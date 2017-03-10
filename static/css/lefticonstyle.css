@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'lefticon';
+  src:  url('../fonts/lefticon.eot?yr0wli');
+  src:  url('../fonts/lefticon.eot?yr0wli#iefix') format('embedded-opentype'),
+    url('../fonts/lefticon.ttf?yr0wli') format('truetype'),
+    url('../fonts/lefticon.woff?yr0wli') format('woff'),
+    url('../fonts/lefticon.svg?yr0wli#lefticon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'lefticon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-adoms:before {
+  content: "\e900";
+}
+.icon-charge:before {
+  content: "\e901";
+}
+.icon-clinic:before {
+  content: "\e902";
+}
+.icon-inspect:before {
+  content: "\e8fa";
+}
+.icon-operate:before {
+  content: "\e904";
+}
+.icon-patient:before {
+  content: "\e905";
+}
+.icon-pharmacy:before {
+  content: "\e906";
+}
+.icon-register:before {
+  content: "\e907";
+}
+.icon-set:before {
+  content: "\e908";
+}
+.icon-statistics:before {
+  content: "\e909";
+}
+.icon-treatment:before {
+  content: "\e90a";
+}
+
