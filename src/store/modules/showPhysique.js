@@ -10,6 +10,8 @@ export default {
     phisicalData:"",
     chargeData:"",
     isChargeData : "",
+    ostockType: "",
+    ostockId: "",
   },
   mutations: {
     SHOW_PHYSIQUE_USER_DATA: (state,  data ) => {
@@ -23,6 +25,12 @@ export default {
     },
     IS_CHARGE_DATA: (state, data) => {
       state.isChargeData = data;
+    },
+    SHOW_STOCK_OSTOCKTYPE: (state, data) => {
+      state.ostockType = data;
+    },
+    SHOW_STOCK_OSTOCKID: (state, data) => {
+      state.ostockId = data;
     },
   },
   actions: {
@@ -38,11 +46,19 @@ export default {
     is_charge_data ({commit}, isChargeData) {
       commit(types.IS_CHARGE_DATA,isChargeData);
     },
+    show_stock_ostocktype ({commit}, ostockType) {
+      commit(types.SHOW_STOCK_OSTOCKTYPE,ostockType);
+    },
+    show_stock_ostockid ({commit}, ostockId) {
+      commit(types.SHOW_STOCK_OSTOCKID,ostockId);
+    },
   },
   getters: {
     getUserData: (state) => state.userData,
     getPhysicalData: (state) => state.phisicalData,
     getChargeData: (state) => state.chargeData,
     getIsChargeData: (state) => state.isChargeData,
+    getOstockType: (state) => state.ostockType,
+    getOstockId: (state) => state.ostockId,
   }
 };

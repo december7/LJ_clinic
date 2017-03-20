@@ -25,10 +25,10 @@
                         </ul>
                     </div>
                 </td>
-                <td :class="other_charge_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 1)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{getUnit(other_charge_item.projectUnit) }}</span></td>
+                <td :class="other_charge_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 1)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{$enumeration.getProjectUnit(other_charge_item.projectUnit) }}</span></td>
                 <td :class="other_charge_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="little_item"><input @focus="getFocus(other_charge_item, 2)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="other_charge_item.amount"></td>
-                <td :class="other_charge_item.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 3)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"  >{{other_charge_item.retailPrice}}</span></td>
-                <td :class="other_charge_item.focus && currentFocusIndex == 4 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 4)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{getPrice(other_charge_item.amount,other_charge_item.retailPrice)}}</span></td>
+                <td :class="other_charge_item.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 3)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"  >{{$enumeration.getGoodsPrice(other_charge_item.retailPrice)}}</span></td>
+                <td :class="other_charge_item.focus && currentFocusIndex == 4 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 4)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{$enumeration.getCountMoney(other_charge_item.amount,other_charge_item.retailPrice)}}</span></td>
                 <td :class="other_charge_item.focus && currentFocusIndex == 5 ? 'focus_border' : 'l_border' " ><input @focus="getFocus(other_charge_item, 5)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" placeholder="点击添加备注说明" type="text" style="height: auto;" v-model="other_charge_item.remark"></td>
                 <td class="l_border"><a @click="delete_other_charge_item(other_charge_item,index)">删除</a></td>
             </tr>
@@ -47,7 +47,7 @@
         </table>
         <div class="text-center p-lg gray-bg">
             <button type="button" id="btn_print_add_other_charge" class="btn btn-w-m btn-primary">打印</button>
-            <button type="button" id="btn_save_add_other_charge" class="btn btn-w-m btn-white" @click="saveRestCharge">保存</button>
+            <button type="button" id="btn_save_add_other_charge" class="btn btn-w-m btn-white" @click="saveRestCharge">{{getTemplate}}保存</button>
         </div>
     </div>
 </template>
@@ -63,14 +63,39 @@
                 if (registeredOrdId){
                     this.registeredOrdId=registeredOrdId;
                     this.request();
-                }  }
+                }  },
+          getTemplate(){
+            console.log("getTemplate--------------------");
+            let getTemplateContent=  this.$store.getters.getTemplateContent;
+            let getTemplateType=  this.$store.getters.getTemplateType;
+            if (getTemplateType==4){
+              for (let i in getTemplateContent){
+                this.other_charge_items.push({
+                  projectName: getTemplateContent[i].projectName,
+                  retailPrice: getTemplateContent[i].retailPrice,
+                  projectId: getTemplateContent[i].projectId,
+                  projectUnit: getTemplateContent[i].projectUnit,
+                  remark: getTemplateContent[i].projectDesc,
+                  state:  1,
+                  count: '',
+                  feeDetailOrdId: '',
+                  operType: 1,
+                  focus: false
+                })
+              }
+              this.$store.dispatch('setTemplateContentType', -1);
+              this.$store.dispatch('setTemplateContent', "");
+            }
+
+            return "";
+          },
         },
         data(){
             return {
                 other_charge_items: [],
                 currentFocusIndex:0,
                 dataList: [],
-                deleteOtherItems:[], 
+                deleteOtherItems:[],
             }
         },
         methods:{

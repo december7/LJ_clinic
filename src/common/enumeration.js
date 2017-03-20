@@ -114,5 +114,91 @@ export  default {
 
     getParseValue:function (data,index) {
         return data[index];
+    },
+    /**返回商品单位*/
+    getProjectUnit:function ( unit) {
+        if (typeof unit==='undefined'|| unit==0){
+            return "";
+        }else {
+            let content= this.getPROD_UNITE()[unit]
+            if (content.length>5){
+                return  content.substring(0,5)+"...";
+            }else {
+                return  this.getPROD_UNITE()[unit];
+            }
+        }
+    }, /**返回商品用法*/
+     getUsageType:function ( unit) {
+        if (typeof unit==='undefined'|| unit==0){
+            return "";
+        }else {
+            let content= this.getUSAGE_TYPE()[unit]
+            if (content.length>5){
+                return  content.substring(0,5)+"...";
+            }else {
+                return  this.getUSAGE_TYPE()[unit];
+            }
+        }
+    },/**返回商品用药频次*/
+    getFrequency :function ( unit) {
+        if (typeof unit==='undefined'|| unit==0){
+            return "";
+        }else {
+            let content= this.getPROD_FREQUENCY()[unit]
+            if (content.length>5){
+                return  content.substring(0,5)+"...";
+            }else {
+                return  this.getPROD_FREQUENCY()[unit];
+            }
+        }
+    },
+
+    /**返回商品价格*/
+    getGoodsPrice:function ( price) {
+        if (price=="" ||typeof price=="undefined"){
+            return ""
+        }
+       return  (price/100).toFixed(2);
+    },  /**计算商品价格*/
+    getComputePricet:function ( price) {
+        if (price=="" ||typeof price=="undefined"){
+            return ""
+        }
+        if (price>0){
+            return  Number(price)*100;
+        }
+    },
+    getCountMoney:function (retailPrice,count) {
+        if (retailPrice==""||count=="" ||typeof retailPrice=="undefined"||typeof count=="undefined"){
+            return ""
+        }
+            if (retailPrice>0&&count>0){
+                return this.getGoodsPrice(retailPrice*count);
+            }else {
+                return "";
+            }
+    },
+  //计算返回零
+  getNumMoney:function (retailPrice,count) {
+        if (retailPrice==""||count=="" ||typeof retailPrice=="undefined"||typeof count=="undefined"){
+            return ""
+        }
+            if (retailPrice>0&&count>0){
+                return this.getGoodsPrice(retailPrice*count);
+            }else {
+                return 0;
+            }
+    },
+  /**计算状态*/
+  getState:function ( state) {
+    if (state=="0"){
+       return "已删除"
+    }else if (state=="1"){
+      return "正常"
+    }else if (state=="2"){
+      return "待审核"
+    }else if (state=="3"){
+      return "拒绝"
     }
+  },
 }

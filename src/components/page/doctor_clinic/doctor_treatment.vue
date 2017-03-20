@@ -26,10 +26,10 @@
                         </ul>
                     </div>
                 </td>
-                <td class="l_r_border cure_little_item no-padding"><input class="form-control white-bg no-padding text-center no-borders" readonly="readonly"  style="height: auto; background-color: white" v-model="cure_item.retailPrice"></td>
-                <td class="little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly="readonly" type="text" style="height: auto;background-color: white"  v-model="unit_array[cure_item.projectUnit-1]"></td>
+                <td class="l_r_border cure_little_item no-padding"><span class="form-control white-bg no-padding text-center no-borders" readonly="readonly"  style="height: auto; background-color: white">{{$enumeration.getGoodsPrice (cure_item.retailPrice)}}</span></td>
+                <td class="little_item"><span class="form-control white-bg no-padding text-center no-borders" readonly="readonly" type="text" style="height: auto;background-color: white" >{{$enumeration.getProjectUnit(cure_item.projectUnit)}}</span></td>
                 <td class="l_r_border cure_little_item" :class="cure_item.focus && currentFocusIndex == 2? 'focus_border' : 'l_r_border' "> <input class="form-control white-bg no-padding text-center no-borders"  @focus="getFocus(cure_item, 2)" @blur="loseFocus(cure_item)"    type="text" style="height: auto;" v-model="cure_item.amount"></td>
-                <td class="cure_little_item"><span class="form-control white-bg no-padding text-center no-borders" readonly="readonly" style="height: auto;background-color: white" >{{money(cure_item.retailPrice,cure_item.amount)}}</span></td>
+                <td class="cure_little_item"><span class="form-control white-bg no-padding text-center no-borders" readonly="readonly" style="height: auto;background-color: white" >{{$enumeration.getCountMoney(cure_item.retailPrice,cure_item.amount)}}</span></td>
                 <td :class="cure_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_r_border' "> <input @focus="getFocus(cure_item, 1)" @blur="loseFocus(cure_item)" placeholder="点击添加备注说明" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="cure_item.remark"></td>
                 <td class="r_border text-danger">{{cure_item.state==1?'待治疗':'已治疗'}}</td>
                 <td><a @click="delete_cure_item(cure_item,index)" class="un_skip_link">删除</a></td>
@@ -49,7 +49,7 @@
         </table>
         <div class="text-center p-lg gray-bg">
             <button type="button" id="btn_print_add_cure" class="btn btn-w-m btn-primary">打印</button>
-            <button type="button" id="btn_save_add_cure" class="btn btn-w-m btn-white" @click="saveTreatment">{{registeredOrd}}保存</button>
+            <button type="button" id="btn_save_add_cure" class="btn btn-w-m btn-white" @click="saveTreatment">{{registeredOrd}}{{getTemplate}}保存</button>
         </div>
     </div>
 </template>
@@ -66,7 +66,32 @@
                 if (registeredOrdId){
                     this.registeredOrdId=registeredOrdId;
                     this.request();
-                }}
+                }},
+          getTemplate(){
+                  console.log("getTemplate--------------------");
+                let getTemplateContent=  this.$store.getters.getTemplateContent;
+                let getTemplateType=  this.$store.getters.getTemplateType;
+                if (getTemplateType==1){
+                  for (let i in getTemplateContent){
+                    this.cure_items.push({
+                      projectName: getTemplateContent[i].projectName,
+                      retailPrice: getTemplateContent[i].retailPrice,
+                      projectId: getTemplateContent[i].projectId,
+                      projectUnit: getTemplateContent[i].projectUnit,
+                      remark: getTemplateContent[i].projectDesc,
+                      state:  1,
+                      count: '',
+                      feeDetailOrdId: '',
+                      operType: 1,
+                      focus: false
+                    })
+                  }
+                  this.$store.dispatch('setTemplateContentType', -1);
+                  this.$store.dispatch('setTemplateContent', "");
+                }
+
+                return "";
+          },
         },
 
         data(){
@@ -74,9 +99,7 @@
                 isCreated:false,
                 cure_items: [],
                 dataList: [],
-                unit_array: [
-                    "袋", "片", "支", "粒", "瓶", "mg", "g", "ml", "l", "ug", "IU", "U", "包", "盒", "枚", "丸", "喷", "颗", "滴", "cm", "少许", "适量", "对", "个", "条", "板", "件", "套", "卷", "副", "只", "根", "箱", "台", "贴", "万单位",
-                ],
+
                 deleteCureItems:[],
                 registeredOrdId:""
             }
@@ -97,7 +120,7 @@
                     projectUnit: '',
                     count: '',
                     remark: '',
-                    state: '',
+                    state: 1,
                     feeDetailOrdId: '',
                     operType: 1,
                     focus: false
@@ -186,8 +209,11 @@
                             treatProjectStrs:JSON.stringify(treatProjectStrs),
                         },function  (data) {
                             if(data.body.code=='00'){
-                                swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
 
+                                swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
+                              that.request();
+                              that.cure_items=[];
+                              that.deleteCureItems=[];
                             }else{
                                 console.log(data.body.msg);
                             }

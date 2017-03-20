@@ -4,7 +4,7 @@
 
     <!--中间列表-->
     <div class="wrapper wrapper-content animated fadeInRight no_top_padding">
-      <screen_title></screen_title>
+      <screen_title :titleItems="titleItems"></screen_title>
 
       <div class="col-sm-12 no-padding" id="userList">
         <ul>
@@ -13,7 +13,6 @@
               <div class="ibox-title patient_list_item_title">
                 <h5>{{data_item.userName}}</h5>
                 <small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{ $stringUtils.dateSex(data_item.userSex )}} / {{data_item.billId}}</small>
-
               </div>
               <div class="ibox-content patient_ibox-content">
 
@@ -36,7 +35,7 @@
                   </div>
 
                   <div class="m-t-sm">
-                    <button data-toggle="modal" data-target="#perfect_information_modal" class="list_reception wait_reception_left" type="button">完善信息</button>
+                    <button @click="prefectUser(data_item.userId)" data-toggle="modal" data-target="#perfect_information_modal" class="list_reception wait_reception_left" type="button">完善信息</button>
                     <button @click="reception(data_item.userId)" class="list_reception wait_reception_right pull-right" type="button">就诊详情</button>
                   </div>
                 </div>
@@ -51,10 +50,10 @@
     </div>
 
     <!--底部分页-->
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0"> </pagination>
 
     <!--完善信息模态框-->
-    <prefect></prefect>
+    <prefect :userId="userId"></prefect>
 
   </div>
 </template>
@@ -152,8 +151,19 @@
   import prefect from '../doctor_registered/registered_modal_perfect.vue'
 
   export default{
+    computed : {
+
+
+  },
+
     data(){
       return {
+        titleItems: [
+          {titleName: '昨天'},
+          {titleName: '过去七天'},
+          {titleName: '过去三十天'},
+          {titleName: '自定义'}
+        ],
         titles: [
           {titleName: '全部', selected: true, listCount: 0},
           {titleName: '已接诊', selected: false, listCount: 0},
@@ -167,10 +177,11 @@
         ],
 
         data_items:[],
+        userId:"",
         historyData:{
           startDate:"",
-          pageIndex:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1,
-          pageSize:this.$enumerationType.iDisplayLength,
+          pageIndex:"",
+          pageSize:this.$enumerationType.pageSize,
           endDate:"",
           userName:"",
         }
@@ -188,20 +199,20 @@
 
 
     methods:{
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
       request:function () {
         let that=this;
         that.historyData.startDate=that.$stringUtils.dayFormat(-1);
         that.historyData.endDate=that.$stringUtils.nowFormat();
 
-        this.requestGet(
-          that.historyData);
+        this.requestGet(that.historyData);
       },
       screenSearchResult:function (resultName) {
         let that=this;
         that.historyData.userName=resultName;
-        this.requestGet(
-          that.historyData
-          );
+        this.requestGet(that.historyData);
       },
       screenDateList:function (startDate,endDate) {
         let that=this;
@@ -211,18 +222,18 @@
       },
       requestGet:function (data) {
         let that=this;
+        that.historyData.pageIndex= that.pageIndexNo();
         that.$api.get(that,that.$requestApi.historyPatients,data,
           function  (data) {
             if(data.status=='200'){
               that.data_items = data.body.data;
-              that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.iDisplayLength));
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }else{
               console.log(data.body.msg);
             }
 
           },function (err) {
             console.log(err);
-
           });
       },
       screenList:function (index ) {
@@ -234,23 +245,24 @@
         }else if (index==2){
           that.historyData.startDate=that.$stringUtils.dayFormat(-30);
         }
-
         this.requestGet( that.historyData);
       },
       request_list:function (index) {
         let that=this;
         if (index==1||index==2){
           that.historyData.state=index==1?2:1;
-        }else {
-          delete  that.historyData['state'];
+        }else if (index==0){
+//          delete  that.historyData ['state'];
+          that.historyData.state=-1;
         }
         this.requestGet( that.historyData);
-
       },
-
       reception:function (userId) {
-        this.$store.dispatch('medicine_compile_suppliers_no',  userId);
+        this.$store.dispatch('medicine_compile_user_id',  userId);
         this.$router.push('/doctor_clinic/history_case');
+      },
+      prefectUser:function (userId) {
+        this.userId=userId;
       }
     },
 

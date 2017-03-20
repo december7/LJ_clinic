@@ -22,7 +22,7 @@
             </div>
             <div>
               <div class='tc-form-labeldiv'>手&nbsp&nbsp机&nbsp&nbsp号&nbsp<span style="color: red;">&#10045</span></div>
-              <input style='width: 210px' class='form-tcinput' type="number" placeholder='请输入手机号码' v-model="staff_json.billId">
+              <input style='width: 210px' class='form-tcinput' type="tel" placeholder='请输入手机号码' v-model="staff_json.billId">
             </div>
             <div>
               <div class='tc-form-labeldiv'>邮&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp箱&nbsp</div>
@@ -59,7 +59,7 @@
       </thead>
       <tbody>
       <tr v-for="(data_item,index) in data_items">
-        <td class="text-center">{{index+1}}</td>
+        <td class="text-center">{{waitParams.pageNo+index}}</td>
         <td class="text-center l_r_border">{{data_item.operatorName}}</td>
         <td class="text-center">{{data_item.billId}}</td>
         <td class="text-center l_r_border">{{data_item.email}}</td>
@@ -108,13 +108,17 @@
       </div>
     </div>
 
+    <pagination v-show="data_items.length > 0"></pagination>
   </div>
 </template>
 
 <script>
-
+import pagination from '../doctor_clinic/bottom_pagination.vue';
 
   export default {
+    components:{
+      pagination
+    },
 
     data(){
       return {
@@ -130,19 +134,30 @@
           wechatNo:'',
         },
         select_edit_index:-100,
+        waitParams:{
+          pageSize:this.$enumerationType.pageSize,
+          pageNo:'',
+          billId:"",
+          operatorName:""
+        }
       }
     },
 
     created(){
-      this.staff_manage();
+      this.staff_manage_list();
     },
 
     methods: {
-      staff_manage: function () {
+      pageIndexNo:function(){
+        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      		},
+      staff_manage_list: function () {
+        this.waitParams.pageNo = this.pageIndexNo();
         var that = this;
-        this.$api.get(this, this.$requestApi.staffManage, {"pageSize":40,"pageNo":1,"billId":"","operatorName":""}, function (data) {
-          if (data.body.code==='00') {
+        this.$api.get(this, this.$requestApi.staffManage, this.waitParams, function (data) {
+          if (data.body.code == '00') {
             that.data_items = data.body.data;
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
             console.log(data.body.msg);
           }
@@ -150,8 +165,15 @@
           console.log(err);
         });
       },
+      // 分页点击调用
+      request_list:function (index) {
+				this.staff_manage_list();
+      },
 //      搜索员工
       searchStaff:function (search_staff) {
+        if (!search_staff){
+          return;
+        }
         var that = this;
         var billId;
         var operatorName;
@@ -164,7 +186,7 @@
         }
         console.log(billId + "------" + operatorName);
         this.$api.get(this, this.$requestApi.staffManage, {"billId":billId,"operatorName":operatorName}, function (data) {
-          if (data.body.code==='00') {
+          if (data.body.code == '00') {
             that.data_items = data.body.data;
           } else {
             console.log(data.body.msg);
@@ -179,7 +201,7 @@
         var that = this;
         this.$api.get(this, this.$requestApi.roleManage, "", function (data) {
           console.log("请求的数据:" + JSON.stringify(data));
-          if (data.body.code==='00') {
+          if (data.body.code == '00') {
             that.roles_items = data.body.data;
           } else {
 
@@ -199,9 +221,9 @@
         }else {
           var that=this;
           this.$api.post(this,this.$requestApi.addNewStaff, {"operatorName":staffjson.operatorName,"billId":staffjson.billId,"email":staffjson.email,"wechatNo":staffjson.wechatNo,"roleId":roleId},function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               console.log("添加成功");
-              that.staff_manage();
+              that.staff_manage_list();
             }else{
 
             }
@@ -217,7 +239,7 @@
         var that = this;
         this.$api.get(this, this.$requestApi.roleManage, "", function (data) {
           console.log("请求的数据:" + JSON.stringify(data));
-          if (data.body.code==='00') {
+          if (data.body.code == '00') {
             that.roles_items = data.body.data;
           } else {
             console.log(data.body.msg);
@@ -234,10 +256,10 @@
         var operatorId = this.data_items[this.select_edit_index].operatorId;
         var that=this;
         this.$api.post(this,this.$requestApi.updateStaff, {"email":that.edit_json_email,"wechatNo":that.edit_json_wechatNo,"roleId":roleId,"operatorId":operatorId},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("编辑成功");
             console.log(roleName);
-            that.staff_manage();
+            that.staff_manage_list();
           }else{
 
           }
@@ -248,7 +270,7 @@
         if(data_item.state=='1'){//当前状态为启用状态
           var that=this;
           this.$api.post(this,this.$requestApi.stopStaff, {"operatorId":data_item.operatorId},function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               console.log("停用成功");
               that.data_items[index].state = 0;
             }else{
@@ -258,7 +280,7 @@
         }else {//当前状态为停用状态
           var that=this;
           this.$api.post(this,this.$requestApi.startStaff, {"operatorId":data_item.operatorId},function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               console.log("启用成功");
               that.data_items[index].state = 1;
             }else{

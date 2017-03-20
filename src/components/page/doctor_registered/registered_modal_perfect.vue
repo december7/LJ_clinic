@@ -30,7 +30,7 @@
 								<div class="col-md-9 no-padding" id="data_1" style="margin-left: -5px">
 									<div class="col-md-11 no-padding input-group date gray-bg" style="line-height: 34px; border-radius: 4px; border: 1px solid #e5e6e7;">
 										<div class="pull-left col-md-9 no-padding">
-											<input style="background-color: #F4F4F4; height: 20px; width: 100%;padding-left: 12px;border: none;" v-model="itemData.birthdayDate" readonly
+											<input style="background-color: #F4F4F4; height: 20px; width: 100%;padding-left: 12px;border: none;" id="birthdayDate" readonly
 														 type="text" placeholder="请选择出生年月">
 										</div>
 										<span style="margin-top: 2px; margin-left: 15px; background-color: #F4F4F4;" class="pull-left input-group-addon no-borders m-t-xxs" id="startDate"><i class="fa fa-calendar"></i></span>
@@ -261,7 +261,7 @@
 
 						that.itemData.address = that.data_item.address;
 						that.itemData.billId = that.data_item.billId;
-						that.itemData.birthdayDate =that.$stringUtils.dateFormat(that.data_item.birthdayDate);
+						that.itemData.birthdayDate = that.$stringUtils.dateFormat(that.data_item.birthdayDate);
 						that.itemData.cityCode = that.data_item.cityCode;
 						that.itemData.company = that.data_item.company;
 						that.itemData.email = that.data_item.email;
@@ -274,7 +274,7 @@
 						that.itemData.userName = that.data_item.userName;
 						that.itemData.userSex = that.data_item.userSex;
 						that.itemData.remark = that.data_item.remark;
-
+						$('#birthdayDate').val(that.$stringUtils.dateFormat(that.data_item.birthdayDate));
 
 						if (that.itemData.isMarital == '1') {
 							that.maritalValue = '已婚';
@@ -295,6 +295,7 @@
 			//完善患者信息
 			perfectRequest: function () {
 				var that=this;
+				this.itemData.birthdayDate = $('#birthdayDate').val();
 				this.$api.post(this,this.$requestApi.perfectRequest,that.itemData,function  (data) {
 					if(data.status=='200'){
 						swal({title:data.body.msg,text:"",type:"success",timer:2000,showConfirmButton:false});

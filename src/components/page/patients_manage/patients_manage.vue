@@ -1,25 +1,30 @@
 <template>
 	<div>
-		<!--挂号中间list列表组件-->
+	<!--完善信息弹窗-->
+	<registered_modal_perfect :userId="data_item.userId"></registered_modal_perfect>
+	<!--添加患者-->
+	<patients_add></patients_add>
+	<!--患者列表-->
 	<div class="wrapper wrapper-content animated fadeInRight">
 		<div>
-			<button type="button" class="btn btn-link patient_add_btn" data-toggle="modal" data-target="#patients_add"><img src="../../../../static/img/set_manage_img/add.png" style="margin-top: -3px"> 添加患者</button>
+			<button type="button" class="btn btn-link patient_add_btn" style="margin-top: -10px" data-toggle="modal" data-target="#patients_add">
+			<img src="../../../../static/img/set_manage_img/add.png" style="margin-top: -3px"> 添加患者</button>
 		</div>
 
 		<div class="col-sm-12 no-padding">
 			<ul>
-				<li v-for="data_item in data_items" class="col-md-4 item_list">
+				<li v-for="(data_item, index) in data_items" class="col-md-4 item_list">
 					<div class="ibox patient_item">
 						<div class="ibox-title patient_list_item_title">
-							<h5>{{data_item.userName}}</h5>
-							<small class="m-l-sm">{{$stringUtils.dateFormat(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+							<h5>{{data_item.userName.length > 8 ? data_item.userName.substring(0,8)+"...":data_item.userName}}</h5>
+							<small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
 						</div>
 						<div class="ibox-content patient_ibox-content">
 
 							<div class="patient_msg_list">
 								<div>
-									<p class="patient_msg_title">门 诊 号:</p>
-									<p class="patient_msg_content">{{data_item.hospitalId}}</p>
+									<p class="patient_msg_title">病 例 号:</p>
+									<p class="patient_msg_content">{{data_item.medicalNo}}</p>
 								</div>
 
 								<div style="margin: 3px 0">
@@ -28,10 +33,10 @@
 								</div>
 							</div>
 
-							<div style="margin-top: 10px">
+							<div style="margin-top: 20px">
 								<button @click="perfect_information_click(data_item)" type="button" class="patient_perfect_information" data-toggle="modal" data-target="#perfect_information_modal">完善信息</button>
-								<button type="button" class="patient_perfect_information" data-toggle="modal" data-target="#physical_check_modal"><a style="color: white" href="#/doctor_clinic/history_case">查看病例</a></button>
-								<button @click="reception()" type="button" class="patient_physical_check" data-toggle="modal" data-target="#physical_check_modal">方便门诊</button>
+								<button @click="reception(data_item.userId)" type="button" class="patient_perfect_information"><a style="color: white" href="#/doctor_clinic/history_case">查看病例</a></button>
+								<button @click="doctorWorkbench(data_item)" type="button" class="patient_physical_check">方便门诊</button>
 							</div>
 
 						</div>
@@ -40,13 +45,8 @@
 			</ul>
 		</div>
 	</div>
-
-	<!--完善信息弹窗-->
-	<registered_modal_perfect :userId="data_item.userId"></registered_modal_perfect>
-	<!--添加患者-->
-	<patients_add></patients_add>
 	<!--底部分页-->
-	<pagination v-show="data_items.length >= 9"></pagination>
+	<pagination v-show="data_items.length > 0"></pagination>
 	</div>
 </template>
 
@@ -153,7 +153,9 @@
 			return {
 				data_items:[],
 				data_item:{},
-				currentNo: 1
+				currentNo: 1,
+				pageIndex: '',
+				pageSize: this.$enumerationType.pageSize,
 			}
 		},
 		components:{
@@ -165,13 +167,6 @@
 			this.patientManageList();
 		},
 
-		computed:{
-			currentPageNo:function () {
-				console.log(this.$store.getters.getCurrentPageNo);
-				return this.$store.getters.getCurrentPageNo;
-			}
-		},
-
 		methods: {
 
 			perfect_information_click: function (data_item) {
@@ -179,11 +174,17 @@
 				this.$store.dispatch('show_physique_user_data',  data_item.userId);
 			},
 
+			pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
+
 			patientManageList:function () {
 				var that=this;
-				this.$api.get(this,this.$requestApi.patientManageList,{pageNo:1,pageSize:9},function  (data) {
+				that.pageIndex = this.pageIndexNo();
+				this.$api.get(this,this.$requestApi.patientManageList,{pageNo:this.pageIndex,pageSize:this.pageSize},function  (data) {
 					if(data.status=='200'){
 						that.data_items = data.body.data;
+						that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
 						console.log(data.body.data);
 					}else{
 						console.log(data.body.msg);
@@ -193,9 +194,29 @@
 				});
 			},
 
-			reception:function () {
-				parent.document.getElementById("30300").click();
-				parent.vueRoot.$store.dispatch("today_data","");
+			reception:function (userId) {
+        this.$store.dispatch('medicine_compile_user_id', userId);
+        this.$router.push('/doctor_clinic/history_case');
+      },
+
+			doctorWorkbench:function (data_item) {
+				var that = this;
+				var params = {registeredType:2,isEmergency:1,userSex:data_item.userSex,billId:data_item.billId,
+											birthdayDate:(that.$stringUtils.dateFormat(data_item.birthdayDate))};
+				this.$api.post(this,this.$requestApi.patientReception+data_item.userId,params,function  (data) {
+					if(data.body.code=='00'){
+						console.log(data.body.data);
+						localStorage.setItem(that.$names.registeredOrdId, data.body.data);
+						parent.document.getElementById("30300").click();
+					}else{
+						console.log(data.body.msg);
+					}
+				},function (err) {
+					console.log(err);
+				});
+      },
+			request_list:function (index) {
+				this.patientManageList();
 			},
 		},
 	}

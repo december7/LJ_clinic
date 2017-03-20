@@ -21,8 +21,8 @@
 
                   </div>
                   <div :class="showAssistInquiry ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                    <input v-model="patientCaseList.height" type="text" placeholder="身高(cm)" readonly="readonly"
-                           :disabled="editable" class="form-control  input_circular_corner">
+                    <input v-model="patientCaseList.height" type="text" placeholder="身高(cm)"
+                           :disabled="editable" class="form-control gray-bg input_circular_corner">
                   </div>
                 </div>
 
@@ -31,8 +31,8 @@
                        class="pull-left no-padding left_text_tips">体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重
                   </div>
                   <div :class="showAssistInquiry ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                    <input v-model="patientCaseList.weight" type="text" placeholder="体重(kg)" readonly="readonly"
-                           :disabled="editable" class="form-control   input_circular_corner">
+                    <input v-model="patientCaseList.weight" type="text" placeholder="体重(kg)"
+                           :disabled="editable" class="form-control gray-bg  input_circular_corner">
                   </div>
                 </div>
 
@@ -41,8 +41,8 @@
                        class="pull-left no-padding left_text_tips">体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;温
                   </div>
                   <div :class="showAssistInquiry ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                    <input v-model="patientCaseList.temperature" type="text" placeholder="体温(℃)" readonly="readonly"
-                           :disabled="editable" class="form-control   input_circular_corner">
+                    <input v-model="patientCaseList.temperature" type="text" placeholder="体温(℃)"
+                           :disabled="editable" class="form-control gray-bg  input_circular_corner">
                   </div>
                 </div>
 
@@ -51,8 +51,8 @@
                        class="pull-left no-padding left_text_tips">BMI&nbsp;&nbsp;&nbsp;指&nbsp;&nbsp;&nbsp;数
                   </div>
                   <div :class="showAssistInquiry ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                    <input v-model="patientCaseList.bmiNum" type="text" placeholder="BMI指数" readonly="readonly"
-                           :disabled="editable" class="form-control   input_circular_corner">
+                    <input v-model="patientCaseList.bmiNum" type="text" placeholder="BMI指数"
+                           :disabled="editable" class="form-control gray-bg  input_circular_corner">
                   </div>
                 </div>
 
@@ -61,8 +61,8 @@
                        class="pull-left no-padding left_text_tips">呼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;吸
                   </div>
                   <div :class="showAssistInquiry ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                    <input v-model="patientCaseList.breathing" type="text" placeholder="呼吸(次/分钟)" readonly="readonly"
-                           :disabled="editable" class="form-control   input_circular_corner">
+                    <input v-model="patientCaseList.breathing" type="text" placeholder="呼吸(次/分钟)"
+                           :disabled="editable" class="form-control gray-bg  input_circular_corner">
                   </div>
                 </div>
 
@@ -156,7 +156,7 @@
                 </div>
               </div>
 
-              <div  v-for="(item, index) in allergy_data" class="form-group" v-show="hasAllergys=='true'">
+              <div  v-for="(item, index) in allergy_data" class="form-group" v-show="hasAllergys">
                 <div :class="showAssistInquiry ? 'col-md-6' : 'col-md-4' " class="no-padding">
                   <p :class="showAssistInquiry ? 'col-md-4' : 'col-md-3' "
                      class="no-padding left_text_tips">过&nbsp;&nbsp;&nbsp;&nbsp;敏&nbsp;&nbsp;&nbsp;&nbsp;源:</p>
@@ -293,36 +293,29 @@
                 <p :class="showAssistInquiry ? 'col-md-2' : 'col-md-1' "
                    class="no-padding left_text_tips">初步诊断:</p>
                 <div :class="showAssistInquiry ? 'col-md-10' : 'col-md-11' ">
-                              <textarea :disabled="editable" v-model="medical.diagnosis" id="primary_diag"
-                                        name="primary_diag" class="form-control gray-bg input_circular_corner"
-                                        rows="5" required="" aria-required="true" placeholder="请填写初步诊断结果"></textarea>
-                  <!--<select id="select" name="select"  multiple  data-selectator-keep-open="true">-->
-                    <!--<optgroup label="Group one" class="group_one">-->
-                      <!--<option value="1" class="option_one" data-subtitle="Et" data-left="<img src='images/ingi.png'>" data-right="1">One</option>-->
-                      <!--<option value="2" class="option_two" data-subtitle="To" data-left="<img src='images/runa.png'>" data-right="2">Two</option>-->
-                    <!--</optgroup>-->
-                    <!--<optgroup label="Group two" class="group_two">-->
-                      <!--<option value="3" class="option_three" data-subtitle="Tre" data-left="<img src='images/jogvan.png'>" data-right="3">Three</option>-->
-                      <!--<option value="4" class="option_four" selected data-left="<img src='images/noimage.png'>" data-right="4">Four</option>-->
-                      <!--<option value="5" class="option_five" selected data-left="<img src='images/noimage.png'>" data-right="5">Five</option>-->
-                      <!--<option value="6" class="option_six">Six</option>-->
-                    <!--</optgroup>-->
-                    <!--<optgroup label="Group three" class="group_three">-->
-                      <!--<option value="7" class="option_seven">Seven</option>-->
-                    <!--</optgroup>-->
-                    <!--<option value="8" class="option_eight" data-subtitle="Otte">Eight</option>-->
-                    <!--<option value="9" class="option_nine">Nine</option>-->
-                    <!--<option value="10" class="option_ten" selected>Ten</option>-->
-                    <!--<option value="11" class="option_eleven" selected>Eleven</option>-->
-                    <!--<option value="12" class="option_twelve">Twelve</option>-->
-                    <!--<option value="13" class="option_thirteen">Thirteen</option>-->
-                    <!--<option value="14" class="option_fourteen">Fourteen</option>-->
-                  <!--</select>-->
+
+                  <div class="input-group-btn">
+                    <input  data-toggle="dropdown"  placeholder="请填写初步诊断结果" type="text" class="form-control gray-bg input_circular_corner"  v-model="medical.diagnosis"  @focus="getListDiseaseName(medical.diagnosis)" @input="getListDiseaseName(medical.diagnosis)">
+                    <ul class="dropdown-menu" style="width: 100%"  >
+                      <li @click="selectDosageFormItem(titleItem,index)" v-for="(titleItem, index) in symptomInfo">
+                        <a  class="no-padding" style="text-align: center">{{titleItem.symptomName}}</a>
+                      </li>
+                    </ul>
+
+
+                  </div>
+
 
                 </div>
               </div>
+              <div class="form-group" v-show="selects.length>0">
+                <p :class="showAssistInquiry ? 'col-md-2' : 'col-md-1' "
+                   class="no-padding left_text_tips"> </p>
+                <div :class="showAssistInquiry ? 'col-md-10' : 'col-md-11' ">
+                  <span  style="margin-right: 10px"  v-for="(select,index) in selects">{{select.symptomName}}  <a   @click="deleteSelect(index)" class="fa fa-times-circle"></a></span>
 
-
+                </div>
+              </div>
 
               <div class="form-group">
                 <p :class="showAssistInquiry ? 'col-md-2' : 'col-md-1' "
@@ -347,7 +340,7 @@
 
               <div v-show="!editable" class="text-center m-t-xl">
                 <button id="btn_print_case" type="button" class="btn btn-w-m btn-primary">打印</button>
-                <button id="btn_save_case" type="button" class="btn btn-w-m btn-white" @click="submitData">{{registeredOrd}}保存</button>
+                <button id="btn_save_case" type="button" class="btn btn-w-m btn-white" @click="submitData">{{preliminaryDiagnosis}}{{chiefComplaint}}{{registeredOrd}}保存</button>
               </div>
 
             </form>
@@ -357,122 +350,25 @@
       </div>
     </div>
     <!--右侧辅助问诊部分-->
-    <div v-show="showAssistInquiry" class="assist_inquiry_page col-sm-4" style="padding-left: 0">
-      <div class="ibox float-e-margins">
-        <div class="ibox-title no-top-border">
-          <h5>辅助问诊</h5>
-          <div class="ibox-tools">
-            <a @click="btn_close" class="btn_close un_skip_link">&#10005</a>
-          </div>
-        </div>
-        <div class="ibox-content no_top_padding" style="padding-left: 10px; padding-bottom: 10px">
-          <div class="file-manager">
-            <ul class="tag-list" style="padding: 0;">
-              <li><a>头疼</a></li>
-              <li><a>恶心</a></li>
-              <li><a>咳嗽</a></li>
-              <li><a>流鼻涕</a></li>
-              <li><a>咽痛</a></li>
-
-              <li><a>头疼</a></li>
-              <li><a>恶心</a></li>
-              <li><a>咳嗽</a></li>
-              <li><a>流鼻涕</a></li>
-              <li><a>咽痛</a></li>
-
-              <li><a>头疼</a></li>
-              <li><a>恶心</a></li>
-              <li><a>咳嗽</a></li>
-              <li><a>流鼻涕</a></li>
-              <li><a>咽痛</a></li>
-
-              <li><a>头疼</a></li>
-              <li><a>恶心</a></li>
-              <li><a>咳嗽</a></li>
-              <li><a>流鼻涕</a></li>
-              <li><a>咽痛</a></li>
-            </ul>
-            <h5 class="tag-title" style="display: inline-block;"><a>急性上呼吸道感染</a></h5>
-            <ul class="tag-list" style="padding: 0;">
-              <li><a>扁桃体肿大</a></li>
-              <li><a>咽喉出血</a></li>
-              <li><a>季节性流感</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-            </ul>
-            <h5 class="tag-title" style="display: inline-block;"><a>急性上呼吸道感染</a></h5>
-            <ul class="tag-list" style="padding: 0;">
-              <li><a>扁桃体肿大</a></li>
-              <li><a>咽喉出血</a></li>
-              <li><a>季节性流感</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-            </ul>
-            <h5 class="tag-title" style="display: inline-block;"><a>急性上呼吸道感染</a></h5>
-            <ul class="tag-list" style="padding: 0;">
-              <li><a>扁桃体肿大</a></li>
-              <li><a>咽喉出血</a></li>
-              <li><a>季节性流感</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-
-              <li><a>感冒</a></li>
-              <li><a>发热</a></li>
-              <li><a>季节性流感</a></li>
-              <li><a>过敏性鼻炎</a></li>
-            </ul>
-            <div class="clearfix"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <assist-inquiry v-show="showAssistInquiry"></assist-inquiry>
   </div>
 </template>
 <style>
 
 </style>
 <script>
+  import assistInquiry from './assistInquiry.vue';
   export default{
+    components:{
+      assistInquiry
+    },
 
     data(){
       return {
         patientCaseList: '',
-        allergy_data: [{allergen: 1, allergicDegree: 1, anaphylaxis: 1}],
+        allergy_data: [{allergyDegree: 1, allergyReaction: 1, allergyThing: 1}],
         allergyState: 0,
+        selects: [],
         userMedical:{
           marriageHistory:"",
           userHistory:"",
@@ -481,11 +377,10 @@
           menstruationHistory:"",
         },
         registeredOrdId:"",
-        userAllergys:[1,2],
-        userAllergyStrs:"",
+        userAllergys:[],
         hasAllergys:false,
         hasUserMedical:false,
-        diagnosisIdStrs:[113943],//初步诊断结果编号数组
+        diagnosisIdStrs:[],//初步诊断结果编号数组
         medical:{
           treatmentAdvice:"",
           physiqueInfo:"",
@@ -494,25 +389,17 @@
           chiefComplaint:"",
         },
         singleUnit:1,
+        symptomInfo:[],
 
       }
     },
 
     mounted: function () {
-      $('#select').selectator({
-        prefix: 'selectator_',             // CSS class prefix
-        height: 'auto',                    // auto or element
-        useDimmer: false,                  // dims the screen when option list is visible
-        useSearch: true,                   // if false, the search boxes are removed and//   `showAllOptionsOnFocus` is forced to true
-        keepOpen: false,                   // if true, then the dropdown will not close when
-                  //   selecting options, but stay open until losing focus
-        showAllOptionsOnFocus: false,      // shows all options if input box is empty
-        selectFirstOptionOnSearch: true,   // selects the topmost option on every search
-        searchCallback: function(value){}, // Callback function when enter is pressed and
-                                           //   no option is active in multi select box
-        labels: {
-          search: 'Search...'            // Placeholder text in search box in single select box
-        }
+      var that=this;
+      $(".selectator_input").bind('input porpertychange',function(){
+       that.getListDiseaseName($(this).val());
+        console.log("==============");
+
       });
 
       $('.collapse-link').click(function () {
@@ -539,22 +426,75 @@
       this.registeredOrdId=localStorage.getItem(this.$names.registeredOrdId);
       console.log( " this.registeredOrdId"+this.registeredOrdId);
       this.request_case();
-
     },
 
     computed: {
       showAssistInquiry: function () {
         return this.$store.getters.getWeatherShowAssistInquiry;
-      }, isHasAllergys: function () {
-        return this.hasAllergys;
       },
 
       editable: function () {
         return this.$store.getters.getMsgEditable;
       },
-      editable1: function () {
-        console.log( parent.vueRoot.$store);
-        return  parent.vueRoot.$store.getters.getToday;
+      chiefComplaint: function () {
+        let data=this.$store.getters.getChiefComplaint[0];
+        let index=-1;
+        if (typeof(data) != "undefined"){
+          let chiefComplaints =this. medical.chiefComplaint.split(" ");
+          if (chiefComplaints.length==1){
+            this.medical.chiefComplaint += data + " ";
+          }else {
+            this.medical.chiefComplaint="";
+            for (let i in  chiefComplaints) {
+              if (chiefComplaints[i] === data) {
+                chiefComplaints.splice(i, 1);
+                index=i;
+              } else {
+                this.medical.chiefComplaint += chiefComplaints[i] + " ";
+              }
+
+            };
+            if (index==-1){
+              this.medical.chiefComplaint += data + " ";
+            }
+          }
+        }
+        this.$store.dispatch('set_chief_complaint', []);
+        return;
+      },
+      preliminaryDiagnosis: function () {
+        let data=   this.$store.getters.getPreliminaryDiagnosis[0];
+        let that=this;
+        let index=-1;
+        let dataArr=[];
+
+        if (typeof (data)!= "undefined"){
+          if ( that.selects.length===0){
+            that.selects.push(data);
+          }else {
+            dataArr=  that.selects;
+            that.selects=[];
+            console.error(JSON.stringify(dataArr));
+            console.error("data"+JSON.stringify(data.symptomName));
+            for (let i in  dataArr) {
+            console.error("data"+JSON.stringify(dataArr[i].symptomName));
+
+              if (  dataArr[i].symptomName === data.symptomName) {
+                dataArr.splice(i, 1);
+                index=i;
+              }
+
+            };
+            that.selects=  dataArr;
+            if (index==-1){
+
+              that.selects .push( data);
+            }
+          }
+
+        }
+        that.$store.dispatch('set_preliminary_diagnosis', []);
+        return "";
       },
       registeredOrd(){
         let registeredOrdId=  this.$store.getters.getCompileSuppliersNo;
@@ -567,25 +507,45 @@
     },
 
     methods: {
-      /*关闭辅助问诊*/
-      btn_close: function () {
-        this.$store.dispatch('setWeatherShowAssistInquiry', false);
+
+      selectDosageFormItem:function (symptom,selectedIndex) {
+        console.log(selectedIndex);
+        console.log(JSON.stringify(symptom));
+        this.medical.diagnosis='';
+        this.selects.push(symptom);
+        console.log(console.log(this.selects));
+      },
+      getListDiseaseName:function (name) {
+        let that = this;
+        that.$api.get(that, that.$requestApi.listdiseaseName, {keyLike:name}, function (data) {
+          if (data.body.code == '00') {
+           that.  symptomInfo= data.body.data;
+          } else {
+            console.log(data.body.msg);
+          }
+
+        }, function (err) {
+          console.log(err);
+        });
       },
 
       /*病例数据*/
       request_case: function () {
         var that = this;
         this.$api.get(this, this.$requestApi.showMedical+this.registeredOrdId, "", function (data) {
-          if (data.status == '200') {
+          if(data.body.code == '00'){
             that.patientCaseList = data.body.physique;
             if (data.body.userMedical){
             that.userMedical = data.body.userMedical;
-
+              that.selects=[];
             } if (data.body.medical){
               that.medical = data.body.medical;
          }
 
-            that.$parent.hasUserMedical = data.body.hasUserMedical;
+            that.$parent.hasAllergys = data.body.hasUserMedical;
+            that.hasAllergys = data.body.hasUserMedical;
+            that.userAllergys = data.body.userAllergys;
+            that.hasAllergys = data.body.hasUserMedical;
             that.$parent.patientCaseList = data.body.data;
 
           } else {
@@ -602,10 +562,14 @@
         if (this.editable) {
           return;
         }
-        this.allergy_data.push({allergen: 1, allergicDegree: 1, anaphylaxis: 1})
+        this.allergy_data.push({allergyDegree: 1, allergyReaction: 1, allergyThing: 1})
       },
       submitData: function () {
         let that = this;
+        for (let item in that.selects){
+          that. diagnosisIdStrs.push(that.selects[item].symptomId);
+        }
+
         that.$api.post(that, that.$requestApi.orderMedical+that.registeredOrdId,
           {
             bmiNum:that.patientCaseList.bmiNum,
@@ -626,12 +590,12 @@
             systolicPressure:that.patientCaseList.systolicPressure,
             temperature:that.patientCaseList.temperature,
             treatmentAdvice:that.medical.treatmentAdvice,
-            userAllergyStrs:that.userAllergyStrs,
+            userAllergyStrs:JSON.stringify(that.allergy_data),
             userHistory:that.userMedical.userHistory,
             weight:that.patientCaseList.weight,
 
           }, function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
             } else {
             console.log(data.body.msg);
@@ -647,6 +611,7 @@
         this.allergy_data.splice(index, 1,  this. allergy_data[index]);
 
       },
+
       getAllergyDegree:function ( allergyDegree) {
         if (typeof allergyDegree==='undefined'){
           return  this. $enumeration.getALLERGY_DEGREE()[1];
@@ -698,6 +663,10 @@
           return;
         }
         this.allergy_data.splice(index, 1);
+      },
+      deleteSelect: function (index) {
+        this.selects.splice(index, 1 );
+        console.log("deleteSelect");
       },
 
     }

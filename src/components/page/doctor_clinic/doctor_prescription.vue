@@ -2,12 +2,12 @@
     <div  style="padding: 0 15px;" class="prescription_container">
         <div>
             <div class="radio radio-info radio-inline">
-                <input type="radio" id="western_medicine" value="1" v-model="prescription_type" name="radioInline"
+                <input @click="selectType" type="radio" id="western_medicine" value="1" v-model="prescription_type" name="radioInline"
                        style="margin-top: 1px">
                 <label for="western_medicine" class="no-padding">西/成药处方</label>
             </div>
             <div class="radio radio-inline">
-                <input id="chinese_medicine" type="radio" value="2" v-model="prescription_type" name="radioInline"
+                <input @click="selectType" id="chinese_medicine" type="radio" value="2" v-model="prescription_type" name="radioInline"
                        style="margin-top: 1px">
                 <label for="chinese_medicine" class="no-padding">中药处方</label>
             </div>
@@ -43,15 +43,15 @@
                             </ul>
                         </div>
                     </td>
-                    <td class="l_border prescription_little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="western_prescription_item.stockNum"></td>
-                    <td class="l_border cure_little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="western_prescription_item.retailPrice"></td>
+                    <td class="l_border prescription_little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="western_prescription_item.preStockNum"></td>
+                    <td class="l_border cure_little_item"><span class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white"  >{{$enumeration.getGoodsPrice (western_prescription_item.retailPrice)}} </span></td>
                     <td :class="western_prescription_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_border' " class="cure_little_item"> <input @focus="getFocus(western_prescription_item, 1)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model=" western_prescription_item.singleDose"></td>
-                    <td :class="western_prescription_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="cure_little_item"> <span @focus="getFocus(western_prescription_item, 2)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{ getUnit(western_prescription_item.doseUnit) }}</span></td>
-                    <td class="l_border prescription_little_item"> <span class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white"  >{{getUsageType(western_prescription_item.usageType) }}</span></td>
-                    <td :class="western_prescription_item.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="cure_little_item"> <span @focus="getFocus(western_prescription_item, 3)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{ getFrequency(western_prescription_item.frequency)}}</span></td>
+                    <td :class="western_prescription_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="cure_little_item"> <span @focus="getFocus(western_prescription_item, 2)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" > {{$enumeration.getProjectUnit(western_prescription_item.doseUnit)}}</span></td>
+                    <td class="l_border prescription_little_item"> <span class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white"  >{{$enumeration.getUsageType(western_prescription_item.usageType) }}</span></td>
+                    <td :class="western_prescription_item.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="cure_little_item"> <span @focus="getFocus(western_prescription_item, 3)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{ $enumeration.getFrequency(western_prescription_item.frequency)}}</span></td>
                     <td :class="western_prescription_item.focus && currentFocusIndex == 4 ? 'focus_border' : 'l_border' " class="prescription_little_item"> <input @focus="getFocus(western_prescription_item, 4)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="western_prescription_item.dayNum"></td>
                     <td :class="western_prescription_item.focus && currentFocusIndex == 5 ? 'focus_border' : 'l_border' " class="prescription_little_item"> <input @focus="getFocus(western_prescription_item, 5)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="western_prescription_item.amount"></td>
-                    <td :class="western_prescription_item.focus && currentFocusIndex == 7 ? 'focus_border' : 'l_border' " class="prescription_little_item"> <span @focus="getFocus(western_prescription_item, 7)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{getProdUnit(western_prescription_item.unit)}}</span></td>
+                    <td :class="western_prescription_item.focus && currentFocusIndex == 7 ? 'focus_border' : 'l_border' " class="prescription_little_item"> <span @focus="getFocus(western_prescription_item, 7)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{$enumeration.getProjectUnit(western_prescription_item.unit)}}</span></td>
                     <td :class="western_prescription_item.focus && currentFocusIndex == 6 ? 'focus_border' : 'l_r_border' "><input @focus="getFocus(western_prescription_item, 6)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" placeholder="点击添加备注说明" style="height: auto;" v-model="western_prescription_item.remark"></td>
                     <td class="l_border text-danger">{{western_prescription_item.state==1?'待发药':'已发药'}}</td>
                     <td class="l_border"><a @click="delete_western_prescription_item(western_prescription_item,index)">删除</a></td>
@@ -103,10 +103,10 @@
                             </ul>
                         </div>
                     </td>
-                    <td class="l_border little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="chinese_prescription_item.stockNum"></td>
-                    <td class="l_border little_item"><input class="form-control white-bg no-padding text-center no-borders" type="text" readonly style="height: auto; background-color: white" v-model="chinese_prescription_item.retailPrice"></td>
+                    <td class="l_border little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="chinese_prescription_item.preStockNum"></td>
+                    <td class="l_border little_item"><span class="form-control white-bg no-padding text-center no-borders" type="text" readonly style="height: auto; background-color: white" > {{$enumeration.getGoodsPrice (chinese_prescription_item.retailPrice)}}</span></td>
                     <td :class="chinese_prescription_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_border' " class="little_item"> <input @focus="getFocus(chinese_prescription_item, 1)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"  v-model="chinese_prescription_item.singleDose"> </input></td>
-                    <td :class="chinese_prescription_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="little_item"> <span @focus="getFocus(chinese_prescription_item, 2)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"  > {{ getUnit(chinese_prescription_item.doseUnit) }}</span></td>
+                    <td :class="chinese_prescription_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="little_item"> <span @focus="getFocus(chinese_prescription_item, 2)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"  > {{ $enumeration.getProjectUnit(chinese_prescription_item.doseUnit) }}</span></td>
                     <td :class="chinese_prescription_item.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' "><input @focus="getFocus(chinese_prescription_item, 3)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" placeholder="点击添加备注说明" type="text" style="height: auto;" v-model="chinese_prescription_item.remark"></td>
                     <td class="l_border text-danger">{{chinese_prescription_item.state==1?'待发药':'已发药'}}</td>
                     <td class="l_border"><a @click="delete_chinese_prescription_item(chinese_prescription_item,index)">删除</a></td>
@@ -134,11 +134,11 @@
                             <div class="col-md-8 no-padding">
                                 <!--<input type="text" class="form-control no-padding no-borders">-->
                                 <div class="input-group-btn">
-                                    <button data-toggle="dropdown" style="width: 100%; border: 1px solid white;" class="form-control    " type="button">{{$enumerationType.usageTypeItems[usageType].titleName}}<span class=" caret goods_tips_down"></span>
+                                    <button data-toggle="dropdown" style="width: 100%; border: 1px solid white;" class="form-control    " type="button">{{$enumeration.getUsageType(usageType)}}<span class=" caret goods_tips_down"></span>
                                     </button>
                                     <ul class="dropdown-menu" style="width: 100%" >
-                                        <li @click="selectUsageTypeItem(index)" v-for="(titleItem, index) in $enumerationType.usageTypeItems">
-                                            <a :class="{selected_item :  usageType== index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                                        <li @click="selectUsageTypeItem(index)" v-for="(titleItem, index) in $enumeration.getUSAGE_TYPE()">
+                                            <a :class="{selected_item :  usageType== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                         </li>
 
                                     </ul>
@@ -151,11 +151,11 @@
                             <div class="col-md-8 no-padding">
                                 <!--<input type="text" class="form-control no-padding no-borders">-->
                                 <div class="input-group-btn">
-                                    <button data-toggle="dropdown" style="width: 100%;border: 1px solid white;" class="form-control    " type="button">{{$enumerationType.frequencyItems[ frequency].titleName}}<span class=" caret goods_tips_down"></span>
+                                    <button data-toggle="dropdown" style="width: 100%;border: 1px solid white;" class="form-control    " type="button">{{$enumeration.getFrequency(frequency)}}<span class=" caret goods_tips_down"></span>
                                     </button>
                                     <ul class="dropdown-menu" style="width: 100%" >
-                                        <li @click="selectFrequencyItem(index)" v-for="(titleItem, index) in $enumerationType.frequencyItems">
-                                            <a :class="{selected_item :  frequency== index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                                        <li @click="selectFrequencyItem(index)" v-for="(titleItem, index) in $enumeration.getPROD_FREQUENCY()">
+                                            <a :class="{selected_item :  frequency== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                         </li>
 
                                     </ul>
@@ -183,7 +183,7 @@
         </div>
         <div class="col-md-12 text-center p-lg gray-bg">
             <button type="button" id="btn_print_prescription" class="btn btn-w-m btn-primary">打印</button>
-            <button type="button" id="btn_save_prescription" class="btn btn-w-m btn-white" @click="savePrescription">{{registeredOrd}}保存</button>
+            <button type="button" id="btn_save_prescription" class="btn btn-w-m btn-white" @click="savePrescription">{{registeredOrd}}{{getTemplate}}保存</button>
         </div>
     </div>
 
@@ -204,7 +204,58 @@
                         this.request();
                     }
 
-                }   }
+                }   },
+          getTemplate(){
+            console.log("getTemplate--------------------");
+            let that=this;
+            let getTemplateContent=  this.$store.getters.getTemplateContent;
+            let getTemplateType=  this.$store.getters.getTemplateType;
+            if (getTemplateType==2){
+              for (let i in getTemplateContent){
+                this.western_prescription_items.push({
+                prodName: getTemplateContent[i].prodName,
+                  retailPrice: getTemplateContent[i].retailPrice,
+                  prodId: getTemplateContent[i].prodId,
+                  doseUnit: getTemplateContent[i].singleUnit,
+                  remark: getTemplateContent[i].projectDesc,
+                  preStockNum: getTemplateContent[i].preStockNum,
+                  singleDose: getTemplateContent[i].singleDose,
+                  frequency: getTemplateContent[i].frequency,
+                  usageType: getTemplateContent[i].usageType,
+                  unit: getTemplateContent[i].prodUnit,
+                  state:  1,
+                  count: '',
+                  feeDetailOrdId: '',
+                  operType: 1,
+                  focus: false
+                })
+                this.$store.dispatch('setTemplateContentType', -1);
+                this.$store.dispatch('setTemplateContent', "");
+              }
+
+            }else  if (getTemplateType==3){
+              for (let i in getTemplateContent){
+               that. dayNum= getTemplateContent[i].prodTemplateDayNum;
+               that. usageType= getTemplateContent[i].prodTemplateUsageType;
+               that. frequency= getTemplateContent[i].prodTemplateFrequency;
+                this.chinese_prescription_items.push({
+                  preStockNum: getTemplateContent[i].preStockNum,
+                  doseUnit: getTemplateContent[i].singleUnit,
+                  prodName: getTemplateContent[i].prodName,
+                  prodId: getTemplateContent[i].prodId,
+                  retailPrice: getTemplateContent[i].retailPrice,
+                  state:  1,
+                  count: '',
+                  feeDetailOrdId: '',
+                  operType: 1,
+                  focus: false
+                })
+              }
+              this.$store.dispatch('setTemplateContentType', -1);
+              this.$store.dispatch('setTemplateContent', "");
+            }
+            return "";
+          },
         },
 
         data(){
@@ -225,6 +276,10 @@
             }
         },
         methods:{
+            selectType:function () {
+                console.log(this.prescription_type);
+                this.$parent.prescription_type=this.prescription_type;
+            },
             request:function () {
                 let that=this;
                 that.$api.get(that,that.$requestApi.orderProdInfo+that.registeredOrdId+"/"+that.prescription_type
@@ -328,6 +383,7 @@
             },
             selectUsageTypeItem:function (selectedIndex) {
                 this.usageType=selectedIndex;
+
             },  selectFrequencyItem:function (selectedIndex) {
                 this.frequency=selectedIndex;
             },
@@ -351,7 +407,7 @@
             },
             getDataList:function (prodName) {
                 let that=this;
-                that.$api.get(that, that.$requestApi.goodsSearch,{
+                that.$api.get(that, that.$requestApi.goodsHistory,{
                     prodType:that.  prescription_type,
                     iDisplayLength:that.$enumerationType.iDisplayLength,
                     iDisplayStart:1,
@@ -374,7 +430,7 @@
                 itemData.retailPrice = data.retailPrice;
                 itemData.doseUnit = data.singleUnit;
                 itemData.prodId = data.prodId;
-                itemData.stockNum = data.stockNum;
+                itemData.preStockNum = data.preStockNum;
                 itemData.singleDose = data.singleDose;
                 itemData.usageType = data.usageType;
                 itemData.operType = 1;
@@ -384,7 +440,7 @@
             },
             selectChinesePrescription:function (data, itemData) {
                 itemData.prodName = data.prodName;
-                itemData.stockNum = data.stockNum;
+                itemData.preStockNum = data.preStockNum;
                 itemData.doseUnit = data.singleUnit;
                 itemData.prodId = data.prodId;
                 itemData.state = 1;
@@ -422,6 +478,16 @@
                 that.$api.post(that,url+that.registeredOrdId
                         , data,function  (data) {
                             if(data.body.code=='00'){
+                              that.request();
+                              if (that.prescription_type==1){
+                                that.western_prescription_items=[];
+                                that.deleteWesternItems=[];
+                              }
+                              else {
+                                that.chinese_prescription_items=[];
+                                that.deleteChineseItems=[];
+                              }
+
                                 swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
 
                             }else{

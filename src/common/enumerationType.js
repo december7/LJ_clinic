@@ -6,6 +6,8 @@ export  default {
 
   /**分页条数*/
   iDisplayLength:10,
+    /**分页条数*/
+  pageSize:9,
   /**采购*/
   procurementType:1,
  /**入库*/
@@ -13,9 +15,9 @@ export  default {
   /**出库*/
   outputType:3,
   /**退货*/
-  returnsType:3,
+  returnsType:4,
   /**盘点*/
-  inventoryType:3,
+  inventoryType:5,
   /**弹窗时间*/
   timers:2000,
   /**成功*/
@@ -133,4 +135,8 @@ export  default {
         {titleName: '贴'},
         {titleName: '万单位'},
     ],
+  /**计算页数*/
+  getPageNumber:function (currentNum) {
+    return parseInt( (parseInt(currentNum) + this.pageSize - 1)/this.pageSize);
+  },
 }

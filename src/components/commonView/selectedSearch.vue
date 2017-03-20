@@ -13,7 +13,7 @@
     <!--搜索-->
     <div class="goods-search_background  " style="float: right; margin: 0px 16px 10px 0px">
       <span style="color: lightgray;margin-left: 3px " >|</span>
-      <input type="text" :placeholder="placeholderData" class="serach_box" v-model="searchKeywords">
+      <input type="text" :placeholder="placeholderData" class="serach_box" v-model="searchKeywords" id="search_patient_text">
       <span style="color: lightgray; margin-left: 25px">|</span>
       <button style="border: none; background-color: white"><img src="../../../static/img/set_manage_img/search.png" style="width: 25px;padding: 5px;" @click="searchList"></button>
     </div>
@@ -40,7 +40,14 @@
         searchIndex:0
       }
     },
-
+    mounted: function(){
+      var that=this;
+      //回车绑定
+      $("#search_patient_text").keydown(function(event){
+        if(event.which == "13"){
+          that.$parent.searchRequest(that.searchIndex,that.searchKeywords);
+        }});
+    },
     methods:{
       selectSuppliersItem:function (selectedIndex) {
         this.searchIndex = selectedIndex;

@@ -114,7 +114,7 @@
             user_info: function () {
                 var that = this;
                 this.$api.get(this, this.$requestApi.userinfo, "", function (data) {
-                    if (data.body.code==='00') {
+                    if (data.body.code == '00') {
                         that.data_item = data.body.data;
                         that.userPhone = that.data_item.billId;
                         that.userPassword = that.data_item.password;

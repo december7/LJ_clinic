@@ -4,6 +4,7 @@ import Vue from 'vue';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import store from './store'
+import md5 from 'blueimp-md5'
 // import Validator from 'vue-validator'
 import VeeValidate from 'vee-validate' ;
 import App from './App';
@@ -15,10 +16,8 @@ import 'sweetalert/dist/sweetalert.css';
 import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-default/index.css'
 import 'staticcss/theme/index.css'
-import 'staticcss/fm.selectator.jquery.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'sweetalert/dist/sweetalert.min.js';
-import 'staticjs/fm.selectator.jquery.js';
 import  names from  "common/utils/names.js"
 
 // / 引用API文件
@@ -27,21 +26,23 @@ import requestApi from 'common/request_api';
 import stringUtils from  'common/utils/stringUtils.js';
 import enumerationType from 'common/enumerationType';
 import enumeration from 'common/enumeration.js';
+import toastContent from 'common/toastContent.js';
 Vue.prototype.$requestApi = requestApi;
 Vue.prototype.$stringUtils = stringUtils;
 Vue.prototype.$enumerationType = enumerationType;
+Vue.prototype.$toastContent = toastContent;
 Vue.prototype.$enumeration = enumeration;
 Vue.prototype.$names = names;
 Vue.prototype.isDebug=false;
-// 引用路由配置文件
-// 将API方法绑定到全局
 Vue.prototype.$api = api;
+Vue.prototype.$md5 = md5;
 Vue.use(VeeValidate);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(ElementUI);
 
 Vue.http.options.root = process.env.API_URL;
+Vue.prototype.$API_URL = process.env.API_URL;
 const jwtToken =store.state.account.auth.check();
 Vue.http.interceptors.push((request, next) => {
   //request.headers.common['token'] = sessionStorage.getItem("accessToken");

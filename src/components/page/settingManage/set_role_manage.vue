@@ -34,9 +34,9 @@
       </thead>
       <tbody>
       <tr v-for="(data_item,index) in data_items">
-        <td class="text-center">{{index+1}}</td>
+        <td class="text-center">{{waitParams.pageNo+index}}</td>
         <td class="text-center">{{data_item.roleName}}</td>
-        <td class="text-right"><a v-if="data_item.hospitalId!=0 && data_item.roleType!=1" href="javascript:;" data-toggle="modal" data-target="#edit" @click="editRole(data_item,index)">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a v-if="data_item.isAdmin!=1" href="javascript:;" data-toggle="modal" data-target="#powerSet">权限设置</a></td>
+        <td class="text-right"><a v-if="data_item.hospitalId!=0 && data_item.roleType!=1" href="javascript:;" data-toggle="modal" data-target="#edit" @click="editRole(data_item,index)">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a @click="powerClick(data_item,index)" v-if="data_item.isAdmin!=1" data-toggle="modal" data-target="#powerSet">权限设置</a></td>
         <td class="text-right">&nbsp;</td>
       </tr>
 
@@ -69,7 +69,7 @@
           <div class="hr-tcline"></div><!--分隔线-->
           <div class='tc-block-div'>
             <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">挂号</span></div>
+              <div class="checkbox-div"><input @click="registerClick" class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">挂号</span></div>
             </div>
             <!--灰色部分复选框-->
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">新增挂号</span></div>
@@ -87,12 +87,10 @@
             <div class='tc-darkgray-div'>
               <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">医生门诊</span></div>
               <!--<a  href="#" style="float: right;font-size: 12px;margin-top: 5px"  data-toggle="modal" data-target="#selfinfo">查看更多</a>-->
-
             </div>
             <!--灰色部分复选框-->
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">今日患者</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">历史患者</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">医生接诊工作台</span></div>
           </div>
           <div class='tc-block-div'>
             <div class='tc-darkgray-div'>
@@ -100,7 +98,7 @@
             </div>
             <!--灰色部分复选框-->
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">待治疗</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">已完成</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">治疗列表</span></div>
           </div>
           <div class='tc-block-div'>
             <div class='tc-darkgray-div'>
@@ -108,21 +106,23 @@
             </div>
             <!--灰色部分复选框-->
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">待发药</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">已完成</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">发药列表</span></div>
           </div>
           <div class='tc-block-div'>
             <div class='tc-darkgray-div'>
               <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">药品进销存</span></div>
             </div>
             <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">首营管理</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">商品管理</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">供应商管理</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">库存管理</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">预警</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">采购</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">采购入库</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">入库</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">出库</span></div>
+            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">退货</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">盘点</span></div>
             <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">审核</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">预警</span></div>
           </div>
           <div class='tc-block-div'>
             <div class='tc-darkgray-div'>
@@ -159,7 +159,8 @@
       </div>
     </div>
     <!--模态弹窗结束-->
-<delete-toast></delete-toast>
+    <pagination v-show="data_items.length > 0"></pagination>
+<!--<delete-toast></delete-toast>-->
   </div>
 
 </template>
@@ -169,12 +170,13 @@
 <script>
 
 //  import screen_title from '../doctor_clinic/screen_content_title.vue'
-import deleteToast from 'components/page/settingManage/alert_role.vue'
+import deleteToast from 'components/page/settingManage/alert_role.vue';
+import pagination from '../doctor_clinic/bottom_pagination.vue';
 
 export default {
-  components:{
-    deleteToast
-  },
+    components:{
+      deleteToast,pagination
+    },
     data(){
       return {
         data_items:[],
@@ -184,42 +186,59 @@ export default {
         edit_role_id:'',
         click_index:'',
         search_role_name:'',
+
+        power_arr:[],
+
+        waitParams:{
+          pageSize:this.$enumerationType.pageSize,
+          pageNo:'',
+          roleName:'',
+        }
+
       }
     },
 
     created(){
 //      this.$store.dispatch('showListCount', false);
 //      this.$store.dispatch('showSearchView', true);
-      this.role_manage();
+      this.role_manage_list();
     },
 
     methods: {
-      role_manage: function () {
+      pageIndexNo:function(){
+        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
+      role_manage_list: function () {
         var that = this;
-        this.$api.get(this, this.$requestApi.roleManage, {"pageSize":20,"pageNo":1,"roleName":""}, function (data) {
-          if (data.body.code==='00') {
+        this.waitParams.pageNo = this.pageIndexNo();
+        console.log("this.waitParams.pageNo-->" + this.waitParams.pageNo);
+        this.$api.get(this, this.$requestApi.roleManage, this.waitParams, function (data) {
+          if (data.body.code == '00') {
             that.data_items = data.body.data;
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
             console.log(data.body.msg);
-
           }
-
         }, function (err) {
           console.log(err);
-
         });
+      },
+      // 分页点击调用
+      request_list:function (index) {
+				this.role_manage_list();
       },
 //      搜索角色
       searchRole:function (search_role_name) {
+        if (!search_role_name){
+          return;
+        }
         var that = this;
         this.$api.get(this, this.$requestApi.roleManage, {"roleName":search_role_name}, function (data) {
-          if (data.body.code==='00') {
+          if (data.body.code == '00') {
             that.data_items = data.body.data;
           } else {
             console.log(data.body.msg);
-
           }
-
         });
       },
 //      保存新增的角色
@@ -229,8 +248,8 @@ export default {
         }else {
           var that=this;
           this.$api.post(this,this.$requestApi.addNewRole, {"roleName":add_role_name,"roleType":"2"},function  (data) {
-            if(data.body.code==='00'){
-              that.role_manage();
+            if(data.body.code == '00'){
+              that.role_manage_list();
             }else{
 
             }
@@ -251,8 +270,8 @@ export default {
         }else {
           var that=this;
           this.$api.post(this,this.$requestApi.updateRole, {"roleName":edit_role_name,"roleId":this.edit_role_id},function  (data) {
-            if(data.body.code==='00'){
-              that.role_manage();
+            if(data.body.code == '00'){
+              that.role_manage_list();
             }else{
 
             }
@@ -260,6 +279,23 @@ export default {
         }
       },
 
+      powerClick: function (data_item,index) {
+        this.edit_role_name = data_item.roleName;
+        this.edit_role_id = data_item.roleId;
+        this.click_index = index;
+        var that = this;
+        this.$api.get(this, this.$requestApi.queryRolePower, {"roleId":this.edit_role_id}, function (data) {
+          if (data.body.code == '00') {
+            
+          } else {
+            
+          }
+        });
+      },
+
+      registerClick:function () {
+        
+      }
 
 
     },

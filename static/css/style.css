@@ -5140,9 +5140,9 @@ ul.notes li div {
 
 .tag-list li a {
     font-size: 10px;
-    background-color: #f3f3f4;
+    /*background-color: #f3f3f4;*/
     padding: 5px 12px;
-    color: inherit;
+    /*color: inherit;*/
     border-radius: 2px;
     border: 1px solid #e7eaec;
     margin-right: 5px;

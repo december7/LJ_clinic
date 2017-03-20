@@ -5,9 +5,9 @@
 	<div class="wrapper wrapper-content animated fadeInRight">
 
 		<!--搜索-->
-		<div class="search_background" style="float: right; margin: -10px 16px 10px 0px">
-			<input v-model="searchUserName" type="text" placeholder="请输入需要搜索的姓名" class="serach_box" id="search">
-			<span style="color: lightgray; margin-left: 25px">|</span>
+		<div class="col-sm-12 no-padding search_background" style="float: right; margin: -10px 15px 10px 0px">
+			<input v-model="searchUserName" @keyup.enter="registeredList" type="text" placeholder="请输入需要搜索的姓名" class="serach_box">
+			<span style="color: lightgray; margin-left: 33px">|</span>
 			<button @click="registeredList" style="border: none; background-color: white"><img src="../../../../static/img/set_manage_img/search.png"></button>
 		</div>
 
@@ -16,13 +16,11 @@
 				<li v-for="data_item in data_items" class="col-md-4 item_list">
 					<div class="ibox patient_item">
 						<div class="ibox-title patient_list_item_title">
-							<h5>{{data_item.userName}}</h5>
-							<small class="m-l-sm">{{birthdayDate}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+							<h5 maxlength = "5">{{data_item.userName.length > 8 ? data_item.userName.substring(0,8)+"...":data_item.userName}}</h5>
+							<small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
 						</div>
 						<div class="ibox-content patient_ibox-content">
-
 							<div class="patient_msg_list">
-
 								<div>
 									<p class="patient_msg_title">挂号医生:</p>
 									<p class="patient_msg_content">{{data_item.doctorName}} ({{data_item.departName}})</p>
@@ -35,7 +33,7 @@
 
 								<div style="margin: 3px 0">
 									<p class="patient_msg_title">接诊类型:</p>
-									<p class="patient_msg_content">{{data_item.registeredType == 0 ? '初诊' : '复诊'}}</p>
+									<p class="patient_msg_content">{{data_item.registeredType == 1 ? '初诊' : '复诊'}}</p>
 								</div>
 
 							</div>
@@ -45,8 +43,8 @@
 								<button @click="physical_check_click(data_item)" type="button" class="physical_check" data-toggle="modal" data-target="#physical_check_modal">体格检查</button>
 							</div>
 
-							<div v-show="data_item.isEmergency == 1" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
-							<div :class="{'wait_clinic' : data_item.acceptsType == 0 } " class="patient_state_clinic">{{data_item.acceptsType == 0 ? '待接诊' : '已接诊'}}</div>
+							<div v-show="data_item.isEmergency == 2" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
+							<div :class="{'wait_clinic' : data_item.state == 1 } " class="patient_state_clinic">{{data_item.state == 1 ? '待接诊' : '已接诊'}}</div>
 
 						</div>
 					</div>
@@ -61,7 +59,7 @@
 	<!--体格检查弹框-->
 	<registered_modal_physical :registeredOrdId="data_item.registeredOrdId"></registered_modal_physical>
 	<!--分页-->
-	<pagination v-show="data_items.length >= 9"></pagination>
+	<pagination v-show="data_items.length > 0"></pagination>
 
 </div>
 </template>
@@ -74,6 +72,10 @@
 
 	button {
 		outline: none !important;
+	}
+
+	.wait_clinic{
+		color: #ED6777;
 	}
 
 	.patient_list_item_title {
@@ -164,23 +166,16 @@
 			return {
 				data_items:[],
 				data_item:{},
-				currentNo: 1,
 				registeredOrdId:'',
 				birthdayDate:26,
 				searchUserName: '',
+				pageIndex: '',
+				pageSize: this.$enumerationType.pageSize,
 			}
 		},
 
 		created(){
 			this.registeredList();
-		},
-		mounted: function(){
-			var that=this;
-			//回车绑定
-			$("#search").keydown(function(event){
-				if(event.which == "13"){
-					that.registeredList();
-			}});
 		},
 		components:{
 			pagination,
@@ -189,19 +184,21 @@
 		},
 
 		computed:{
-			currentPageNo:function () {
-				return this.$store.getters.getCurrentPageNo;
-			}
 		},
 
 		methods: {
 
+			pageIndexNo:function(){
+        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      		},
+
 			registeredList:function () {
 				var that=this;
-				this.$api.get(this,this.$requestApi.registeredList,{pageIndex:1,pageSize:9,userName:this.searchUserName},function  (data) {
+				that.pageIndex = this.pageIndexNo();
+				this.$api.get(this,this.$requestApi.registeredList,{pageIndex:this.pageIndex,pageSize:this.pageSize,userName:this.searchUserName},function  (data) {
 					if(data.status=='200'){
 						that.data_items = data.body.data;
-						that.$store.dispatch('setPageCount', data.body.data.length);
+            			that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
 					}else{
 						console.log(data.body.msg);
 					}
@@ -221,6 +218,10 @@
 				this.data_item = data_item;
 				console.log("physical_check_click"+data_item.registeredOrdId);
 				this.$store.dispatch('show_phisical_data',  data_item.registeredOrdId);
+			},
+
+			request_list:function (index) {
+				this.registeredList();
 			},
 		},
 

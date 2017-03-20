@@ -11,7 +11,7 @@
 
 				<div class="ibox-title no-borders msg_item_title">
 					<h5>就诊信息</h5>
-					<img v-show="data_item.isEmergency == 1" src="../../../../static/img/emergency.png" style="position: absolute; right: 30px;">
+					<img v-show="data_item.isEmergency == 2" src="../../../../static/img/emergency.png" style="position: absolute; right: 30px;">
 				</div>
 
 				<!--弹窗详细内容-->

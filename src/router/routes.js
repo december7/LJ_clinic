@@ -2,6 +2,12 @@ import  names from  "common/utils/names.js"
 
 // 引入登陆页面
 import Login from 'components/login/Login.vue'
+// 忘记密码
+import forget_password from 'components/login/forget_password.vue'
+//首页
+import welcome_home_page from 'components/login/welcome_home_page.vue'
+//注册
+import home_register from 'components/login/home_register.vue'
 // 引入路由文件首页
 import Home from 'components/main/Home.vue'
 
@@ -53,8 +59,12 @@ import waiting_treatment from 'components/page/treatment_room/waiting_treatment.
 //治疗列表
 import treatment_list from 'components/page/treatment_room/treatment_list.vue'
 
-//治疗室详情
+//待治疗详情
+import wait_treat_detail from 'components/page/treatment_room/wait_treat_detail.vue'
+
+//已治疗详情
 import treatment_details from 'components/page/treatment_room/treatment_details.vue'
+
 
 //个人信息
 import user_info from 'components/main/user_info.vue'
@@ -96,6 +106,7 @@ import  inventory from "components/page/medicine/inventory.vue";
 import  add_inventory from "components/page/medicine/popup/addInventory.vue";
 //审核表单详细
 import  compile_audit from "components/page/medicine/popup/compileAuditTable.vue";
+import  checkOrderDetail from "components/page/medicine/popup/checkOrderDetail.vue";
 //收费
 import doctor_charge_wait from "components/page/doctor_charge/doctor_charge_wait.vue";
 import doctor_charge_list from "components/page/doctor_charge/doctor_charge_list.vue";
@@ -122,6 +133,19 @@ export default [
     component: Login,
     meta: {requiresAuth: false},
   },
+  {
+    path: '/login/forget_password',
+    component: forget_password,
+  },
+  {
+    path: '/login/welcome_home_page',
+    component: welcome_home_page,
+  },
+  {
+    path: '/login/home_register',
+    component: home_register,
+  },
+
   {
     path: '/doctor_clinic/today_patient',
     component: today_patient,
@@ -249,14 +273,20 @@ export default [
   },
 
   {
-    path: '/main/user_info',
-    component: user_info,
+    path: '/treatment_room/treatment_details',
+    component: treatment_details,
     meta: {requiresAuth: true},
   },
 
   {
-    path: '/treatment_room/treatment_details',
-    component: treatment_details,
+    path: '/treatment_room/wait_treat_detail',
+    component: wait_treat_detail,
+    meta: {requiresAuth: true},
+  },
+
+  {
+    path: '/main/user_info',
+    component: user_info,
     meta: {requiresAuth: true},
   },
   {
@@ -372,6 +402,12 @@ export default [
     path: '/doctor_clinic/case_report_page',
     component: case_report_page,
     meta: {requiresAuth: true},
-  }
+  },
+
+  {
+    path: '/medicine/popup/checkOrderDetail',
+    component: checkOrderDetail,
+    meta: {requiresAuth: true},
+  },
 
 ]

@@ -49,7 +49,7 @@
         </thead>
         <tbody>
         <tr v-for="(data_item,index) in data_items">
-            <td class="text-center">{{index+1}}</td>
+            <td class="text-center">{{waitParams.pageNo+index}}</td>
             <td class="text-center l_r_border">{{data_item.doctorName}}</td>
             <td class="text-center">{{data_item.departname}}</td>
             <td class="text-center l_r_border">{{data_item.registrationFee/100}}</td>
@@ -79,13 +79,17 @@
     </div>
   </div>
   <!--模态弹窗结束-->
-
+  <pagination v-show="data_items.length > 0"></pagination>
 </div>
 </template>
 
 <script>
+import pagination from '../doctor_clinic/bottom_pagination.vue';
 
   export default {
+    components:{
+      pagination
+    },
 
     data(){
       return {
@@ -103,31 +107,44 @@
         },
         registrationFee: 0,
         select_edit_index: -100,
-
+        waitParams:{
+          pageSize:this.$enumerationType.pageSize,
+          pageNo:'',
+          doctorName:'',
+        }
       }
     },
 
     created(){
-      this.cost_set();
+      this.cost_set_list();
     },
 
     methods: {
+      pageIndexNo:function(){
+        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
 //      挂号设置列表
-      cost_set: function () {
+      cost_set_list: function () {
+        this.waitParams.pageNo = this.pageIndexNo();
         var that = this;
-        this.$api.get(this, this.$requestApi.costSetList, {"pageNo": "1", "pageSize": "20","doctorName":""}, function (data) {
-          if (data.body.code==='00') {
+        this.$api.get(this, this.$requestApi.costSetList, this.waitParams, function (data) {
+          if(data.body.code == '00'){
             that.data_items = data.body.data;
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
 
           }
         });
       },
+      // 分页点击调用
+      request_list:function (index) {
+				this.cost_set_list();
+      },
 //      搜索挂号设置
       searchDocName:function (search_docName) {
         var that = this;
         this.$api.get(this, this.$requestApi.costSetList, {"pageNo": "1", "pageSize": "20","doctorName":search_docName}, function (data) {
-          if (data.body.code==='00') {
+          if(data.body.code == '00'){
             that.data_items = data.body.data;
           } else {
 
@@ -138,14 +155,14 @@
       addNewClick:function () {
         var that = this;
         this.$api.get(this, this.$requestApi.costDocList, "", function (data) {
-          if (data.body.code==='00') {
+          if(data.body.code == '00'){
             that.doctor_items = data.body.data;
           } else {
 
           }
         });
         this.$api.get(this, this.$requestApi.costDepList, "", function (data) {
-          if (data.body.code==='00') {
+          if(data.body.code == '00'){
             that.department_items = data.body.data;
           } else {
 
@@ -167,9 +184,9 @@
         console.log("operatorId-->" + operatorId);
         var that=this;
         this.$api.post(this,this.$requestApi.addNewCost + operatorId, {"departId":departId,"departname":departname,"registrationFee":parseInt(cost_json.ghcost*100)},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("添加成功");
-            that.cost_set();
+            that.cost_set_list();
           }else{
 
           }
@@ -186,9 +203,9 @@
       saveEditCost: function (item_data_line) {
         var that=this;
         this.$api.post(this,this.$requestApi.editCost + item_data_line.doctorId, {"registrationFee":parseInt(this.registrationFee*100)},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("修改成功");
-            that.cost_set();
+            that.cost_set_list();
           }else{
 
           }

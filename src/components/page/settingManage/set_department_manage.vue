@@ -66,7 +66,7 @@
         var that = this;
         this.$api.get(this, this.$requestApi.departmentManage, "", function (data) {
           console.log("请求的数据:" + JSON.stringify(data));
-          if (data.status == '200') {
+          if(data.body.code == '00'){
             that.data_items = data.body.data;
           } else {
             console.log(data.body.msg);

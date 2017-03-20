@@ -53,17 +53,17 @@
   .modalOKBtn{
     width:100px;
     height:28px;
-    background-color: #324367; 
+    background-color: #324367;
     color: white;
-    border: 1px solid #324367; 
+    border: 1px solid #324367;
     border-radius: 2px;
   }
   .modalCancelBtn{
     width:100px;
     height:28px;
-    background-color: white; 
+    background-color: white;
     color: #324367;
-    border: 1px solid #324367; 
+    border: 1px solid #324367;
     border-radius: 2px;
   }
   .chargePrice{
@@ -102,13 +102,13 @@
       sendPayRequest: function () {
         var that = this;
         var params = {
-          depositRate:this.paysPrice.dataTotalPrice*(this.paysPrice.dataCouponPrice/10),
+          depositRate:'',
           feeDetailOrdIdStrs:JSON.stringify(this.paysPrice.feeDetailOrdIdStrs),
-          payAmount:this.inputPrice,
+          payAmount:this.paysPrice.dataPayPrice,
           payType:this.paysType
         };
         this.$api.post(this, this.$requestApi.chargeSendPayRequest+this.paysPrice.registerOrderId, params, function (data) {
-          if (data.status == '200') {
+          if(data.body.code == '00'){
             swal({title:data.body.msg,text:"",type:"success",timer:2000,showConfirmButton:false});
             $("#doctor_charge_pay").modal('hide');
             that.$parent.back();

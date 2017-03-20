@@ -18,7 +18,7 @@ export default {
   },
   actions: {
     show_registeredOrdId ({commit}, registeredOrdId) {
-      commit(types.SHOW_REGISTEREDORDID,registeredOrdId);
+      commit('SHOW_REGISTEREDORDID',registeredOrdId);
     },
   },
   getters: {

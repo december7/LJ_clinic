@@ -5,6 +5,11 @@
 export  default {
   login: "sec/login/user/1", //登录
   // login: "login",
+  //注册和忘记密码
+  sendCode: "sec/sms/sendRandomCode", //发送验证码
+  findPwd: "sec/login/findPwd", //找回密码
+  registClinic: "sec/register/registerSecHospital", //注册诊所
+  //
   auth: "sec/priv/bPriv",//登录鉴权
   staticData: "base/staticData/list",//获取枚举值
   registeredList: "order/registeredList",
@@ -16,6 +21,7 @@ export  default {
   roleManage: "sec/role/queryRoles", //查询全部角色
   addNewRole: "sec/role/addRole", //新增角色
   updateRole: "sec/role/updateRole", //编辑角色
+  queryRolePower:"sec/rolePriv/queryRolePrivs", //查询角色的权限
   staffManage: "sec/oper/queryOpers", //查询全部员工
   addNewStaff: "sec/oper/addOper", //新增员工
   stopStaff: "sec/oper/stopOper", //停用员工
@@ -34,6 +40,7 @@ export  default {
   deleteItem: "prod/project/delete/", //删除治疗项目或其他收费
   searchTemplateList: "prod/template/search/", //查询项目模板列表
   userinfo: "sec/oper/queryOper", //查询个人信息
+  searchbyname: "usr/usrUser/searchbyname", //患者根据姓名模糊查询
   changePhone: "sec/oper/updateBillId", //修改手机号
   changePassword: "sec/oper/updateOperPwd", //修改密码
   addNewCureTemp: "prod/template/create/cure", //新增治疗模板
@@ -45,34 +52,45 @@ export  default {
   deleteTemplate: "prod/template/delete/", //删除项目模板
   searchProdsList: "prod/goods/search", //查询商品列表
   addNewWCTemplate: "prod/template/create/prescription/", //新增西成药或中药模板
+  orderProjectInfo: 'order/projectInfo/',//治疗，其他收费项目查询
+  //发药
+  waitMediList: "order/registereds/waitMedicine", //待发药列表
+  dispensingDetails: "order/medicines/needWait/", //待发药详情
+  sendMedicines: "order/medicines/finish/", //发药
+  hasMediList: "order/registereds/hasMedicine", //已发药列表
+  hasMediDetails: "order/medicines/hasFinish/", //已发药详情
+  //治疗
+  waitTreatList: "order/registereds/waitTreat", //待治疗列表
+  waitTreatDetail: "order/treatments/needWait/", //待治疗详情
+  hasTreatList: "order/registereds/hasTreat", //已治疗列表
+  hasTreatDetail: "order/treatments/hasFinish/", //已治疗详情
+  finishTreat: "order/treatments/finish/", //点击完成治疗
 
-    orderProjectInfo: 'order/projectInfo/',//治疗，其他收费项目查询
-    waitMediList: "order/registereds/waitMedicine", //待发药列表
-    hasMediList: "order/registereds/hasMedicine", //已发药列表
-    orderProdInfo: 'order/prodInfo/',//中西药处方查询
-    chinesePrescription: 'chinese_prescription',
-    westernMedicine:'western_medicine',
-    //发药
-  dispensingDetails:'dispensing_details',
+  orderProdInfo: 'order/prodInfo/',//中西药处方查询
   treatProject:'order/treatProject/',//保存治疗项目
   otherChargesStrs:'order/otherCharges/',//保存其他收费项目
     westMedicine:'order/westMedicine/',//保存西药处方
     tradMedicine:'order/tradMedicine/',//保存中药处方
     queryOperList:'sec/oper/queryList/',//查询操作员
-
+  listdiseaseName:'base/disease/listdiseaseName',//查询疾病
+  listhotsymptom:'base/disease/listhotsymptom',//获取热门查体和表现
+  listDisease:'base/disease/listdisease',//获取热门查体和表现
   treatmentDetails: 'treatment_details',
   showMedical: 'order/showMedical/',//查看病历信息
   orderMedical: 'order/medical/',//保存病历信息
-  historyCase: 'order/historyMedical/',//查看历史病例详情
+  historyMedical: 'order/historyMedical/',//查看历史病例详情
+  doctorSuggest: 'order/doctorSuggest/',//增加建议
   historyMedicals: 'order/historyMedicals/',//查看历史病例
   cureTemplate: 'cure_template',
+  searchTemplate: 'prod/template/search/',//模板查询
   otherChargeTemplate: 'other_charge_template',
   chinesePrescriptionTemplate: 'chinese_prescription_template',
   westernMedicineTemplate: 'western_medicine_template',
   getStockManage:"inventoryManagement",
   showPhysique:"order/showPhysique/",
   showPatientInfo:"usr/usrUser/view/",
-  addPatient:'add_patient',
+  addPatient:'order/addPatient',//新增患者
+  receivePatient:'order/receivePatient/',//新增已有患者
 
   //供应商
   suppliers:"suppliers",
@@ -108,9 +126,13 @@ export  default {
   cityList: "base/district/city",
   //患者管理列表
   patientManageList: "usr/usrUser/list",
-  /***********************************************************/
+  //新增患者
+  patientsAdd: "usr/usrUser/create",
+
+  /***********************商品************************************/
   createGoods:"prod/goods/create",//创建商品
   goodsSearch: "prod/goods/search",//供应商品
+  goodsHistory: "prod/inventory/list/stock",//查询库存的商品
   goodsEnable: "prod/goods/disable/",//商品停用
   goodsDisable: "prod/goods/enable/",//商品启用
   goodsView: "prod/goods/view/",//单个查询
@@ -120,6 +142,13 @@ export  default {
   stockSearch:"prod/stock/search/",
   stockDelete:"prod/stock/delete/",
   stockCreate:"prod/stock/create/inbound",
+  //查询未审核库存单
+  stockCheck: "prod/stock/search/audit/",
+  stockViewDetail: "prod/stock/view/",
+  //审核库存单
+  stockCheckDetail: "prod/stock/audit/",
+  listInventory: "prod/inventory/list/inventory",//库存列表
+  stockDetails: "prod/inventory/list/stockDetails",//批号维护
 
   //收费
   chargeOrderWait: "order/registereds/waitPay",
@@ -128,10 +157,15 @@ export  default {
   chargeListConfirm: "order/feeDetails/hasPay/",
   chargeOrderDetail: "order/feeDetails/hasPay/",
   chargeSendPayRequest: "order/registered/pay/",
+  patientReception: "order/receivePatient/",
 
 
   stockView:"prod/stock/view/",
-  stockCreate:"prod/stock/create/inbound",
-  stockUpdateInbound:"stock/update/inbound/",
+  createPurchase:"prod/stock/create/purchase",//新建采购单
+  updatePurchase:"prod/stock/update/purchase/",//修改采购单
+  stockUpdateInbound:"prod/stock/update/inbound/",
+
+  //根据姓名模糊查询患者信息
+  historyPatientNameRequest: "usr/usrUser/searchbyname",
 
 };

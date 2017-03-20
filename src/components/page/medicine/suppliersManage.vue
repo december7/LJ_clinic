@@ -94,11 +94,10 @@
           console.log(data.body.iTotalRecords);
           if(data.body.code=='00'){
             that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.iDisplayLength));
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
-
         },function (err) {
           console.log(err);
 

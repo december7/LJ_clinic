@@ -444,30 +444,25 @@
         assist_inquiry_show: false,
         assist_inquiry_showed: false,
         suppliersItems: [
-          {titleName: '请选择'},
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
         ],
         saleItems: [
-          {titleName: '请选择'},
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
         ],
         operatorIdItems: [],
         operatorIdItemsIndex:0,
 
         saleFlagItems: [
-          {titleName: '请选择'},
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
         ], businessStateItems: [
-          {titleName: '请选择'},
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
         ],custTypeItems: [
-          {titleName: '请选择'},
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
         ],
         suppliersIndex: 0,
         datepickerData:{
@@ -594,18 +589,45 @@
       },
 
       createSuppliers:function () {
-        this.suppliersData.entrustDate=$("#entrustDate").val()
-        this.suppliersData.qualityValidDate=$("#qualityValidDate").val()
-        this.suppliersData.specialEntrustDate=$("#specialEntrustDate").val()
-        this.suppliersData.licenseValidDate=$("#licenseValidDate").val()
-        this.suppliersData.createdDate=$("#createdDate").val()
-        this.suppliersData.armariumDate=$("#armariumDate").val()
-        this.suppliersData.purchaseValidDate=$("#purchaseValidDate").val()
-        this.suppliersData.saleValidDate=$("#saleValidDate").val()
-
+        if ($("#entrustDate").val()==""){
+          delete this.suppliersData ['entrustDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#entrustDate").val();
+        }
+        if ($("#qualityValidDate").val()==""){
+          delete this.suppliersData ['qualityValidDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#qualityValidDate").val();
+        }
+        if ($("#specialEntrustDate").val()==""){
+          delete this.suppliersData ['specialEntrustDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#specialEntrustDate").val();
+        }if ($("#licenseValidDate").val()==""){
+          delete this.suppliersData ['licenseValidDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#licenseValidDate").val();
+        }if ($("#createdDate").val()==""){
+          delete this.suppliersData ['createdDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#createdDate").val();
+        }if ($("#armariumDate").val()==""){
+          delete this.suppliersData ['armariumDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#armariumDate").val();
+        }if ($("#purchaseValidDate").val()==""){
+          delete this.suppliersData ['purchaseValidDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#purchaseValidDate").val();
+        }if ($("#saleValidDate").val()==""){
+          delete this.suppliersData ['saleValidDate'];
+        }else {
+          this.suppliersData.entrustDate=$("#saleValidDate").val();
+        }
         var that = this;
         this.$api.post(this,this.compileSuppliersNo?this.$requestApi.supplierUpdate+  this. compileSuppliersNo:this.$requestApi.createSuppliers , this.suppliersData, function (data) {
           if (data.body.code == '00') {
+            that.returnPage();
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
           } else {
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
@@ -652,7 +674,7 @@
       },
       returnPage: function () {
         console.log("returnPage");
-        this.$store.dispatch('medicine_add_goods', "addReturnedGoods.vue" + Math.random());
+//        this.$store.dispatch('medicine_add_goods', "addReturnedGoods.vue" + Math.random());
 //        this.$router.replace('/medicine/suppliers_manage');
         this.$store.dispatch('medicine_compile_suppliers_no',  "");
         this.$router.back();

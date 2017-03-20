@@ -5,13 +5,13 @@
 
       <div class="col-sm-12">
         <div class="col-sm-8" style="margin-left: -30px">
-          <screen_title></screen_title>
+          <screen_title :titleItems="titleItems"></screen_title>
         </div>
-        <div class="col-sm-4" style="margin-left: 20px">
+        <div class="col-sm-4" style="float: right; margin-right: 10px;">
           <div class="search_background">
             <input v-model="waitParams.userName" @keyup.enter="chargeOrderList" type="text" placeholder="请输入需要搜索的姓名" class="serach_box">
-            <span style="color: lightgray; margin-left: 25px">|</span>
-            <button style="border: none; background-color: white"><img src="../../../../static/img/set_manage_img/search.png"></button>
+            <span style="color: lightgray; margin-left: 33px">|</span>
+            <button @click="chargeOrderList" style="border: none; background-color: white"><img src="../../../../static/img/set_manage_img/search.png"></button>
           </div>
         </div>
       </div>
@@ -21,8 +21,8 @@
           <li v-for="data_item in data_items" class="col-sm-4 item_list">
             <div class="ibox patient_item">
               <div class="ibox-title patient_list_item_title">
-                <h5>{{data_item.userName}}</h5>
-                <small class="m-l-sm">26岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+                <h5>{{data_item.userName.length > 8 ? data_item.userName.substring(0,8)+"...":data_item.userName}}</h5>
+                <small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
               </div>
               <div class="ibox-content patient_ibox-content">
 
@@ -47,7 +47,7 @@
                   </div>
                 </div>
 
-                <div v-show="data_item.isEmergency == 1" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
+                <div v-show="data_item.isEmergency == 2" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
 
               </div>
             </div>
@@ -57,7 +57,7 @@
     </div>
 
     <!--底部分页-->
-    <pagination v-show="data_items.length >= 9"></pagination>
+    <pagination v-show="data_items.length > 0"></pagination>
 
   </div>
 </template>
@@ -161,12 +161,19 @@
   export default{
     data(){
       return {
+        titleItems: [
+          {titleName: '今天'},
+          {titleName: '过去七天'},
+          {titleName: '过去三十天'},
+          {titleName: '自定义'}
+        ],
         data_items:[],
         waitParams:{
-          doctorName: '',
           userName: '',
+          startDate: this.$stringUtils.nowFormat,
+          endDate: this.$stringUtils.dayFormat(1),
           pageIndex: '',
-          pageSize: 9,
+          pageSize: this.$enumerationType.pageSize,
         },
       }
     },
@@ -176,11 +183,18 @@
     },
 
     methods:{
+
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
+
       chargeOrderList:function () {
         var that=this;
+        that.waitParams.pageIndex = this.pageIndexNo();
         this.$api.get(this,this.$requestApi.chargeOrderList,this.waitParams,function  (data) {
           if(data.status=='200'){
             that.data_items = data.body.data;
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -192,6 +206,26 @@
         this.$store.dispatch('is_charge_data',  2);
         this.$store.dispatch('show_charge_data',  data_item.registeredOrdId);
       },
+      screenList:function (index) {
+        let that=this;
+        if (index==0){
+          that.waitParams.startDate=that.$stringUtils.nowFormat;
+        }else if (index==1){
+          that.waitParams.startDate=that.$stringUtils.dayFormat(-7);
+        }else if (index==2){
+          that.waitParams.startDate=that.$stringUtils.dayFormat(-30);
+        }
+        this.chargeOrderList();
+        },
+        screenDateList:function (startDate,endDate) {
+          let that=this;
+          that.waitParams.startDate=startDate;
+          that.waitParams.endDate=endDate;
+          this.chargeOrderList();
+        },
+        request_list:function (index) {
+          this.chargeOrderList();
+        },
     },
 
     //组件注册

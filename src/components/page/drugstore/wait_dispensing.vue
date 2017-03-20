@@ -2,7 +2,7 @@
     <div>
       <!--中间列表-->
       <div class="wrapper wrapper-content animated fadeInRight no_top_padding">
-        <screen_title></screen_title>
+        <screen_title :titleItems="titleItems"></screen_title>
 
         <div class="col-sm-12 no-padding" id="userList">
           <ul>
@@ -27,7 +27,7 @@
 
                     <div style="margin: 3px 0;">
                       <p class="patient_msg_title">接诊类型:</p>
-                      <p class="patient_msg_content">{{data_item.registeredType == 0 ? '初诊' : '次诊'}}</p>
+                      <p class="patient_msg_content">{{data_item.registeredType == 0 ? '初诊' : '复诊'}}</p>
                     </div>
 
                   </div>
@@ -67,40 +67,76 @@
   export default{
     data(){
       return {
-
+        titleItems: [
+          {titleName: '今天'},
+          {titleName: '过去七天'},
+          {titleName: '过去三十天'},
+          {titleName: '自定义'}
+        ],
         data_items:[],
         age:'',
-
+        waitParams: {
+					state: '',
+          pageIndex: '',
+				  pageSize: this.$enumerationType.pageSize,
+          startDate: this.$stringUtils.nowFormat,
+          endDate: this.$stringUtils.dayFormat(1),
+				},
       }
     },
 
     created(){
       this.$store.dispatch('showListCount', true);
       this.$store.dispatch('showSearchView', true);
-      this.request_list();
+      this.wait_dispensing_list();
     },
 
 
     methods:{
-      request_list:function () {
+      pageIndexNo:function(){
+        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      		},
+      wait_dispensing_list:function () {
         var that=this;
-        this.$api.get(this,this.$requestApi.waitMediList,{"pageIndex":"1","pageSize":"9"},function  (data) {
+        this.waitParams.pageIndex = this.pageIndexNo();
+        this.$api.get(this,this.$requestApi.waitMediList,this.waitParams,function  (data) {
           if(data.status=='200'){
             that.data_items = data.body.data;
-            var totalRecord = that.data_items.length;
-            var totalPageNum = parseInt((totalRecord  +  9  - 1) / 9);
-            console.log("总页数--->" + totalPageNum);
-            that.$store.dispatch('setPageCount', totalPageNum);
-//            var counts = [(Number(data.body.receivedCount) + Number(data.body.waitReceiveCount)), data.body.receivedCount, data.body.waitReceiveCount];
-//            that.$store.dispatch('changeTitleCount', counts);
+            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.iDisplayLength));
           }else{
             console.log(data.body.msg);
           }
-
         },function (err) {
           console.log(err);
-
         });
+      },
+      screenList:function (index) {
+        let that=this;
+        if (index==0){
+          that.waitParams.startDate=that.$stringUtils.nowFormat;
+        }else if (index==1){
+          that.waitParams.startDate=that.$stringUtils.dayFormat(-7);
+        }else if (index==2){
+          that.waitParams.startDate=that.$stringUtils.dayFormat(-30);
+        }
+        this.wait_dispensing_list();
+      },
+
+      screenDateList:function (startDate,endDate) {
+        let that=this;
+        that.waitParams.startDate=startDate;
+        that.waitParams.endDate=endDate;
+        this.wait_dispensing_list();
+      },
+      request_list:function (index) {
+
+				let that=this;
+				if (index==1||index==2){
+					that.waitParams.state=index==1?2:1;
+				}else {
+					delete  that.waitParams['state'];
+				}
+				this.wait_dispensing_list();
       },
 //      将时间戳转换为标准时间格式
       timeFormat:function(nS) {
@@ -108,10 +144,9 @@
       },
 //      计算年龄
       getAge:function (timestamp) {
-        var birthDay = new Date(this.timeFormat(timestamp)).getTime();
         var now = new Date().getTime();
-        var hours = (now - birthDay)/1000/60/60;
-        var years =  Math.floor(hours / (24 * 30 * 12));
+        var hours = Math.abs(now - timestamp)/1000/60/60;
+        var years =  parseInt(hours / (24 * 30 * 12));
         console.log("years-------->" + years);
         return years;
       },

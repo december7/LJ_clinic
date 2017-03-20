@@ -8,7 +8,8 @@ export default {
   state: {
     goodsData: "",
     selectGoods:[],
-    compileSuppliersNo:""
+    compileSuppliersNo:"",
+    compileUserId:"",
   },
   mutations: {
     MEDICINE_ADD_GOODS: (state,  tableData ) => {
@@ -25,6 +26,9 @@ export default {
     },
     MEDICINE_COMPILE_SUPPLIERS_NO: (state,  compileSuppliersNo ) => {
       state.compileSuppliersNo=  compileSuppliersNo;
+      // Vue.set(state.tableData, types.MEDICINE_TABLE, tableData);
+    }, MEDICINE_COMPILE_USER_ID: (state,  compileUserId ) => {
+      state.compileUserId=  compileUserId;
       // Vue.set(state.tableData, types.MEDICINE_TABLE, tableData);
     },
 
@@ -44,10 +48,14 @@ export default {
     medicine_compile_suppliers_no ({commit}, compileSuppliersNo) {
       commit(types.MEDICINE_COMPILE_SUPPLIERS_NO,compileSuppliersNo);
     },
+    medicine_compile_user_id ({commit}, compileUserId) {
+      commit(types.MEDICINE_COMPILE_USER_ID,compileUserId);
+    },
   },
   getters: {
     getAddGoods: (state) => state.goodsData,
     getSelectGoods: (state) => state.selectGoods,
     getCompileSuppliersNo: (state) => state.compileSuppliersNo,
+    getCompileUserId: (state) => state.compileUserId,
   }
 };

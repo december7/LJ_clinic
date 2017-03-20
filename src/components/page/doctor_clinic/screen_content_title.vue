@@ -34,7 +34,7 @@
             </div>
 
             <div class="pull-left white-bg">
-              <a class="no-margins wrapper" style="line-height: 30px; border-left: 1px solid deepskyblue" id="endDate">确定</a>
+              <a class="no-margins wrapper" style="line-height: 30px; border-left: 1px solid deepskyblue" @click="searchDate">确定</a>
             </div>
           </div>
 
@@ -118,14 +118,14 @@
   import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-CN.min'
 
     export default{
+      props: {
+        titleItems:{
+          default: []
+        },
+      },
         data(){
           return {
-            titleItems: [
-              {titleName: '昨天'},
-              {titleName: '过去七天'},
-              {titleName: '过去三十天'},
-              {titleName: '自定义'}
-            ],
+
             selectedIndex: 0
           };
         },
@@ -150,7 +150,7 @@
                 }
             },
             searchDate:function () {
-                this.$parent.screenDateList($("#startDate").val(),$("#endDate").val() );
+                this.$parent.screenDateList($("#startDate").val(),$("#endDate").val());
             },
         },
 

@@ -212,7 +212,7 @@
           }
 
           this.$api.get(this, url, "", function (data) {
-            if (data.status == '200') {
+            if(data.body.code == '00'){
               that.dataList = data.body.data;
               console.log(JSON.stringify(that.dataList));
             } else {
@@ -238,7 +238,7 @@
           }
 
           this.$api.get(this, url, "", function (data) {
-            if (data.status == '200') {
+            if(data.body.code == '00'){
               that.suppliersList = data.body.data;
               console.log(JSON.stringify(that.dataList));
             } else {

@@ -99,6 +99,7 @@
           </tbody>
         </table>
       </div>
+      <pagination v-show="cure_data_items.length > 0"></pagination>
     </div>
 
     <!--模态弹窗开始--编辑治疗项目-->
@@ -156,7 +157,6 @@
           </div>
           <!--确定取消按钮-->
           <button @click="saveEditCure(cure_items,cure_select_index)" style='margin: 30px 10px 30px 310px;' class='form-btn-black' data-dismiss="modal">确定</button><button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
-
         </div>
       </div>
     </div>
@@ -277,6 +277,7 @@
           </tbody>
         </table>
       </div>
+      <pagination v-show="west_data_items.length > 0"></pagination>
     </div>
 
     <!--模态弹窗开始--编辑西/成药模板-->
@@ -535,10 +536,8 @@
             </div>
           </div>
         </div>
-
-
-
       </div>
+      <pagination v-show="china_data_items.length > 0"></pagination>
     </div>
 
   </div>
@@ -546,7 +545,10 @@
 
 <script>
   import switch_tab from '../doctor_clinic/switch_tab_template.vue'
+  import pagination from '../doctor_clinic/bottom_pagination.vue';
+
   export default{
+    components:{switch_tab, pagination},
     data() {
       return{
         titles:[
@@ -559,7 +561,7 @@
           "袋", "片", "支", "粒", "瓶", "mg", "g", "ml", "l", "ug", "IU", "U", "包", "盒", "枚", "丸", "喷", "颗", "滴", "cm", "少许", "适量", "对", "个", "条", "板", "件", "套", "卷", "副", "只", "根", "箱", "台", "贴", "万单位",
         ],
         usage_array:[
-          "口服", "直肠用药", "舌下用药","注射用药","皮下注射","皮内注射","肌肉注射","静脉滴注","吸入用药","局部用药","椎管内用药","关节腔内用药","胸膜腔用药","腹腔用药","阴道用药","气管内用药","滴眼","滴鼻","喷喉","含化","敷伤口","擦皮肤","其他局部用药途径","其他用药途径",
+          "","口服", "直肠用药", "舌下用药","注射用药","皮下注射","皮内注射","肌肉注射","静脉滴注","吸入用药","局部用药","椎管内用药","关节腔内用药","胸膜腔用药","腹腔用药","阴道用药","气管内用药","滴眼","滴鼻","喷喉","含化","敷伤口","擦皮肤","其他局部用药途径","其他用药途径",
         ],
 
         selects:[
@@ -601,9 +603,13 @@
 
         template_name:'', //模板名称
 
-
         cure_select_index:-100,
-
+        waitParams:{
+          iDisplayLength:this.$enumerationType.pageSize,
+          iDisplayStart:'',
+          templateName:'',
+        },
+        tabClick:false,
 
       }
     },
@@ -611,9 +617,10 @@
     computed: {
       indexChoose () {
         var that=this;
-        that.tabindex = this.$store.getters.getCurrentIndex + 1;
-        console.log("tab页面------->" + that.tabindex);
+        this.tabindex = this.$store.getters.getCurrentIndex + 1;
+        console.log("tab页面------->" + this.tabindex);
         this.item_template_set('');
+        this.tabClick = true;
         return this.$store.getters.getCurrentIndex;
       }
     },
@@ -626,23 +633,38 @@
     },
 
     methods: {
+      pageIndexNo:function(){
+        this.tabClick = false;
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
       item_template_set: function (search_template) {
+        this.waitParams.iDisplayStart = this.pageIndexNo();
+        this.waitParams.templateName = search_template;
         var that = this;
-        this.$api.get(this, this.$requestApi.searchTemplateList + this.tabindex, {"iDisplayLength":"20","iDisplayStart":"1","templateName":search_template}, function (data) {
-          if (data.body.code==='00') {
+        this.$api.get(this, this.$requestApi.searchTemplateList + this.tabindex, this.waitParams, function (data) {
+          if (data.body.code == '00') {
             if (that.tabindex == '1') { //治疗项目
               that.cure_data_items = data.body.data;
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }else if (that.tabindex == '2'){
               that.west_data_items = data.body.data;
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }else {
               that.china_data_items = data.body.data;
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }
           } else {
 
           }
         });
       },
-
+      // 分页点击调用
+      request_list:function (index) {
+        if(!this.tabClick) {
+          this.item_template_set('');
+        }
+      },
+      // 新增
       addNewFunc:function () {
         this.template_name = '';
         this.item_json = {
@@ -740,14 +762,9 @@
         console.log('治疗项目---->' + templateDesc + '--jsonProjects:' + jsonProjects);
         var that=this;
         this.$api.post(this,this.$requestApi.addNewCureTemp, {"jsonProjects":JSON.stringify(jsonProjects),"templateDesc":templateDesc,"templateName":item_json.templateName},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("添加成功");
-            var data = {
-              templateName:item_json.templateName,
-              templateDesc:templateDesc,
-              state:1,
-            };
-            that.cure_data_items.push(data);
+            that.item_template_set('');
           }else{
 
           }
@@ -790,14 +807,9 @@
         console.log('西/成药项目---->' + templateDesc + '--jsonProds:' + jsonProds);
         var that=this;
         this.$api.post(this,this.$requestApi.addNewWCTemplate + "2", {"jsonProds":JSON.stringify(jsonProds),"templateDesc":templateDesc,"templateName":item_json.templateName},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("添加成功");
-            var data = {
-              templateName:item_json.templateName,
-              templateDesc:templateDesc,
-              state:1,
-            };
-            that.west_data_items.push(data);
+            that.item_template_set('');
           }else{
 
           }
@@ -829,14 +841,9 @@
         console.log('中药项目---->' + templateDesc + '--jsonProds:' + jsonProds);
         var that=this;
         this.$api.post(this,this.$requestApi.addNewWCTemplate + "3", {"jsonProds":JSON.stringify(jsonProds),"templateDesc":templateDesc,"templateName":item_json.templateName},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("添加成功");
-            var data = {
-              templateName:item_json.templateName,
-              templateDesc:templateDesc,
-              state:1,
-            };
-            that.china_data_items.push(data);
+            that.item_template_set('');
           }else{
 
           }
@@ -848,7 +855,7 @@
         if(data_item.state=='1'){//当前状态为启用状态
           var that=this;
           this.$api.post(this,this.$requestApi.stopTemplate + data_item.templateId, "",function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               console.log("停用成功");
               data_items[index].state = 0;
             }else{
@@ -858,7 +865,7 @@
         }else {//当前状态为停用状态
           var that=this;
           this.$api.post(this,this.$requestApi.startTemplate + data_item.templateId, "",function (data) {
-            if(data.body.code==='00'){
+            if(data.body.code == '00'){
               console.log("启用成功");
               data_items[index].state = 1;
             }else{
@@ -881,7 +888,7 @@
         var regex = '|';
         var that = this;
         this.$api.get(this,this.$requestApi.searchTemp + data_item.templateId, "",function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("查询成功");
             templateItemsArr = data.body.templateItems;
             if(itemsString.indexOf("|") >= 0){ //判断是否含有竖线号
@@ -924,7 +931,7 @@
         var regex = '|';
         var that = this;
         this.$api.get(this,this.$requestApi.searchTemp + data_item.templateId, "",function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("查询成功");
             templateItemsArr = data.body.templateItems;
             if(itemsString.indexOf("|") >= 0){ //判断是否含有竖线号
@@ -963,7 +970,7 @@
             };
           }else{
 
-          }
+          };
         });
       },
       editChinaFunc:function (data_item,index) {
@@ -977,7 +984,7 @@
         var regex = '|';
         var that = this;
         this.$api.get(this,this.$requestApi.searchTemp + data_item.templateId, "",function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("查询成功");
             templateItemsArr = data.body.templateItems;
             if(itemsString.indexOf("|") >= 0){ //判断是否含有竖线号
@@ -1049,10 +1056,11 @@
         console.log('治疗项目---->' + templateDesc + '--jsonProjects:' + jsonProjects);
         var that = this;
         this.$api.post(this,this.$requestApi.changeCureTemp + this.cure_data_items[index].templateId, {"jsonProjects":JSON.stringify(jsonProjects),"templateDesc":templateDesc,"templateName":that.template_name},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("修改成功");
-            that.cure_data_items[index].templateName = that.template_name;
-            that.cure_data_items[index].templateDesc = templateDesc;
+            that.item_template_set('');
+            // that.cure_data_items[index].templateName = that.template_name;
+            // that.cure_data_items[index].templateDesc = templateDesc;
           }else{
 
           }
@@ -1083,10 +1091,11 @@
         console.log('西/成药处方项目---->' + templateDesc + '--jsonProds:' + jsonProds);
         var that = this;
         this.$api.post(this,this.$requestApi.changeProdTemp + this.west_data_items[index].templateId, {"jsonProds":JSON.stringify(jsonProds),"templateDesc":templateDesc,"templateName":that.template_name},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("修改成功");
-            that.west_data_items[index].templateName = that.template_name;
-            that.west_data_items[index].templateDesc = templateDesc;
+            that.item_template_set('');
+            // that.west_data_items[index].templateName = that.template_name;
+            // that.west_data_items[index].templateDesc = templateDesc;
           }else{
 
           }
@@ -1117,10 +1126,11 @@
         console.log('中药处方项目---->' + templateDesc + '--jsonProds:' + jsonProds);
         var that = this;
         this.$api.post(this,this.$requestApi.changeProdTemp + this.china_data_items[index].templateId, {"jsonProds":JSON.stringify(jsonProds),"templateDesc":templateDesc,"templateName":that.template_name},function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("修改成功");
-            that.china_data_items[index].templateName = that.template_name;
-            that.china_data_items[index].templateDesc = templateDesc;
+            that.item_template_set('');
+            // that.china_data_items[index].templateName = that.template_name;
+            // that.china_data_items[index].templateDesc = templateDesc;
           }else{
 
           }
@@ -1151,7 +1161,7 @@
       delete_list: function (data_items,data_item,currentIndex) {
         var that=this;
         this.$api.post(this,this.$requestApi.deleteTemplate + data_item.templateId, "",function (data) {
-          if(data.body.code==='00'){
+          if(data.body.code == '00'){
             console.log("删除成功");
             data_items.splice(currentIndex, 1);
           }else{
@@ -1260,7 +1270,6 @@
 
     },
 
-    components:{switch_tab}
   }
 </script>
 

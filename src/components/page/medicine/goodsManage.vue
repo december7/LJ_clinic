@@ -18,24 +18,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr class="gradeC" v-for="(goodsItem ,index) in auditContent">
+    <tr class="gradeC" v-for="(goodsItem ,index) in goodsData">
       <td class="text-center" >{{goodsItem. prodId}}</td>
       <td class="text-center" >{{goodsItem.prodName}}</td>
       <td class="text-center" >{{goodsItem.prodSpec}}</td>
-      <td class="text-center" >{{goodsItem.prodUnit}}</td>
+      <td class="text-center" >{{$enumeration.getProjectUnit(goodsItem.prodUnit)}}</td>
       <td class="text-center" >{{goodsItem.manufacturer}}</td>
       <td class="text-center" >{{goodsItem. supplierName}}</td>
-      <td class="text-center" >{{goodsItem.retailPrice}}</td>
-      <td class="text-center" >{{goodsItem.costPrice}}</td>
+      <td class="text-center" >{{$enumeration.getGoodsPrice(goodsItem.retailPrice)}}</td>
+      <td class="text-center" >{{$enumeration.getGoodsPrice(goodsItem.costPrice)}}</td>
       <td class="text-center" >{{goodsItem.remark}}</td>
       <td class="text-center" >{{goodsItem.state==1?'正常':'停用'}}</td>
       <td class="text-center" ><span v-if="goodsItem.state==1"><router-link class="table-margin-r-5" :to="{ path: 'add_goods'}" append><span @click="compileSuppliers(goodsItem.prodId)">编辑</span></router-link><a @click="outageGoods(index ,goodsItem.prodId)">停用</a> </span><a @click="enabledGoods(index ,goodsItem.prodId)" v-else >启用</a></td>
     </tr>
-
     </tbody>
   </table>
 </div>
-  <pagination v-show="auditContent.length > 0"></pagination>
+  <pagination v-show="goodsData.length > 0"></pagination>
   </div>
 </template>
 
@@ -59,7 +58,7 @@
           {  name:"状态"},
           {  name:"操作"},
         ],
-        auditContent:[],
+        goodsData:[],
         data_items:[],
         suppliersItems: [
           {titleName: '全部'},
@@ -81,8 +80,8 @@
  /*   mounted(){
       // 如果从详情返回并且之前存有对应的查询条件和参数
       // 则直接渲染之前的数据
-      if (window.window.sessionStorage.auditContent ) {
-        this.auditContent=JSON.parse(window.window.sessionStorage.auditContent) ;
+      if (window.window.sessionStorage.goodsData ) {
+        this.goodsData=JSON.parse(window.window.sessionStorage.goodsData) ;
         this.data_items=JSON.parse(window.window.sessionStorage.data_items) ;
         this.$nextTick(() => $(window).scrollTop(window.window.sessionStorage.scrollTop));
       } else {
@@ -96,7 +95,7 @@
 //      console.log("--beforeRouteLeave-"+  JSON.stringify(from));
       if (to.name ==="add_goods") {
       window.window.sessionStorage.scrollTop = $(window).scrollTop();
-      window.window.sessionStorage.auditContent = JSON.stringify( this.auditContent );
+      window.window.sessionStorage.goodsData = JSON.stringify( this.goodsData );
       window.window.sessionStorage.data_items = JSON.stringify( this.data_items );
       }
       next();
@@ -105,8 +104,8 @@
       console.log("--beforeRouteEnter-"+  JSON.stringify(from.name));
 //      console.log("--beforeRouteEnter-"+   to);
       if (from.name !=="add_goods") {
-      if ( window.window.sessionStorage.auditContent ){
-        window.window.sessionStorage.removeItem('auditContent');
+      if ( window.window.sessionStorage.goodsData ){
+        window.window.sessionStorage.removeItem('goodsData');
         window.window.sessionStorage.removeItem('data_items');
       }
       }
@@ -124,8 +123,8 @@
         this.$api.get(this,this.$requestApi.goodsSearch,{iDisplayLength:this.iDisplayLength},function  (data) {
           console.log(data.body.iTotalRecords);
           if(data.body.code=='00'){
-            that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.iDisplayLength));
+            that.goodsData=data.body.data
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -139,7 +138,6 @@
       searchRequest:function (state,searchKeywords) {
         let data={};
         let that=this;
-        console.log("state"+state);
         that.suppliersIndex=state;
         if (0===state||""===state){
           data= { iDisplayLength:this.iDisplayLength,supplierNameOrContactName:searchKeywords}
@@ -148,8 +146,8 @@
         }
         this.$api.get(this,this.$requestApi.goodsSearch,data,function  (data) {
           if(data.body.code=='00'){
-            that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.iDisplayLength));
+            that.goodsData=data.body.data
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(   data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -169,7 +167,7 @@
         }
         this.$api.get(this,this.$requestApi.goodsSearch,data,function  (data) {
           if(data.body.code=='00'){
-            that.auditContent=data.body.data
+            that.goodsData=data.body.data
           }else{
             console.log(data.body.msg);
           }
@@ -188,8 +186,8 @@
         let that=this;
         this.$api.post(this,this.$requestApi.goodsDisable+supplierId,"",function  (data) {
           if(data.body.code=='00'){
-            that.auditContent[index].state=1;
-            that. auditContent.splice(index, 1,  that.auditContent[index]);
+            that.goodsData[index].state=1;
+            that. goodsData.splice(index, 1,  that.goodsData[index]);
 
             console.log(data.body.msg);
           }
@@ -206,8 +204,8 @@
         let that=this;
         this.$api.post(this,this.$requestApi.goodsEnable+supplierId, "",function  (data) {
           if(data.body.code=='00'){
-            that.auditContent[index].state=0;
-            that. auditContent.splice(index, 1,  that.auditContent[index]);
+            that.goodsData[index].state=0;
+            that. goodsData.splice(index, 1,  that.goodsData[index]);
 
           }else{
             console.log(data.body.msg);

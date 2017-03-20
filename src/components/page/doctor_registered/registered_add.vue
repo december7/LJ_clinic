@@ -16,7 +16,12 @@
 							<div class="col-md-4 no-padding">
 								<div class="col-md-3 pull-left no-padding left_text_tips">患者姓名<span class="text-danger" style="margin-left: 2px">*</span></div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input v-model="itemData.userName" type="text" placeholder="请填写真实姓名" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input @input="patientsRequest" v-model="itemData.userName" type="text" placeholder="请填写真实姓名" data-toggle="dropdown" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<ul class="dropdown-menu" style="width: 93%; margin-right: 8%;">
+										<li v-for="(patient,index) in patientsNameArr">
+											<a @click="selectedPatientName(patient)" class="no-padding" style="text-align: center">{{patient.userName}} <span style="color: #999999">{{patient.userSex == 1 ? '男':'女'}} {{$stringUtils.dateAge(patient.birthdayDate)}}岁 {{patient.billId}}</span></a>
+										</li>
+									</ul>
 								</div>
 							</div>
 
@@ -105,14 +110,14 @@
 
 							<div class="col-md-6 no-padding">
 								<div class="form-group">
-									<p class="col-md-2 no-padding left_text_tips" style="margin-left: 15px">是否急诊 <span class="text-danger" style="margin-left: 2px">*</span></p>
+									<p class="col-md-2 no-padding left_text_tips" style="margin-left: 15px">是否急诊<span class="text-danger" style="margin-left: 2px">*</span></p>
 									<div class="col-md-6">
 										<div class="radio radio-info radio-inline">
-											<input v-model="itemData.isEmergency" type="radio" id="inlineRadio1" value="1" name="radioInline" style="margin-top: 1px">
+											<input v-model="itemData.isEmergency" type="radio" id="inlineRadio1" value="2" name="radioInline" style="margin-top: 1px">
 											<label for="inlineRadio1" style="margin-left: -15px">是</label>
 										</div>
 										<div class="radio radio-inline">
-											<input v-model="itemData.isEmergency" type="radio" id="inlineRadio2" value="2" name="radioInline"
+											<input v-model="itemData.isEmergency" type="radio" id="inlineRadio2" value="1" name="radioInline"
 														 style="margin-top: 1px">
 											<label for="inlineRadio2" style="margin-left: -15px">否</label>
 										</div>
@@ -283,6 +288,7 @@
 	export default{
 		data(){
 			return {
+				patientsNameArr: [],
 				departListArr: [],
 				doctorListArr: [],
 				registeredTypeTitle: '',
@@ -333,6 +339,36 @@
 		methods:{
 			selectItem:function (selectedIndex) {
 				this.selectedIndex = selectedIndex;
+			},
+
+			selectedPatientName: function (patient) {
+				var that = this;
+				this.itemData.userName = patient.userName;
+				this.itemData.userSex = patient.userSex;
+				this.itemData.idCardNo = patient.idCardNo;
+				this.itemData.billId = patient.billId;
+
+				if (patient.birthdayDate.length > 0){
+					this.itemData.birthdayDate = that.$stringUtils.dateFormat(patient.birthdayDate);
+					$('#birthdayDate').val(this.itemData.birthdayDate);
+				}
+			},
+			//模糊查询患者姓名
+			patientsRequest: function () {
+				var that=this;
+				if (this.itemData.userName == ''){
+					console.log("姓名为空");
+					return;
+				}
+				this.$api.post(this,this.$requestApi.historyPatientNameRequest,{userName:this.itemData.userName},function(data) {
+					if(data.status=='200'){
+						that.patientsNameArr = data.body.data;
+					}else{
+						console.log(data.body.msg);
+					}
+				},function (err) {
+					console.log(err);
+				});
 			},
 
 			//选择接诊类型
@@ -402,7 +438,7 @@
 					|| this.itemData.doctorId == ''
 				)
 				{
-					swal({title:"请注意填写必填项",text:"",type: "error",timer: 2000,showConfirmButton:false});
+					swal({title:"请填写完整必填项",text:"",type: "error",timer: 2000,showConfirmButton:false});
 					return;
 				}
 

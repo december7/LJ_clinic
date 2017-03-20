@@ -10,17 +10,15 @@
     </thead>
     <tbody>
     <tr class="gradeC" v-for="(storageItem,index) in auditContent">
-      <td class="text-center"v-if="storageItem.no">{{storageItem.no}}</td>
-      <td class="text-center"v-if="storageItem.storageOdd">{{storageItem.storageOdd}}</td>
-      <td class="text-center"v-if="storageItem.storageDate">{{storageItem.storageDate}}</td>
-      <td class="text-center"v-if="storageItem.storageSingle">{{storageItem.storageSingle}}</td>
-      <td class="text-center"v-if="storageItem.storageMember">{{storageItem.storageMember}}</td>
-      <td class="text-center"v-if="storageItem.storagePhone">{{storageItem.storagePhone}}</td>
-      <td class="text-center"v-if="storageItem.storageRemarks">{{storageItem.storageRemarks}}</td>
-      <td class="text-center" v-if="storageItem.storageSuppliers">{{storageItem.storageSuppliers}}</td>
-      <td class="text-center" v-if="storageItem.storageStatus">{{storageItem.storageStatus}}</td>
-      <td class="text-center"v-if="storageItem.storageDelete"><a @click="auditDelete(index)" class="table-margin-r-5">{{storageItem.storageDelete}}</a><router-link :to="{ path: 'compile_audit'}" append> <span @click="auditCompile(index)">{{storageItem.storageCompile}}</span></router-link></td>
-
+      <td class="text-center">{{storageItem.no}}</td>
+      <td class="text-center">{{storageItem.storageOdd}}</td>
+      <td class="text-center">{{storageItem.storageDate}}</td>
+      <td class="text-center">{{storageItem.storageSingle}}</td>
+      <td class="text-center">{{storageItem.storageMember}}</td>
+      <td class="text-center">{{storageItem.storagePhone}}</td>
+      <td class="text-center">{{storageItem.storageRemarks}}</td>
+      <td class="text-center">{{storageItem.storageSuppliers}}</td>
+      <td class="text-center">{{storageItem.storageStatus}}</td>
     </tr>
 
     </tbody>

@@ -58,7 +58,7 @@
           </thead>
           <tbody>
           <tr v-for="(data_item,index) in cure_data_items">
-            <td class="text-center">{{index+1}}</td>
+            <td class="text-center">{{waitParams.iDisplayStart+index}}</td>
             <td class="text-center l_r_border">{{data_item.projectName}}</td>
             <td class="text-center">{{unit_array[data_item.projectUnit-1]}}</td>
             <td class="text-center l_r_border">{{data_item.costPrice/100}}</td>
@@ -96,8 +96,8 @@
             </div>
           </div>
         </div>
-
       </div>
+      <pagination v-show="cure_data_items.length > 0"></pagination>
     </div>
 
     <!--内容部分-其他收费管理-->
@@ -155,7 +155,7 @@
           </thead>
           <tbody>
           <tr v-for="(data_item,index) in others_data_items">
-            <td class="text-center">{{index+1}}</td>
+            <td class="text-center">{{waitParams.iDisplayStart+index}}</td>
             <td class="text-center l_r_border">{{data_item.projectName}}</td>
             <td class="text-center">{{unit_array[data_item.projectUnit-1]}}</td>
             <td class="text-center l_r_border">{{data_item.costPrice/100}}</td>
@@ -195,16 +195,21 @@
         </div>
 
       </div>
+      <pagination v-show="others_data_items.length > 0"></pagination>
     </div>
 
   </div>
 </template>
 
 <script>
-
-  import switch_tab from '../doctor_clinic/switch_tab_template.vue'
+import switch_tab from '../doctor_clinic/switch_tab_template.vue'
+import pagination from '../doctor_clinic/bottom_pagination.vue';
 
   export default{
+    components: {
+      switch_tab,pagination
+    },
+
     data() {
       return {
         titles: [
@@ -249,15 +254,24 @@
         item_line:{},
 
         tabindex:"1",
+        waitParams:{
+          iDisplayLength:this.$enumerationType.pageSize,
+          iDisplayStart:'',
+          projectName:'',
+        },
+        tabClick:false,
+        searchClick:false,
       }
     },
 
     computed: {
       indexChoose () {
-        var that=this;
-        that.tabindex = this.$store.getters.getCurrentIndex+1;
-        console.log("tab页面------->" + that.tabindex);
-        this.item_set('');
+        this.tabindex = this.$store.getters.getCurrentIndex+1;
+        console.log("tab页面------->" + this.tabindex);
+        if (!this.searchClick){
+          this.item_set_list('');
+        }
+        this.tabClick = true;
         return this.$store.getters.getCurrentIndex;
       }
     },
@@ -273,32 +287,51 @@
 //      获得单位列表
       getUnitList:function () {
         var that = this;
-        this.$api.get(this, this.$requestApi.enumerationList, {"codeType":"PROD_UNIT"}, function (data) {
-          if (data.body.code==='00') {
+        this.$api.get(this, this.$requestApi.staticData, {"codeType":"PROD_UNIT"}, function (data) {
+          if (data.body.code == '00') {
             that.unit_list = data.body.data;
           } else {
 
           }
         });
       },
+      pageIndexNo:function(){
+        this.tabClick = false;
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+      },
 //      查询治疗列表和其他收费列表
-      item_set: function (search_item) {
+      item_set_list: function (search_item) {
+        console.log("search_item-->" + search_item);
+        this.waitParams.iDisplayStart = this.pageIndexNo();
+        this.waitParams.projectName = search_item;
         var that = this;
-        this.$api.get(this, this.$requestApi.itemManageList + this.tabindex, {"iDisplayLength":"20","iDisplayStart":"1","projectName":search_item}, function (data) {
-          if (data.body.code==='00') {
+        this.$api.get(this, this.$requestApi.itemManageList + this.tabindex, this.waitParams, function (data) {
+          if (data.body.code == '00') {
             if (that.tabindex == '1') { //治疗项目
               that.cure_data_items = data.body.data;
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }else { //其他收费项目
               that.others_data_items = data.body.data;
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }
           } else {
 
           }
         });
       },
+      // 分页点击调用
+      request_list:function (index) {
+        console.log("searchClick--->"+ this.searchClick);
+        if(!this.tabClick) {
+          this.item_set_list('');
+        }
+      },
 //      搜索项目
       searchItem: function (search_item) {
-        this.item_set(search_item);
+        this.searchClick = true;
+        if (search_item){
+          this.item_set_list(search_item);
+        }
       },
 //      新增项目的点击事件(清空输入的历史)
       addNewFunc:function () {
@@ -325,7 +358,7 @@
         this.$api.post(this,this.$requestApi.addNewItem + this.tabindex, {"costPrice":parseInt(project_json.costPrice*100),"projectDesc":project_json.projectDesc,"projectName":project_json.projectName,"projectUnit":codeKey,"retailPrice":parseInt(project_json.retailPrice*100)},function (data) {
           if(data.body.code==='00'){
             console.log("添加成功");
-            that.item_set('');
+            that.item_set_list('');
           }else{
 
           }
@@ -353,7 +386,7 @@
         this.$api.post(this,this.$requestApi.editItem + data_items[this.select_edit_index].projectId, {"costPrice":parseInt(this.costPrice*100),"projectDesc":this.projectDesc,"retailPrice":parseInt(this.retailPrice*100)},function (data) {
           if(data.body.code==='00'){
             console.log("修改成功");
-            that.item_set('');
+            that.item_set_list('');
           }else{
 
           }
@@ -407,7 +440,6 @@
 
     },
 
-    components: {switch_tab}
   }
 
 </script>

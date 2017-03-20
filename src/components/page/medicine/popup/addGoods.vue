@@ -31,7 +31,7 @@
                       </div></div>
 
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
-                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">通用名<span class="span-red">*</span>:</div>
+                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">通用名<span class="span-red">*</span></div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <input  type="text"  class="form-control gray-bg input_circular_corner" placeholder="请输入通用名" v-model="goodsData.genericName">
 
@@ -73,11 +73,11 @@
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">药品类型:</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                             <div class="input-group-btn">
-                              <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{prodTypeItems[goodsData.prodType ].titleName}}<span class="goods_tips_down caret"></span>
+                              <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{prodTypeItems[goodsData.prodType ]}}<span class="goods_tips_down caret"></span>
                               </button>
                               <ul class="dropdown-menu" style="width: 100%" >
                                 <li @click="selectProdTypeItem(index)" v-for="(titleItem, index) in prodTypeItems">
-                                  <a :class="{selected_item : goodsData.prodType == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                                  <a :class="{selected_item : goodsData.prodType == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                 </li>
 
                               </ul>
@@ -109,11 +109,11 @@
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">单位<span class="span-red">*</span></div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
-                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{splitUnitItems[goodsData.prodUnit].titleName}}<span class="goods_tips_down caret"></span>
+                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{splitUnitItems[goodsData.prodUnit]}}<span class="goods_tips_down caret"></span>
                           </button>
                           <ul class="dropdown-menu" style="width: 100%" >
                             <li @click="selectProdUnitItem(index)" v-for="(titleItem, index) in splitUnitItems">
-                              <a :class="{selected_item : goodsData.prodUnit == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                              <a :class="{selected_item : goodsData.prodUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
 
                           </ul>
@@ -124,11 +124,11 @@
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">剂型</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
-                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{dosageFormItems[goodsData.dosageForm].titleName}}<span class="goods_tips_down caret"></span>
+                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{dosageFormItems[goodsData.dosageForm]}}<span class="goods_tips_down caret"></span>
                           </button>
                           <ul class="dropdown-menu" style="width: 100%" >
                             <li @click="selectDosageFormItem(index)" v-for="(titleItem, index) in dosageFormItems">
-                              <a :class="{selected_item : goodsData.dosageForm == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                              <a :class="{selected_item : goodsData.dosageForm == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
 
                           </ul>
@@ -170,12 +170,12 @@
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
                           <input  type="text" style="width: 65%;    float: left;" class="form-control gray-bg input_circular_left_radius" placeholder="请输入拆零数量" v-model="goodsData.splitNum"  >
-                          <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{splitUnitItems[ goodsData.splitUnit].titleName}}<span class=" caret goods_tips_down"></span>
+                          <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{splitUnitItems[ goodsData.splitUnit]}}<span class=" caret goods_tips_down"></span>
                           </button>
 
                           <ul class="dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
                             <li @click="selectSplitUnitItem(index)" v-for="(titleItem, index) in splitUnitItems">
-                              <a :class="{selected_item : goodsData.splitUnit == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                              <a :class="{selected_item : goodsData.splitUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
 
                           </ul>
@@ -207,11 +207,11 @@
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">默认用法</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
-                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{usageTypeItems[ goodsData.usageType].titleName}}<span class=" caret goods_tips_down"></span>
+                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{usageTypeItems[ goodsData.usageType]}}<span class=" caret goods_tips_down"></span>
                           </button>
                           <ul class="dropdown-menu" style="width: 100%" >
                             <li @click="selectUsageTypeItem(index)" v-for="(titleItem, index) in usageTypeItems">
-                              <a :class="{selected_item : goodsData.usageType== index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                              <a :class="{selected_item : goodsData.usageType== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
 
                           </ul>
@@ -223,12 +223,12 @@
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
                           <input  type="text" style="width: 65%;    float: left;" class="form-control gray-bg input_circular_left_radius" placeholder="请输入单次剂量" v-model="goodsData.singleDose">
-                        <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{singleUnitItems[goodsData.singleUnit].titleName}}<span class=" caret goods_tips_down"></span>
+                        <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{singleUnitItems[goodsData.singleUnit]}}<span class=" caret goods_tips_down"></span>
                         </button>
 
                           <ul class="dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
                           <li @click="selectSingleUnitItem(index)" v-for="(titleItem, index) in singleUnitItems">
-                            <a :class="{selected_item : goodsData.singleUnit == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                            <a :class="{selected_item : goodsData.singleUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                           </li>
 
                         </ul>
@@ -239,11 +239,11 @@
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">默认频次</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
-                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{frequencyItems[ goodsData.frequency].titleName}}<span class=" caret goods_tips_down"></span>
+                          <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{frequencyItems[ goodsData.frequency]}}<span class=" caret goods_tips_down"></span>
                           </button>
                           <ul class="dropdown-menu" style="width: 100%" >
                             <li @click="selectFrequencyItem(index)" v-for="(titleItem, index) in frequencyItems">
-                              <a :class="{selected_item : goodsData.frequency== index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
+                              <a :class="{selected_item : goodsData.frequency== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
 
                           </ul>
@@ -301,199 +301,17 @@
         assist_inquiry_show: false,
         assist_inquiry_showed:false,
         compileSuppliersNo:"",
-        suppliersItems: [
-          {titleName: '西药'},
-          {titleName: '中药'},
-        ],
         suppliersIndex: 0,
-        prodTypeItems: [
-          {titleName: '西/成药'},
-          {titleName: '中药'},
-          {titleName: '器械/药材'},
-        ],
-        usageTypeItems: [
-          {titleName: '口服'},
-          {titleName: '直肠用药'},
-          {titleName: '舌下用药'},
-          {titleName: '注射用药'},
-          {titleName: '皮下注射'},
-          {titleName: '皮内注射'},
-          {titleName: '肌肉注射'},
-          {titleName: '静脉滴注'},
-          {titleName: '吸入用药'},
-          {titleName: '局部用药'},
-          {titleName: '椎管内用药'},
-          {titleName: '关节腔内用药'},
-          {titleName: '胸膜腔用药'},
-          {titleName: '腹腔用药'},
-          {titleName: '阴道用药'},
-          {titleName: '气管内用药'},
-          {titleName: '滴眼'},
-          {titleName: '滴鼻'},
-          {titleName: '喷喉'},
-          {titleName: '含化'},
-          {titleName: '敷伤口'},
-          {titleName: '擦皮肤'},
-          {titleName: '其他局部用药途径'},
-          {titleName: '其他用药途径'},
-        ],
+        prodTypeItems:this.$enumeration.getPROD_TYPE(),
+        usageTypeItems: this.$enumeration.getUSAGE_TYPE(),
         supplierNameItems: [ ],
-        frequencyItems: [
-          {titleName:'每天一次(qd)'},
-          {titleName:'每天二次(bid)'},
-          {titleName:'每天三次(tid)'},
-          {titleName:'每天四次(qid)'},
-          {titleName:'每天五次(Quingid)'},
-          {titleName:'每周一次(qw)'},
-          {titleName:'每周二次(biw)'},
-          {titleName:'每周三次(tiw)'},
-          {titleName:'每半小时一次(q1/2h)'},
-          {titleName:'每小时一次(qh)'},
-          {titleName:'每2时一次(q2h)'},
-          {titleName:'每3时一次(q3h)'},
-          {titleName:'每4时一次(q4h)'},
-          {titleName:'每5时一次(q5h)'},
-          {titleName:'每6时一次(q6h)'},
-          {titleName:'每8时一次(q8h)'},
-          {titleName:'每12时一次(q12h)'},
-          {titleName:'每晚一次(qn)'},
-          {titleName:'隔天一次(qod)'},
-          {titleName:'五天一次(q5d)'},
-          {titleName:'十天一次(q10d)'},
-          {titleName:'每三天一次(q3d)'},
-          {titleName:'每二周一次(2w)'},
-          {titleName:'12小时维持'},
-          {titleName:'24小时维持'},
-          {titleName:'立即(st)'},
-          {titleName:'必要时使用(prn)'},
-          {titleName:'其他'},
-          {titleName:'Q4D(一次/4 天)'},
-          {titleName:'Q90M(1 个半小时一次'},
-          {titleName:'QID7(7 次/日。6:00-9:00)'},
-          {titleName:'QMON(每月 1 次)'},
-          {titleName:'QOD/BID(2 次/隔日 8-4)'},
-          {titleName:'QOD/TID(3 次/隔日 8-12-4)'},
-          {titleName:'QW(3)BID(每周 3 天每日 2 次)'},
-          {titleName:'W5D(周一～～周五 8am)'},
-          {titleName:'W6D(周一～～周六 8am)'},
-        ],
-        splitUnitItems: [
-          {titleName: '袋'},
-          {titleName: '片'},
-          {titleName: '支'},
-          {titleName: '粒'},
-          {titleName: '瓶'},
-          {titleName: 'mg'},
-          {titleName: 'ml'},
-          {titleName: 'l'},
-          {titleName: 'ug'},
-          {titleName: 'IU'},
-          {titleName: 'U'},
-          {titleName: '包'},
-          {titleName: '盒'},
-          {titleName: '枚'},
-          {titleName: '丸'},
-          {titleName: '喷'},
-          {titleName: '颗'},
-          {titleName: '滴'},
-          {titleName: 'cm'},
-          {titleName: '少许'},
-          {titleName: '适量'},
-          {titleName: '对'},
-          {titleName: '个'},
-          {titleName: '条'},
-          {titleName: '条'},
-          {titleName: '板'},
-          {titleName: '件'},
-          {titleName: '套'},
-          {titleName: '卷'},
-          {titleName: '副'},
-          {titleName: '只'},
-          {titleName: '根'},
-          {titleName: '箱'},
-          {titleName: '台'},
-          {titleName: '贴'},
-          {titleName: '万单位'},
-        ],
-        singleUnitItems: [
-          {titleName: '袋'},
-          {titleName: '片'},
-          {titleName: '支'},
-          {titleName: '粒'},
-          {titleName: '瓶'},
-          {titleName: 'mg'},
-          {titleName: 'ml'},
-          {titleName: 'l'},
-          {titleName: 'ug'},
-          {titleName: 'IU'},
-          {titleName: 'U'},
-          {titleName: '包'},
-          {titleName: '盒'},
-          {titleName: '枚'},
-          {titleName: '丸'},
-          {titleName: '喷'},
-          {titleName: '颗'},
-          {titleName: '滴'},
-          {titleName: 'cm'},
-          {titleName: '少许'},
-          {titleName: '适量'},
-          {titleName: '对'},
-          {titleName: '个'},
-          {titleName: '条'},
-          {titleName: '条'},
-          {titleName: '板'},
-          {titleName: '件'},
-          {titleName: '套'},
-          {titleName: '卷'},
-          {titleName: '副'},
-          {titleName: '只'},
-          {titleName: '根'},
-          {titleName: '箱'},
-          {titleName: '台'},
-          {titleName: '贴'},
-          {titleName: '万单位'},
-        ],
-        dosageFormItems: [
-          {titleName: '注射液'},
-          {titleName: '肠溶片'},
-          {titleName: '滴剂'},
-          {titleName: '滴眼剂'},
-          {titleName: '冻干粉针剂'},
-          {titleName: '粉针剂'},
-          {titleName: '含片'},
-          {titleName: '混悬剂'},
-          {titleName: '胶浆剂'},
-          {titleName: '胶囊剂'},
-          {titleName: '颗粒剂'},
-          {titleName: '凝胶'},
-          {titleName: '泡腾片'},
-          {titleName: '喷剂'},
-          {titleName: '喷雾'},
-          {titleName: '片剂'},
-          {titleName: '溶液'},
-          {titleName: '乳膏剂'},
-          {titleName: '软膏剂'},
-          {titleName: '散剂'},
-          {titleName: '栓剂'},
-          {titleName: '糖浆'},
-          {titleName: '贴膜'},
-          {titleName: '眼膏'},
-          {titleName: '针剂'},
-          {titleName: '注射剂'},
-          {titleName: '口服液'},
-          {titleName: '软膏'},
-          {titleName: '乳膏'},
-          {titleName: '粉剂'},
-          {titleName: '丸剂'},
-          {titleName: '干混悬剂'},
-          {titleName: '洗剂'},
-          {titleName: '饮片'},
-          {titleName: '中药配方颗粒'},
-          {titleName: '汤剂'},
-        ],
+        frequencyItems:this.$enumeration.getPROD_FREQUENCY(),
+        splitUnitItems:this.$enumeration.getPROD_UNITE(),
+        singleUnitItems:this.$enumeration.getPROD_UNITE(),
+        dosageFormItems: this.$enumeration.getDOSAGE_FORM(),
         isSplitItems:[
-          {titleName: '是'},
           {titleName: '否'},
+          {titleName: '是'},
          ] ,
         addGood:{
           commonName:""
@@ -502,9 +320,9 @@
           approvalNumber: "",
           barCode: "",
           doneCode: "",
-          dosageForm: 0,
+          dosageForm: 1,
           englishName: "",
-          frequency: 0,
+          frequency: 1,
           genericName: "",
           supplierName: "",
           hosId: "",
@@ -516,18 +334,18 @@
           prodId: "",
           prodName: "",
           prodSpec: "",
-          prodType: 0,
-          prodUnit: 0,
+          prodType: 1,
+          prodUnit: 1,
           remark:"" ,
           retailPrice: "",
           singleDose: "",
-          singleUnit: 0,
+          singleUnit: 1,
           splitNum: "",
           splitPrice: "",
-          splitUnit: 0,
+          splitUnit: 1,
           stockWarning: "",
           supplierId: "",
-          usageType: 0,
+          usageType: 1,
           validWarning: ""
 
         }
@@ -556,6 +374,9 @@
       this.$api.get(this, this.$requestApi.goodsView+compileSuppliersNo,"", function (data) {
         if (data.body.code == '00') {
           let goodsData=  data.body.data;
+           goodsData.retailPrice=that.$enumeration.getGoodsPrice(   goodsData.retailPrice);
+          goodsData.costPrice=that.$enumeration.getGoodsPrice(   goodsData.costPrice);
+          goodsData.splitPrice=that.$enumeration.getGoodsPrice(  goodsData.splitPrice);
           delete goodsData['createDate'];
           delete goodsData['doneDate'];
           return that.goodsData= goodsData;
@@ -571,13 +392,10 @@
     },
 
       getSupplierName:function (supplierName) {
-
-
         let that = this;
-        this.$api.get(that, that.$requestApi.goodsSupplierQuery ,{ supplierNameOrContactName:supplierName}, function (data) {
+        that.$api.get(that, that.$requestApi.goodsSupplierQuery ,{ supplierNameOrContactName:  supplierName,iDisplayLength:that.$enumerationType.iDisplayLength}, function (data) {
           if (data.body.code == '00') {
             that.supplierNameItems=data.body.data;
-
           } else {
             console.log(data.body.msg);
           }
@@ -589,22 +407,39 @@
 
       },
       createGoods:function () {
-
         let that = this;
+         if ( that.goodsData.genericName==""){
+           return   swal({   title:that.$toastContent.toastGenericName ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+         }
+        if (that.goodsData.isSplit==0){
+          delete that. goodsData['splitUnit']
+        }
+       that.goodsData.retailPrice=that.$enumeration.getComputePricet( that. goodsData.retailPrice);
+       that.goodsData.costPrice=that.$enumeration.getComputePricet( that. goodsData.costPrice);
+       that.goodsData.splitPrice=that.$enumeration.getComputePricet( that. goodsData.splitPrice);
         this.$api.post(that,that.compileSuppliersNo?that.$requestApi.goodsUpdate+  that. compileSuppliersNo:that.$requestApi.createGoods , that.goodsData, function (data) {
           if (data.body.code == '00') {
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
             that.returnPage();
           } else {
+            that. setDefaultGoodsData();
             swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
           }
 
         }, function (err) {
+          that. setDefaultGoodsData();
           console.log(err);
 
         });
       },
+      //默认数据
+        setDefaultGoodsData:function () {
+          let that=this;
+          that.  goodsData.retailPrice= that.$enumeration. getGoodsPrice(that.goodsData.retailPrice);
+          that.  goodsData.costPrice= that.$enumeration. getGoodsPrice(that.goodsData.costPrice);
+          that.  goodsData.splitPrice= that.$enumeration. getGoodsPrice(that.goodsData.splitPrice);
 
+        },
       change_phone: function () {
         this.inputState=false;
       },
@@ -684,7 +519,7 @@
   .common-body-white{
     background: white;
     margin: 15px;
-    padding-top: 10px
+    padding: 10px
 
   }
   .fixed-div{

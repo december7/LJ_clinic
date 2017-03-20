@@ -12,17 +12,17 @@
                         <div class="info-title-front">▎</div><div class="info-title">基本信息</div>
                     </div>
                     <div>
-                        <div style="display: inline-block;"><img alt="image" class="info-smallimg" :src="data_items.hospitalUrl"></div>
+                        <div style="display: inline-block;"><img alt="image" class="info-smallimg" :src="hospitalUrl"></div>
 
                         <div style="display: inline-block; vertical-align: middle">
                           <div>
-                            <div class="info-label-front" >诊所名称:</div><div class="info-label" >{{data_items.hospitalName}}</div>
+                            <div class="info-label-front" >诊所名称:</div><div class="info-label" >{{data_item.hospitalName}}</div>
                           </div>
                           <div>
-                            <div class="info-label-front" style="padding: 15px 0">诊所类型:</div><div class="info-label" >{{data_items.hospitalType}}</div>
+                            <div class="info-label-front" style="padding: 15px 0">诊所类型:</div><div class="info-label" >{{clinicTypeArr[data_item.hospitalType]}}</div>
                           </div>
                           <div>
-                            <div class="info-label-front" >诊所地址:</div><div class="info-label" >{{data_items.address}}</div>
+                            <div class="info-label-front" >诊所地址:</div><div class="info-label" >{{data_item.address}}</div>
                           </div>
                         </div>
                     </div>
@@ -31,16 +31,16 @@
                         <div class="info-title-front">▎</div><div class="info-title">法人信息</div>
                     </div>
                     <div>
-                        <div class="owner-info-front">法人姓名:</div><div class="owner-info-label">{{data_items.legalName}}</div>
+                        <div class="owner-info-front">法人姓名:</div><div class="owner-info-label">{{data_item.legalName}}</div>
                     </div>
                     <div>
-                        <div class="owner-info-front">法人身份证:</div><div class="owner-info-label">{{data_items.legalCard}}</div>
+                        <div class="owner-info-front">法人身份证:</div><div class="owner-info-label">{{data_item.legalCard}}</div>
                     </div>
                     <div class="hr-tcline" style="margin-top: 20px"></div>
                     <div>
                         <div class="info-title-front">▎</div><div class="info-title">营业执照</div>
                     </div>
-                    <img alt="image" class="info-bigimg" :src="data_items.busiLicenceUrl">
+                    <img alt="image" class="info-bigimg" :src="data_item.busiLicenceUrl">
                     <div class="info-centerlabel">修改信息请联系客服: 400-0900-360</div>
                     <!--<div class="info-centerlabel" style="font-size: 12px;">Copyright © 2016 格格医疗科技(上海)有限公司 使用协议</div>-->
                 </div>
@@ -127,7 +127,16 @@
 
         data(){
             return {
-                data_items:'',
+                data_item:'',
+                clinicTypeArr: [
+                    "",
+                    "中医诊所",
+                    "西医诊所",
+                    "中西医结合",
+                    "专科诊所",
+                    "综合门诊部",
+                ],
+                hospitalUrl:'',
             }
         },
 
@@ -140,9 +149,13 @@
                 var that = this;
                 this.$api.get(this, this.$requestApi.clinicInfo, "", function (data) {
 //                    console.log("请求的数据:" + JSON.stringify(data));
-                    if (data.status == '200') {
-                        that.data_items = data.body.data;
-                        console.log("请求的数据:" + data.body.data);
+                  if(data.body.code == '00'){
+                        that.data_item = data.body.data;
+                        if(!that.data_item.hospitalUrl) {
+                            that.hospitalUrl = "../../../static/img/LoginAndRegister/clinic_logo.png";
+                        }else {
+                            that.hospitalUrl = that.data_item.hospitalUrl;
+                        }
                     } else {
                         console.log(data.body.msg);
                     }

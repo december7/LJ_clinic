@@ -11,7 +11,7 @@
       <!--<patient_msg_list></patient_msg_list>-->
       <div class="col-sm-12 no-padding">
         <ul>
-          <li v-for="data_item in data_items" class="col-sm-4 item_list">
+          <li v-for="(data_item,index) in data_items" class="col-sm-4 item_list">
             <div class="ibox patient_item">
               <div class="ibox-title patient_list_item_title">
                 <h5>{{data_item.userName}}</h5>
@@ -38,10 +38,10 @@
                 </div>
 
                 <div class="m-t-sm">
-                  <button @click="reception(data_item.state == 1,data_item.registeredOrdId)" :class="data_item.state == 1 ? 'receptioned' : 'wait_reception' " class="list_reception_btn" type="button">{{$stringUtils.buttonState(data_item.state)}}</button>
+                  <button @click="reception(data_item.state == 1,data_item.registeredOrdId,index)" :class="data_item.state == 1 ? 'receptioned' : 'wait_reception' " class="list_reception_btn" type="button">{{$stringUtils.buttonState(data_item.state)}}</button>
                 </div>
 
-                <div v-if="data_item.isEmergency == 1" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
+                <div v-if="data_item.isEmergency == 2" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
 
               </div>
             </div>
@@ -184,11 +184,11 @@
       request:function () {
         let that=this;
         that.$api.get(that,that.$requestApi.todayPatient,
-          { pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1,pageSize:that.$enumerationType.iDisplayLength},
+          { pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.pageSize+1,pageSize:that.$enumerationType.pageSize},
           function  (data) {
           if(data.status=='200'){
             that.data_items = data.body.data;
-            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.iDisplayLength));
+            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.pageSize));
           }else{
             console.log(data.body.msg);
           }
@@ -202,16 +202,16 @@
         let that=this;
         let  data={};
         if (index==1||index==2){
-          data=  {state:index, pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1,pageSize:that.$enumerationType.iDisplayLength};
+          data=  {state:index, pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.pageSize+1,pageSize:that.$enumerationType.pageSize};
         }else {
-          data=  { pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1,pageSize:that.$enumerationType.iDisplayLength};
+          data=  { pageIndex:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.pageSize+1,pageSize:that.$enumerationType.pageSize};
 
         }
         that.$api.get(that,that.$requestApi.todayPatient,data,
           function  (data) {
             if(data.status=='200'){
               that.data_items = data.body.data;
-              that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.iDisplayLength));
+              that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
             }else{
               console.log(data.body.msg);
             }
@@ -223,12 +223,15 @@
 
           },
 
-      reception:function (received,registeredOrdId) {
-            let that=this;
+      reception:function (received,registeredOrdId,index) {
+        let that=this;
         if (received) {//未接诊
           that.$api.post(that,that.$requestApi.orderDoctorRreat+registeredOrdId,{},
             function  (data) {
-              if(data.body.code==='00'){
+              if(data.body.code == '00'){
+                that.data_items[index].state=0;
+                that. data_items.splice(index, 1,  that.data_items[index]);
+
                 localStorage.setItem(that.$names.registeredOrdId,registeredOrdId);
                 swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
                 parent.document.getElementById("30300").click();

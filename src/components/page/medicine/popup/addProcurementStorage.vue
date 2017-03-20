@@ -64,17 +64,17 @@
             </div>
 
           </div>
-          <div><h3>入库明细</h3></div>
+          <div><h3>入库明细 <a data-toggle="modal" data-target="#selectProcurement" @click="selectProcurement" style="border-bottom:1px solid #23527c ; margin-left: 12px;font-size: 14px;    padding-bottom: 2px;">提取采购单</a></h3> </div>
           <div class="col-md-12 no-padding" style="margin-bottom: 20px; ">
             <table class="table no-margins text-center white-bg">
               <thead>
 
-              <tr >
+              <tr  :class="{'bottom_border': auditContent.length==0}">
                 <th  v-for="(item,index) in procurement" :class="{right_border:index==procurement.length-1}"  class=" l_border text-center top_border" style="border-bottom: none;">{{item.name}}</th>
               </tr>
               </thead>
               <tbody>
-              <tr class="gradeC"   v-for="(storageItem, index) in auditContent" :class="{ bottom_border:goodsType}" >
+              <tr class="gradeC"   v-for="(storageItem, index) in auditContent"  :class=" {'bottom_border':goodsId[1]==2}" >
                 <td class="text-center  l_border" >
                   <span   class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{getIndex(index)}}</span></td>
                 <td  :class="storageItem.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' "  class="text-center  l_border">
@@ -85,13 +85,13 @@
                     </ul>
                   </div>
                 </td>
-                <td :class="storageItem.focus && currentFocusIndex == 4? 'focus_border' : 'l_border' " class="  text-center"><input @focus="getFocus(storageItem, 4)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;"v-model="storageItem.prodSpec"></td>
-                <td :class="storageItem.focus && currentFocusIndex == 5? 'focus_border' : 'l_border' "class="   text-center" ><input @focus="getFocus(storageItem, 5)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem.supplierName"> </td>
-                <td :class="storageItem.focus && currentFocusIndex == 6? 'focus_border' : 'l_border' "  class="   text-center"><input @focus="getFocus(storageItem, 6)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto; width: 100%;"v-model="storageItem.prodUnit"> </td>
-                <td :class="storageItem.focus && currentFocusIndex == 7 ? 'focus_border' : 'l_border' " class="   text-center"><input @focus="getFocus(storageItem, 7)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem.purchaseNum"> </td>
-                <td  :class="storageItem.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="text-center " ><input @focus="getFocus(storageItem, 3)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem .storageNum "></td>
-                <td :class="storageItem.focus && currentFocusIndex == 8 ? 'focus_border' : 'l_border' "   class="   text-center"><input @focus="getFocus(storageItem, 8)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem.purchasePrice"> </td>
-                <td :class="storageItem.focus && currentFocusIndex == 10 ? 'focus_border' : 'l_border' "  class="   text-center"><input @focus="getFocus(storageItem, 10)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text"  style="height: auto;width: 100%;" v-model="storageItem.batchNumber"> </td>
+                <td :class="storageItem.focus && currentFocusIndex == 4? 'focus_border' : 'l_border' " class="  text-center"><span @focus="getFocus(storageItem, 4)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{storageItem.prodSpec}}</span></td>
+                <td :class="storageItem.focus && currentFocusIndex == 5? 'focus_border' : 'l_border' "class="   text-center" ><span @focus="getFocus(storageItem, 5)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" >{{storageItem.supplierName}} </span></td>
+                <td :class="storageItem.focus && currentFocusIndex == 6? 'focus_border' : 'l_border' "  class="   text-center"><span @focus="getFocus(storageItem, 6)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto; width: 100%;" >{{$enumeration.getProjectUnit(storageItem.prodUnit)}}</span> </td>
+                <td :class="storageItem.focus && currentFocusIndex == 7 ? 'focus_border' : 'l_border' " class="   text-center"><input @focus="getFocus(storageItem, 7)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem.purchaseNum" > </td>
+                <td  :class="storageItem.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="text-center " ><input @focus="getFocus(storageItem, 3)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem .storageNum" @input="getPrice(storageItem)"></td>
+                <td :class="storageItem.focus && currentFocusIndex == 8 ? 'focus_border' : 'l_border' "   class="   text-center"><input @focus="getFocus(storageItem, 8)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%; " v-model="storageItem.purchasePrice" @input="getPrice(storageItem)"> </td>
+                <td :class="storageItem.focus && currentFocusIndex == 10 ? 'focus_border' : 'l_border' "  class="   text-center"><input @focus="getFocus(storageItem, 10)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text"  style="height: auto;width: 100%;"  v-model="storageItem.batchNumber"></td>
                 <td :class="storageItem.focus && currentFocusIndex == 9 ? 'focus_border' : 'l_border' " class="   text-center"  >
                   <div   id="data_2">
                     <div class="input-group date">
@@ -101,12 +101,12 @@
                   </div>
                 </td>
 
-                <td :class="storageItem.focus && currentFocusIndex == 11? 'focus_border' : 'l_border' "  class="   text-center"><span style="height: auto;width: 100%;"> {{getPrice(storageItem)}}</span></td>
+                <td :class="storageItem.focus && currentFocusIndex == 11? 'focus_border' : 'l_border' "  class="   text-center"><span style="height: auto;width: 100%;"> {{ storageItem.storageItemPrice}}</span></td>
                 <td   :class="storageItem.focus && currentFocusIndex == 12? 'focus_border' : 'l_border'  " class="   text-center"><input @focus="getFocus(storageItem, 12)" @blur="loseFocus(storageItem)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;"v-model="storageItem.remark"> </td>
-                <td  class="l_border text-center right_border" @click="deleteProcurements"    ><a class="un_skip_link">{{storageItem.procurementOperation}}</a></td>
+                <td  class="l_border text-center right_border" @click="deleteProcurements(index)"    ><a class="un_skip_link">删除</a></td>
               </tr>
 
-              <tr id="add_cure_line" v-if="!goodsType">
+              <tr id="add_cure_line"v-show="goodsId[1]!=2">
                 <td class=" bottom_border l_border text-center"  @click="addProcurement" id="addProcurement"><a class="un_skip_link">添加商品</a>
                 <td class=" bottom_border l_border text-center"> </td>
                 <td class=" bottom_border l_border text-center"> </td>
@@ -126,19 +126,21 @@
             </table>
 
           </div>
-          <div  ><h3 >入库金额:{{totalPrice}}</h3></div>
+          <div  ><h3 >入库金额:  {{totalPrices}}</h3></div>
         </div>
         <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' @click="createProcurementStorage">完成</button>
         <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消{{no}}</button>
           </div>
           <div class="add_body_bottom" ></div>
         </div>
+        <select-procurement :procurementDatas="procurementDatas"></select-procurement>
       </div>
 </template>
 
 <script>
-
+import selectProcurement from 'components/page/medicine/popup/selectProcurement.vue'
   export default {
+    components :{selectProcurement},
     created(){
 
       console.log("=="+this.$store.getters.getOperatorId);
@@ -168,22 +170,14 @@
 
         return false;
       },
-      totalPrice(){
-        let that=this;
-        let datas= that.auditContent;
-        let totalPrice= 0;
-        that.procurementStorageData.totalPrice=0;
-        for (let i=0,j=datas.length;i<j;i++){
-          totalPrice   +=Number(datas[i].storageItemPrice);
-        }
-       return totalPrice;
-      }
 
 
     },
     data(){
       return {
+        totalPrices:0,
         goodsId:[],
+        procurementDatas:[],
         datepickerData:{
           todayBtn: "linked",
           keyboardNavigation: false,
@@ -242,6 +236,33 @@
 
 
     methods: {
+      totalPrice:function(){
+        let that=this;
+        let datas= that.auditContent;
+        let totalPrice= 0;
+        for (let i=0,j=datas.length;i<j;i++){
+          console.error("datas"+datas[i].storageItemPrice);
+          if (typeof datas[i].storageItemPrice !="undefined"){
+            totalPrice   +=Number(datas[i].storageItemPrice);
+          }
+        }
+        that.totalPrices=totalPrice.toFixed(2);
+        return totalPrice.toFixed(2);
+
+      },
+      selectProcurement:function () {
+        let that=this;
+        that.$api.get(that,that.$requestApi.stockSearch + that.$enumerationType.procurementType ,{state:1}, function (data) {
+          if (data.body.code == '00') {
+            that.procurementDatas=data.body.data;
+          } else {
+            swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+          }
+        }, function (err) {
+          swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+        });
+      },
       getIndex:function (index) {
         return  this.goodsIndex=++index;
       },
@@ -255,25 +276,68 @@
         this.pwInputState=false;
       },
       getPrice: function (storageItem) {
+        console.error(JSON.stringify(storageItem));
         let storageNum=   storageItem  .storageNum;
         let purchasePrice=   storageItem  .purchasePrice;
-
+        let that=this;
         if (storageNum>0&&purchasePrice>0){
-          storageItem.storageItemPrice=  storageNum* purchasePrice;
-          return storageItem. storageItemPrice;
+          storageItem.storageItemPrice=  ( storageNum* purchasePrice).toFixed(2);
         }else {
-          return 0;
+          storageItem.storageItemPrice=0;
         }
+        that.totalPrice();
+        return storageItem. storageItemPrice;
       },
       getViewProcurement:function () {
         let that=this;
         this.$api.get(that,that.$requestApi.stockView + that.goodsId[0] ,{}, function (data) {
           if (data.body.code == '00') {
-            that.procurementStorageData=data.body.data;
+            that.procurementStorageData.contactName=data.body.data.contactName;
+            that.procurementStorageData.contactPhone=data.body.data.contactPhone;
+            that.procurementStorageData.supplierId=data.body.data.supplierId;
+            that.procurementStorageData.operatorId=data.body.data.operatorId;
+            that.procurementStorageData.supplierName=data.body.data.supplierName;
+            that.procurementStorageData.remark=data.body.data.remark;
+            that.procurementStorageData.operatorName=data.body.data.operatorName;
+            that.procurementStorageData.billId=data.body.data.billId;
             that.auditContent =data.body.prods;
-            $('[id=expireDate]').each(function (index) {
-              $(this).val(that.auditContent[index].expireDate );
-            });
+            that.$nextTick(() => $('[id=expireDate]').each(function (index) {
+              console.log("expireDate");
+              $(this).val(that.$stringUtils.dateFormat(that.auditContent[index].expireDate ));
+              that.auditContent[index].purchasePrice= that.$enumeration.getGoodsPrice( that.auditContent[index].purchasePrice);
+              that. auditContent.splice(index, 1,  that.auditContent[index]);
+              that.getPrice(that.auditContent[index]);
+            }));
+            that.$nextTick(() =>that.datepickerDate());
+          } else {
+            swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+          }
+        }, function (err) {
+          swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+        });
+      },
+     getViewGoods:function (index) {
+        let that=this;
+        this.$api.get(that,that.$requestApi.stockView + that.procurementDatas[index]. ostockId ,{}, function (data) {
+          if (data.body.code == '00') {
+            that.procurementStorageData.contactName=data.body.data.operatorName;
+            that.procurementStorageData.contactPhone=data.body.data.billId;
+            that.procurementStorageData.supplierName=data.body.data.supplierName;
+            that.procurementStorageData.supplierId=data.body.data.supplierId;
+            let price= that.auditContent.length;
+          for (let i in   data.body.prods){
+            that.auditContent.push(data.body.prods[i]);
+          }
+
+          for (let i=price ,j=that.auditContent.length;i<j;i++){
+              that.auditContent[i].storageItemPrice=0;
+              that.auditContent[i].purchasePrice=  that.$enumeration.getGoodsPrice( that.auditContent[i].purchasePrice);
+
+            }
+            console.log(JSON.stringify(that.auditContent));
+
+            that.$nextTick(() =>that.datepickerDate());
           } else {
             swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
           }
@@ -285,19 +349,26 @@
 
       createProcurementStorage:function () {
         let that=this;
-        that.procurementStorageData.totalPrice=that.totalPrice;
+        that.procurementStorageData.totalPrice=that.totalPrices*100;
         that.procurementStorageData.prods=that.auditContent;
-        for (let i=0,j=that.procurementStorageData.prods.length;i<j;i++){
-          let prod=that.procurementStorageData.prods[i];
-          delete  prod['no'];
-          delete prod['focus'];
-          delete prod['procurementOperation'];
-          delete prod['storageItemPrice'];
+        let  prods=[];
+        for (let i in that.auditContent){
+          console.log("that.auditContent[i].remark"+that.auditContent[i].remark);
+        prods.push({
+          prodId:that.auditContent[i].prodId,
+          batchNumber:that.auditContent[i].batchNumber,
+          purchaseDetailId:that.auditContent[i].purchaseDetailId,
+          storageNum:that.auditContent[i].storageNum,
+          purchaseNum:that.auditContent[i].purchaseNum,
+          purchasePrice:that.auditContent[i].purchasePrice*100,
+          remark:that.auditContent[i].remark,
+          expireDate:"",
+        })
         }
         $('[id=expireDate]').each(function (index) {
-          that.procurementStorageData.prods[index].expireDate =$(this).val();
+          prods[index].expireDate =$(this).val();
         });
-        that.procurementStorageData.prods=JSON.stringify(that.procurementStorageData.prods);
+        that.procurementStorageData.prods=JSON.stringify(prods);
 //        that.goodsId[1]==2
         console.log("that.goodsId"+that.goodsId);
         that.$api.post(that, that.goodsId==""?that.$requestApi.stockCreate:that.$requestApi.stockUpdateInbound+that.goodsId[0],that.procurementStorageData ,function  (data) {
@@ -351,8 +422,7 @@
         itemData.prodId = data.prodId;
         itemData.prodUnit = data.prodUnit;
 //        itemData.costPrice = data.costPrice;
-        itemData.batchNumber = data.batchNumber;
-        itemData.remark = data.remark;
+        itemData.batchNumber = data.approvalNumber;
       },
       selectSuppliers:function (data) {
        this.procurementStorageData.supplierId = data.supplierId;
@@ -360,32 +430,6 @@
           this.suppliersList=[];
       },
 
-      getDataList:function (type) {
-        var that=this;
-        var url = '';
-        if (type == 0) {//治疗
-          url = this.$requestApi.cureInfo;
-        } else if (type == 1) {// 中药处方
-          url = this.$requestApi.chinesePrescription;
-        } else if (type == 2) {//西药处方
-          url = this.$requestApi.westernMedicine;
-        } else if (type == 3) {//其他收费
-          url = this.$requestApi.otherCharge;
-        }
-
-        this.$api.get(this, url,"",function  (data) {
-          if(data.status=='200'){
-            that.dataList = data.body.data;
-            console.log(JSON.stringify(that.dataList));
-          }else{
-            console.log(data.body.msg);
-          }
-
-        },function (err) {
-          console.log(err);
-
-        });
-      },
       getSupplierName:function () {
         let that = this;
         this.$api.get(that, that.$requestApi.goodsSupplierQuery ,{ supplierNameOrContactName:that.procurementStorageData.supplierName}, function (data) {
@@ -402,12 +446,10 @@
         });
 
       },
-      selectSuppliersItem:function (selectedIndex) {
-        this.suppliersIndex = selectedIndex;
-        console.log( this.suppliersIndex);
-      },
       deleteProcurements: function (currentIndex) {
+        console.log("currentIndex"+currentIndex);
         this.auditContent.splice(currentIndex, 1);
+        this.totalPrice();
       },
       returnPage: function () {
 //        console.log("returnPage");

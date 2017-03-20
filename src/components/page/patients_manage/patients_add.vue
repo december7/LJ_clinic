@@ -1,6 +1,6 @@
 <template>
 
-	<div class="modal inmodal fade" id="perfect_information_modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal inmodal fade" id="patients_add" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 
@@ -8,7 +8,6 @@
 				<button type="button" class="close" data-dismiss="modal" style="margin: 11.5px 15px 0 0;"><span
 					aria-hidden="true">&times;</span></button>
 				<div class="hr-tcline"></div>
-
 				<div class="ibox-title no-borders msg_item_title">
 					<h5>患者基本信息</h5>
 				</div>
@@ -30,7 +29,7 @@
 								<div class="col-md-9 no-padding" id="data_1" style="margin-left: -5px">
 									<div class="col-md-11 no-padding input-group date gray-bg" style="line-height: 34px; border-radius: 4px; border: 1px solid #e5e6e7;">
 										<div class="pull-left col-md-9 no-padding">
-											<input style="background-color: #F4F4F4; height: 20px; width: 100%;padding-left: 12px;border: none;" v-model="itemData.birthdayDate" readonly
+											<input style="background-color: #F4F4F4; height: 20px; width: 100%;padding-left: 12px;border: none;" id="birthdayDate" readonly
 														 type="text" placeholder="请选择出生年月">
 										</div>
 										<span style="margin-top: 2px; margin-left: 15px; background-color: #F4F4F4;" class="pull-left input-group-addon no-borders m-t-xxs" id="startDate"><i class="fa fa-calendar"></i></span>
@@ -43,16 +42,16 @@
 									<p class="col-md-2 no-padding left_text_tips" style="margin-left: 15px">性&nbsp;&nbsp;&nbsp;&nbsp;别 :</p>
 									<div class="col-md-9">
 										<div class="radio radio-info radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio1" value="2" name="radioInline" style="margin-top: 2px">
+											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio1" value="1" name="radioInline" style="margin-top: 2px">
 											<label style="margin-left: -15px">男</label>
 										</div>
 										<div class="radio radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio2" value="1" name="radioInline"
+											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio2" value="2" name="radioInline"
 														 style="margin-top: 2px">
 											<label style="margin-left: -15px">女</label>
 										</div>
 										<div class="radio radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio3" value="0" name="radioInline"
+											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio3" value="9" name="radioInline"
 														 style="margin-top: 2px">
 											<label>未知</label>
 										</div>
@@ -170,8 +169,8 @@
 				</div>
 
 				<div  style="text-align: center; margin-bottom: 20px">
-					<button @click="perfectRequest" class="btn_save">保存</button>
-					<button class="btn_cancel" data-dismiss="modal">取消{{editable1}}</button>
+					<button @click="patientsAdd" class="btn_save">保存</button>
+					<button class="btn_cancel" data-dismiss="modal">取消</button>
 				</div>
 
 			</div>
@@ -226,7 +225,6 @@
 					nation: '',
 					occupation: '',
 					privCode: '',
-					userId: '',
 					userName: '',
 					userSex: ''
 				},
@@ -249,56 +247,27 @@
 				language: "zh-CN",
 				format: "yyyy/mm/dd"
 			});
-      
 		},
 
 		methods: {
-			//请求患者信息
-			showPhysique:function () {
+
+			//新增患者信息
+			patientsAdd: function () {
+				this.itemData.birthdayDate = $('#birthdayDate').val();
+				if(
+					this.itemData.userName == ''
+					|| this.itemData.birthdayDate == ''
+					|| this.itemData.billId == ''
+				){
+					console.log(this.itemData);
+					swal({title:"请填写完整必填项",text:"",type: "error",timer: 2000,showConfirmButton:false});
+					return;
+				}
 				var that=this;
-				this.$api.get(this,this.$requestApi.showPatientInfo+this.userId,'',function  (data) {
-					if(data.status=='200'){
-						that.data_item = data.body.data;
-
-						that.itemData.address = that.data_item.address;
-						that.itemData.billId = that.data_item.billId;
-						that.itemData.birthdayDate =that.$stringUtils.dateFormat(that.data_item.birthdayDate);
-						that.itemData.cityCode = that.data_item.cityCode;
-						that.itemData.company = that.data_item.company;
-						that.itemData.email = that.data_item.email;
-						that.itemData.idCardNo = that.data_item.idCardNo;
-						that.itemData.isMarital = that.data_item.isMarital;
-						that.itemData.nation = that.data_item.nation;
-						that.itemData.occupation = that.data_item.occupation;
-						that.itemData.privCode = that.data_item.privCode;
-						that.itemData.userId = that.data_item.userId;
-						that.itemData.userName = that.data_item.userName;
-						that.itemData.userSex = that.data_item.userSex;
-						that.itemData.remark = that.data_item.remark;
-
-
-						if (that.itemData.isMarital == '1') {
-							that.maritalValue = '已婚';
-						}else if (that.itemData.isMarital == '0'){
-							that.maritalValue = '未婚';
-						}else {
-							that.maritalValue = '';
-						}
-
-					}else{
-						console.log(data.body.msg);
-					}
-				},function (err) {
-					console.log(err);
-				});
-			},
-
-			//完善患者信息
-			perfectRequest: function () {
-				var that=this;
-				this.$api.post(this,this.$requestApi.perfectRequest,that.itemData,function  (data) {
+				this.$api.post(this,this.$requestApi.patientsAdd,that.itemData,function  (data) {
 					if(data.status=='200'){
 						swal({title:data.body.msg,text:"",type:"success",timer:2000,showConfirmButton:false});
+						$("#patients_add").modal('hide');
 					}else{
 						swal({title:data.body.msg,text:"",type: "error",timer:2000,showConfirmButton:false});
 						console.log(data.body.msg);
@@ -382,17 +351,6 @@
 		computed:{
 			editable:function () {
 				return this.$store.getters.getEditable;
-			},
-			editable1:function () {
-
-				this.registeredOrdId= this.$store.getters.getUserData;
-
-				if (this.userId.length > 0){
-					return this.showPhysique();
-				}else {
-					return;
-				}
-
 			},
 		}
 	}

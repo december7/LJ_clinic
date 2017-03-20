@@ -6,22 +6,35 @@
         <th   v-for="goodsName in goodsNames " class="text-center">{{goodsName.name}}</th>
       </tr>
       </thead>
-      <tbody>
-      <tr class="gradeC" v-for="medicineItem in medicineItems">
-        <td class="text-center">{{medicineItem.no}}</td>
-        <td class="text-center">{{medicineItem.medicineName}}</td>
-        <td class="text-center">{{medicineItem.medicineSpecification}}</td>
-        <td class="text-center">{{medicineItem.medicineUnits}}</td>
+      <tbody v-show="selectedIndex==0">
+      <tr class="gradeC" v-for="(medicineItem ,index) in medicineItems">
+        <td class="text-center">{{++index}}</td>
+        <td class="text-center">{{$stringUtils.dateFormat(medicineItem.createDate)}}</td>
+        <td class="text-center">{{medicineItem.prodName}}</td>
+        <td class="text-center">{{medicineItem.prodSpec}}</td>
         <td class="text-center">{{medicineItem.manufacturer}}</td>
-        <td class="text-center">{{medicineItem.suppliers}}</td>
-        <td class="text-center">{{medicineItem.lotNumber}}</td>
-        <td class="text-center">{{medicineItem.validity}}</td>
-        <td class="text-center">{{medicineItem.onhand}}</td>
-        <td class="text-center">{{medicineItem.costPrice}}</td>
-        <td class="text-center">{{medicineItem.retail}}</td>
-
+        <td class="text-center">{{medicineItem.supplierName}}</td>
+        <td class="text-center">{{medicineItem.preStockNum}}</td>
+        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem.prodCostPrice)}}</td>
+        <td class="text-center">{{$enumeration. getNumMoney(medicineItem.preStockNum,medicineItem.prodCostPrice)}}</td>
+        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem.retailPrice)}}</td>
+        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem.totalPrice)}}</td>
       </tr>
-
+      </tbody><tbody v-show="selectedIndex==1">
+      <tr class="gradeC" v-for="(medicineItem ,index) in medicineItems">
+        <td class="text-center">{{++index}}</td>
+        <td class="text-center">{{$stringUtils.dateFormat(medicineItem.createDate)}}</td>
+        <td class="text-center">{{medicineItem.prodName}}</td>
+        <td class="text-center">{{medicineItem.prodSpec}}</td>
+        <td class="text-center">{{medicineItem.manufacturer}}</td>
+        <td class="text-center">{{medicineItem.supplierName}}</td>
+        <td class="text-center">{{$enumeration. getProjectUnit(medicineItem.prodUnit)}}</td>
+        <td class="text-center">{{ medicineItem.batchNumber}}</td>
+        <td class="text-center">{{$stringUtils.dateFormat(medicineItem.expireDate)}}</td>
+        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem. stockNum)}}</td>
+        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem.stockPrice)}}</td>
+        <td class="text-center">{{medicineItem.surplusStockNum}}</td>
+      </tr>
       </tbody>
     </table>
 
@@ -34,6 +47,10 @@
       },
       medicineItems:{
         default: []
+      }, selectedIndex:{
+        default: 0
+      }, currentPageNo:{
+        default: 0
       },
     },
     data(){
@@ -42,8 +59,12 @@
 
     },
     computed : {
-      medicineItems(){
-      return  this.$store.getters.getMedicineTable;
+//      medicineItems(){
+//      return  this.$store.getters.getMedicineTable;
+//      }
+      currentPageNo:function () {
+
+        return this.$store.getters.getCurrentPageNo;
       }
 
     },

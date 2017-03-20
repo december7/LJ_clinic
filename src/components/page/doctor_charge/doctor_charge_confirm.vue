@@ -25,7 +25,7 @@
     <div class="wrapper wrapper-content animated fadeInRight no_top_padding">
       <div class="row" style="padding: 0 15px;">
         <!--顶部信息栏-->
-        <div class="col-sm-2 no-padding" style="line-height: 48px">
+        <div class="col-sm-2 no-padding" style="line-height: 48px;width: 50%">
           <small>初步诊断:</small>
           <small class="m-l-xs" style="color: lightgray"></small>
         </div>
@@ -52,9 +52,9 @@
                 <td class="text-center l_r_border">{{index + 1}}</td>
                 <td class="text-center">{{table_item.feeName}}</td>
                 <td class="text-center l_r_border">{{table_item.state == 1 ? '未完成' : '已完成'}}</td>
-                <td class="text-center l_r_border">次</td>
+                <td class="text-center l_r_border">{{$enumeration.getProjectUnit(table_item.unit)}}</td>
                 <td class="text-center l_r_border">{{table_item.retailPrice}}元</td>
-                <td class="text-center l_r_border">{{table_item.unit}}</td>
+                <td class="text-center l_r_border">{{table_item.amount}}</td>
                 <td class="text-center l_r_border" style="color: #ED6777">{{table_item.totalPrice}}</td>
               </tr>
             </tbody>
@@ -212,13 +212,13 @@
     border: 1px solid #324367;
     border-radius: 2px;
   }
-  
+
   .charge_input_conpus{
-    width: 35%; 
-    height: 28px; 
-    text-align: center; 
-    border: solid 1px #66ABD4; 
-    border-radius: 2px; 
+    width: 35%;
+    height: 28px;
+    text-align: center;
+    border: solid 1px #66ABD4;
+    border-radius: 2px;
     color: #66ABD4;
     margin-left: 5px;
   }
@@ -237,15 +237,14 @@
         paysPrice: {
           dataTotalPrice: '0',
           dataPayPrice: '0',
-          dataCouponPrice: 10,
+          dataCouponPrice: '',
           feeDetailOrdIdStrs: [],
           registerOrderId: '',
         },
       }
     },
 
-    created() {
-    },
+  
 
     components:{
       doctor_charge_pay,
@@ -265,7 +264,7 @@
         this.requestData();
         return "";
       },
-      
+
     },
 
     methods: {
@@ -296,7 +295,7 @@
         var that = this;
         if (this.is_charged == 1) {
           this.$api.get(this, this.$requestApi.chargeWaitConfirm+this.registerOrderId, '', function (data) {
-          if (data.status == '200') {
+            if(data.body.code == '00'){
             that.data_item = data.body.data;
             that.table_items = data.body.feeDetails;
 
@@ -318,7 +317,7 @@
           });
         }else{
           this.$api.get(this, this.$requestApi.chargeListConfirm+this.registerOrderId, '', function (data) {
-          if (data.status == '200') {
+            if(data.body.code == '00'){
             that.data_item = data.body.data;
             that.table_items = data.body.feeDetails;
             that.pays_items = data.body.pays;
@@ -332,7 +331,7 @@
             console.log(err);
           });
         }
-        
+
       },
 
       finishTreatment: function (data_item) {

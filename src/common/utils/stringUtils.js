@@ -26,7 +26,7 @@ export  default {
    return userSex=="1"?"男": userSex=="2"?"女":"未知";
   },//接诊计算
   registeredType:function (type) {
-   return type == 1 ? '初诊' : '次诊';
+   return type == 1 ? '初诊' : '复诊';
   },//接诊计算
   registeredState:function (state) {
    return state == 1 ? '待接诊' : '已接诊';

@@ -2,18 +2,18 @@
   <div>
     <!--顶部信息栏-->
     <div class="row white-bg" style="padding: 0 20px; height: 35px">
-      <div class="col-sm-12">
+      <div class="col-sm-12 fixed-div">
         <div class="ibox-title no-top-border pull-left" style="padding-left: 0;min-height: 35px;padding-top: 10px">
-          <h5 class="red-bg" style="margin: 1px 10px 0 0;">急</h5>
-          <small>{{data.patientName}}</small>
-          <small class="m-l-sm" style="color: #999">{{data.age}}岁 / {{data.sex == 0 ? '男' : '女'}} / {{data.tele}}</small>
-          <small class="m-l-sm" style="margin-left: 30px;">门诊号: {{data.outpatientNum}}</small>
-          <small class="m-l-sm" style="margin-left: 30px;">科室: {{data.department}}</small>
+          <h5 v-show="data.isEmergency == 1" class="red-bg" style="margin: 1px 10px 0 0;">急</h5>
+          <small>{{data.userName}}</small>
+          <small class="m-l-sm" style="color: #999">{{age}}岁 / {{data.userSex == 1 ? '男' : '女'}} / {{data.billId}}</small>
+          <small class="m-l-sm" style="margin-left: 30px;">门诊号: {{data.sortNo}}</small>
+          <small class="m-l-sm" style="margin-left: 30px;">科室: {{data.departName}}</small>
           <small class="m-l-sm" style="margin-left: 30px;">医生: {{data.doctorName}}</small>
         </div>
 
         <div class="pull-right m-r-md" style="line-height: 35px">
-          <a @click="back">返回上一级</a>
+          <a href="#/drugstore/dispensing_list">返回上一级</a>
         </div>
       </div>
     </div>
@@ -23,115 +23,100 @@
       <div class="row" style="padding: 0 15px;">
         <!--顶部信息栏-->
         <div class="col-sm-12 no-padding">
-          <div class="col-sm-2 no-padding" style="line-height: 48px">
+          <div class="col-sm-2 no-padding" style="line-height: 48px;width: 50%">
             <small>初步诊断:</small>
-            <small class="m-l-xs" style="color: black">{{data.diagnose}}</small>
+            <small class="m-l-xs" style="color: black">{{data.diagnosis}}</small>
           </div>
           <div class="pull-right m-r-md" style="line-height: 48px">
             <a style="color: #1c2b44;" href="#/doctor_clinic/history_case">查看病历</a>
           </div>
         </div>
-        <!--复选框--西/成药-->
-        <div class="checkbox-div">
-          <span class="lightgray-width" style="margin-left: -5px;font-size: 14px">西/成药</span>
-        </div>
-        <!--西/成药表格-->
-        <div class="m-r-md" style="margin-top: 5px">
-          <table class="table no-margins white-bg" style="border-top: 2px solid #999999">
-            <thead>
-            <tr>
-              <th class="text-center n_b_border">序号</th>
-              <th class="text-center n_b_border l_r_border">通用名称</th>
-              <th class="text-center n_b_border">库存</th>
-              <th class="text-center n_b_border l_r_border">数量</th>
-              <th class="text-center n_b_border">单位</th>
-              <th class="text-center n_b_border l_r_border">备注说明</th>
-              <th class="text-center n_b_border">是否收费</th>
-            </tr>
-            </thead>
 
-            <tbody>
-            <tr v-for="(data, index) in dispensingWestData">
-              <td style="" class="text-center">{{index + 1}}</td>
-              <td style="" class="text-center l_r_border">{{data.nomalName}}</td>
-              <td style="" class="text-center">{{data.repertory}}</td>
-              <td style="" class="text-center l_r_border">{{data.numbers}}</td>
-              <td style="" class="text-center">{{data.unit}}</td>
-              <td style="" class="text-center l_r_border">{{data.remark}}</td>
-              <td style="" class="text-center">{{data.chargeSituation == 0 ? '未收费' : '已收费'}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <div v-show="dispensingWestData.length != 0">
+          <!--西/成药--标签-->
+          <div class="checkbox-div">
+            <span class="lightgray-width" style="margin-left: -5px;font-size: 14px">西/成药</span>
+          </div>
+          <!--西/成药表格-->
+          <div class="m-r-md" style="margin-top: 5px">
+            <table class="table no-margins white-bg" style="border-top: 2px solid #999999">
+              <thead>
+              <tr>
+                <th class="text-center n_b_border">序号</th>
+                <th class="text-center n_b_border l_r_border">通用名称</th>
+                <th class="text-center n_b_border">库存</th>
+                <th class="text-center n_b_border l_r_border">数量</th>
+                <th class="text-center n_b_border">单位</th>
+                <th class="text-center n_b_border l_r_border">备注说明</th>
+                <th class="text-center n_b_border">是否收费</th>
+              </tr>
+              </thead>
 
-        <!--复选框--中药-->
-        <div class="checkbox-div" style="margin-top: 10px">
-          <span class="lightgray-width" style="margin-left: -5px;font-size: 14px">中药</span>
-        </div>
-        <!--中药表格-->
-        <div class="m-r-md" style="margin-top: 5px">
-          <table class="table no-margins white-bg" style="border-top: 2px solid #999999">
-            <thead>
-            <tr>
-              <th class="text-center n_b_border">序号</th>
-              <th class="text-center n_b_border l_r_border">通用名称</th>
-              <th class="text-center n_b_border">库存</th>
-              <th class="text-center n_b_border l_r_border">数量</th>
-              <th class="text-center n_b_border">单位</th>
-              <th class="text-center n_b_border l_r_border">备注说明</th>
-              <th class="text-center n_b_border">是否收费</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr v-for="(data, index) in dispensingChinaData">
-              <td style="" class="text-center">{{index + 1}}</td>
-              <td style="" class="text-center l_r_border">{{data.nomalName}}</td>
-              <td style="" class="text-center">{{data.repertory}}</td>
-              <td style="" class="text-center l_r_border">{{data.numbers}}</td>
-              <td style="" class="text-center">{{data.unit}}</td>
-              <td style="" class="text-center l_r_border">{{data.remark}}</td>
-              <td style="" class="text-center">{{data.chargeSituation == 0 ? '未收费' : '已收费'}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-        <!--中药-用法-频次-天数-总副数-->
-        <div class="m-r-md" style="margin-top: 10px">
-          <div style="background-color: white;height: 30px">
-            <span class="dispensing-title" style="margin-left: 20px">用法:</span><input readonly class="dispensing-noinput"
-                                                                                      placeholder="请输入用法"
-                                                                                      v-model="data.usage">
-            <span class="dispensing-title">频次:</span><input readonly class="dispensing-noinput" placeholder="请输入频次"
-                                                            v-model="data.frequency">
-            <span class="dispensing-title">天数:</span><input readonly class="dispensing-noinput" placeholder="请输入天数"
-                                                            v-model="data.days">
-            <span class="dispensing-title">总副数:</span><input readonly class="dispensing-noinput" placeholder="请输入总副数"
-                                                             v-model="data.pairs">
+              <tbody>
+              <tr v-for="(data, index) in dispensingWestData">
+                <td style="" class="text-center">{{index + 1}}</td>
+                <td style="" class="text-center l_r_border">{{data.prodName}}</td>
+                <td style="" class="text-center">{{data.stockNum}}</td>
+                <td style="" class="text-center l_r_border">{{data.amount}}</td>
+                <td style="" class="text-center">{{unit_array[data.unit]}}</td>
+                <td style="" class="text-center l_r_border">{{data.remark}}</td>
+                <td style="" class="text-center">{{data.payState == 0 ? '未收费' : '已收费'}}</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <!--<div style="margin-top: 15px">-->
-          <!--<input type="checkbox" class="checkbox-blue"><span>&nbsp;是否本院煎药</span>-->
-        <!--</div>-->
+        <div v-show="dispensingChinaData.length != 0">
+          <!--中药--标签-->
+          <div class="checkbox-div" style="margin-top: 10px">
+            <span class="lightgray-width" style="margin-left: -5px;font-size: 14px">中药</span>
+          </div>
+          <!--中药表格-->
+          <div class="m-r-md" style="margin-top: 5px">
+            <table class="table no-margins white-bg" style="border-top: 2px solid #999999">
+              <thead>
+              <tr>
+                <th class="text-center n_b_border">序号</th>
+                <th class="text-center n_b_border l_r_border">通用名称</th>
+                <th class="text-center n_b_border">库存</th>
+                <th class="text-center n_b_border l_r_border">数量</th>
+                <th class="text-center n_b_border">单位</th>
+                <th class="text-center n_b_border l_r_border">备注说明</th>
+                <th class="text-center n_b_border">是否收费</th>
+              </tr>
+              </thead>
 
-        <!--<div style="margin-top: 10px">-->
-          <!--<form style="display: inline-block;">-->
-            <!--<input class="checkbox-blue" type="radio" name="radio_ways_name" value="selfRadio"><span>&nbsp;自提</span>-->
-            <!--<input class="checkbox-blue" style="margin-left: 20px" type="radio" name="radio_ways_name"-->
-                   <!--value="expressRadio" checked="checked"><span>&nbsp;快递</span>-->
-          <!--</form>-->
-          <!--<div style="display: inline-block;width: 85%;">-->
-            <!--<div class="tc-form-labeldiv" style="padding:0 0 0 15px;width: auto">收件地址:</div>-->
-            <!--<input class="form-whitebg-input" style="width: 35%" placeholder="请填写收件地址">-->
-            <!--<div class="tc-form-labeldiv" style="padding:0 0 0 15px;width: auto">快递单号:</div>-->
-            <!--<input class="form-whitebg-input" style="width: 30%" placeholder="请填写快递单号">-->
-          <!--</div>-->
-        <!--</div>-->
-
-        <div style="text-align: center">
-          <button @click="back" class="btn_save dispensing-complete-btn">返回</button>
+              <tbody>
+              <tr v-for="(data, index) in dispensingChinaData">
+                <td style="" class="text-center">{{index + 1}}</td>
+                <td style="" class="text-center l_r_border">{{data.prodName}}</td>
+                <td style="" class="text-center">{{data.stockNum}}</td>
+                <td style="" class="text-center l_r_border">{{data.singleDose}}</td>
+                <td style="" class="text-center">{{unit_array[data.doseUnit]}}</td>
+                <td style="" class="text-center l_r_border">{{data.remark}}</td>
+                <td style="" class="text-center">{{data.payState == 0 ? '未收费' : '已收费'}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--中药-用法-频次-天数-总副数-->
+          <div class="m-r-md" style="margin-top: 10px">
+            <div style="background-color: white;height: 30px">
+              <span class="dispensing-title" style="margin-left: 20px">用法:</span><input readonly class="dispensing-noinput" placeholder="请输入用法" v-model="usage_json.usageName">
+              <span class="dispensing-title">频次:</span><input readonly class="dispensing-noinput" placeholder="请输入频次"
+                                                              v-model="frequency">
+              <span class="dispensing-title">天数:</span><input readonly class="dispensing-noinput" placeholder="请输入天数"
+                                                              v-model="dayNum">
+              <span class="dispensing-title">总副数:</span><input readonly class="dispensing-noinput" placeholder="请输入总副数"
+                                                               v-model="pairs">
+            </div>
+          </div>
         </div>
+
+        <!--<div style="text-align: center">-->
+          <!--<button @click="back" class="btn_save dispensing-complete-btn">返回</button>-->
+        <!--</div>-->
 
       </div>
     </div>
@@ -139,6 +124,98 @@
   </div>
 
 </template>
+<script>
+  import 'staticjs/plugins/print/printThis'
+  export default{
+    data(){
+      return {
+        unit_array:[
+          "袋", "片", "支", "粒", "瓶", "mg", "g", "ml", "l", "ug", "IU", "U", "包", "盒", "枚", "丸", "喷", "颗", "滴", "cm", "少许", "适量", "对", "个", "条", "板", "件", "套", "卷", "副", "只", "根", "箱", "台", "贴", "万单位",
+        ],
+        usage_array:[
+          "","口服", "直肠用药", "舌下用药","注射用药","皮下注射","皮内注射","肌肉注射","静脉滴注","吸入用药","局部用药","椎管内用药","关节腔内用药","胸膜腔用药","腹腔用药","阴道用药","气管内用药","滴眼","滴鼻","喷喉","含化","敷伤口","擦皮肤","其他局部用药途径","其他用药途径",
+        ],
+        data:'',
+        dispensingWestData: [],
+        dispensingChinaData: [],
+        registeredOrdId:'',
+        age:'',
+        pairs:'',
+        dayNum:'',
+        frequency:'',
+        usage_json: {
+          focus:false,
+          usageName: '',
+          usageType: '',
+        },
+      }
+    },
+
+    created() {
+      this.requestData();
+    },
+
+    methods: {
+      back: function () {
+        history.back();
+      },
+
+      requestData: function () {
+        this.registeredOrdId = this.$store.getters.getRegisteredOrdId;
+        console.log("registeredOrdId--->" + this.registeredOrdId);
+        var that = this;
+        var medicines = [];
+        this.$api.get(this, this.$requestApi.hasMediDetails + this.registeredOrdId, "", function (data) {
+          if(data.body.code == '00'){
+            medicines = data.body.medicines;
+            that.data = data.body.data;
+            that.age = that.getAge(that.data.birthdayDate);
+            for (var i = 0;i<medicines.length;i++) {
+              if(medicines[i].prodType == '1') {
+                that.dispensingWestData.push(medicines[i]);
+              }else {
+                that.dispensingChinaData.push(medicines[i]);
+              }
+            }
+            if (that.dispensingChinaData.length != 0) {
+              that.pairs = that.dispensingChinaData[0].amount/that.dispensingChinaData[0].singleDose;
+              that.dayNum = that.dispensingChinaData[0].dayNum;
+              that.frequency = that.dispensingChinaData[0].frequency;
+              that.usage_json.usageName = that.usage_array[that.dispensingChinaData[0].usageType];
+            }
+            console.log("dispensingChinaData--->" + that.dispensingChinaData);
+          } else {
+            console.log(data.body.msg);
+          }
+
+        }, function (err) {
+          console.log(err);
+
+        });
+      },
+//      计算年龄
+      getAge:function (timestamp) {
+        var now = new Date().getTime();
+        var hours = Math.abs(now - timestamp)/1000/60/60;
+        var years =  parseInt(hours / (24 * 30 * 12));
+        console.log("years-------->" + years);
+        return years;
+      },
+
+      finishTreatment: function (data) {
+        data.operation = 0;
+      },
+
+      print: function () {
+        $(".print_wrapper").printThis({
+          importCSS: true,
+          loadCSS: "//cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        });
+      }
+    },
+  }
+</script>
+
 <style>
   .l_r_border {
     border-left: 1px solid #f4f4f4;
@@ -163,7 +240,7 @@
     border: 0;
     text-align: center;
     font-size: 12px;
-    color: #5FA8D4;
+    color: #333;
   }
 
   .dispensing-noinput:focus {
@@ -242,54 +319,3 @@
   }
 
 </style>
-<script>
-  import 'staticjs/plugins/print/printThis'
-  export default{
-    data(){
-      return {
-        data: '',
-        dispensingWestData: [],
-        dispensingChinaData: [],
-        registeredOrdId:'',
-      }
-    },
-
-    created() {
-      this.requestData();
-    },
-
-    methods: {
-      back: function () {
-        history.back();
-      },
-
-      requestData: function () {
-        var that = this;
-        this.$api.get(this, this.$requestApi.dispensingDetails, "", function (data) {
-          if (data.status == '200') {
-            that.data = data.body;
-            that.dispensingWestData = data.body.westData;
-            that.dispensingChinaData = data.body.chinaData;
-          } else {
-            console.log(data.body.msg);
-          }
-
-        }, function (err) {
-          console.log(err);
-
-        });
-      },
-
-      finishTreatment: function (data) {
-        data.operation = 0;
-      },
-
-      print: function () {
-        $(".print_wrapper").printThis({
-          importCSS: true,
-          loadCSS: "//cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
-        });
-      }
-    },
-  }
-</script>

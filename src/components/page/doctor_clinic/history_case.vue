@@ -17,7 +17,7 @@
          <!--顶部信息栏-->
          <div class="col-sm-12 no-padding">
            <div class="ibox-title no-top-border gray-bg pull-left" style="padding-left: 0;">
-             <h5 class="red-bg" style="margin: 2px 10px 0 0;" v-if=" historyCaseList.isEmergency==1" >急</h5>
+             <h5 class="red-bg" style="margin: 2px 10px 0 0;" v-if=" historyCaseList.isEmergency==2" >急</h5>
              <a class="un_skip_link" data-toggle="modal" data-target="#perfect_information_modal" style="border-bottom: 1px solid blue">
                <small>{{historyCaseList.userName}}</small>
                <small class="m-l-sm">{{$stringUtils.dateAge(historyCaseList.birthdayDate)}}岁 / {{ $stringUtils.dateSex(historyCaseList.userSex )}} / {{historyCaseList.billId}}</small>
@@ -42,17 +42,17 @@
                          <div class="form-group item_line no-m-b" v-for="usrAllergy in usrAllergys">
                            <div class="col-md-4 no-padding">
                              <p class="col-md-3 no-padding">过敏史:</p>
-                             <div class="col-md-6">{{usrAllergy.allergyThing}}青霉素过敏</div>
+                             <div class="col-md-6">{{$enumeration.getParseValue($enumeration.getALLERGY_THING(),usrAllergy.allergyThing) }}</div>
                            </div>
 
                            <div class="col-md-4 no-padding">
                              <p class="col-md-3 no-padding">过敏反应:</p>
-                             <div class="col-md-6">{{usrAllergy.allergyReaction}}呕吐 休克</div>
+                             <div class="col-md-6">{{$enumeration.getParseValue($enumeration.getALLERGY_REACTION(),usrAllergy.allergyReaction) }} </div>
                            </div>
 
                            <div class="col-md-4 no-padding">
-                             <p class="col-md-3 no-padding">过敏程度:</p>
-                             <div class="col-md-6">{{usrAllergy.allergyDegree}}非常严重</div>
+                             <p class="col-md-3 no-padding" style="line-height: 20px;">过敏程度:</p>
+                             <div class="col-md-6">  {{$enumeration.getParseValue($enumeration.getALLERGY_DEGREE(),usrAllergy.allergyDegree) }} </div>
                            </div>
 
                          </div>
@@ -98,22 +98,22 @@
 
                  </div>
                  <!--病例详情-->
-                 <div v-for="itemData in registereds" class="col-md-12 no-padding" style="margin-bottom: 10px; border: 1px solid #e7eaec;">
+                 <div  v-for="(itemData,index) in registereds" class="col-md-12 no-padding" style="margin-bottom: 10px; border: 1px solid #e7eaec;">
                    <div class="ibox float-e-margins no-margins">
                      <div class="ibox-title no-top-border msg_item_title border-bottom">
-                       <h5>{{$stringUtils.dateFormat(itemData.createDate)}} / itemData.departName / {{itemData.userName}}</h5>
+                       <h5>{{$stringUtils.dateFormat(itemData.createDate)}} / {{itemData.departName}} / {{itemData.userName}}</h5>
 
-                       <p class="pull-left wrapper text-danger">[感冒]</p>
-                       <a @click="add_suggest(itemData.suggest)" data-toggle="modal" data-target="#layer" style="border-bottom: 1px solid #00b7ee">增加建议</a>
+                       <p class="pull-left wrapper text-danger">[{{itemData.diagnosis}}]</p>
+                       <a @click="add_suggest(itemData.registeredOrdId)" data-toggle="modal" data-target="#layer" style="border-bottom: 1px solid #00b7ee">增加建议</a>
                        <div class="ibox-tools">
-                         <a @click="collapse($event)" class="collapse-link">
+                         <a @click="collapseRegistered($event,itemData)" class="collapse-link">
                            <i class="fa fa-chevron-down"></i>
                          </a>
                        </div>
                      </div>
-                     <div class="ibox-content no-borders no-padding"  >
+                     <div class="ibox-content no-borders no-padding" style="display: none"  >
 
-                       <form method="get" class="form-horizontal">
+                       <form method="get"   class="form-horizontal">
 
                          <div class="ibox float-e-margins no-margins m-r-md m-l-md">
                            <div class="ibox-title no-top-border no-padding border-bottom" style="margin-left: 25px; line-height: 40px; min-height: 40px !important;">
@@ -130,56 +130,56 @@
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="col-md-3 pull-left no-padding text_tips">身&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.stature}}cm
+                                   {{registered.physique.height}}cm
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips text-center">体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.weight}}kg
+                                   {{registered.physique.weight}}kg
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips text-center">体&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;温</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.heat}}℃
+                                   {{registered.physique.temperature}}℃
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips">BMI指数</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.massIndex}}
+                                   {{registered.physique.bmiNum}}
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips text-center">呼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;吸</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.breathe}} 次/分钟
+                                   {{registered.physique.breathing}} 次/分钟
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips text-center">氧饱和度</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.oxygenSaturation}}%
+                                   {{registered.physique.oxygen}}%
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips">疼痛评分</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.painScore}}
+                                   {{registered.physique.painScore}}
                                  </div>
                                </div>
 
                                <div class="col-md-4 no-padding" style="line-height: 40px">
                                  <div class="pull-left col-md-3 no-padding text_tips text-center">脉&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;搏</div>
                                  <div class="col-md-8" style="padding-right: 0">
-                                   {{itemData.pulse}}
+                                   {{registered.physique.pulse}}
                                  </div>
                                </div>
 
@@ -187,7 +187,7 @@
                                  <div class="col-md-4 no-padding">
                                    <div class="pull-left col-md-3 no-padding text_tips">血&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;压</div>
                                    <div class="col-md-8" style="padding-right: 0">
-                                     {{itemData.systolicPressure}}mmHg / {{itemData.diastolicPressure}}mmHg
+                                     {{registered.physique.systolicPressure}}mmHg / {{registered.physique.diastolicPressure}}mmHg
                                    </div>
                                  </div>
                                </div>
@@ -201,35 +201,35 @@
                          <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">主&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;诉:</p>
                            <div class="col-md-11">
-                             {{itemData.mainSuit}}
+                             {{registered.usrMedical.chiefComplaint}}
                            </div>
                          </div>
 
                          <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">现&nbsp;&nbsp;病&nbsp;&nbsp;史:</p >
                            <div class="col-md-11">
-                             {{itemData.presentIllness}}
+                             {{registered.usrMedical.medicalInfo}}
                            </div>
                          </div>
 
                          <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">体格检查:</p>
                            <div class="col-md-11">
-                             {{itemData.physicalExamination}}
+                             {{registered.usrMedical.physiqueInfo}}
                            </div>
                          </div>
 
                          <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">初步诊断:</p>
                            <div class="col-md-11">
-                             {{itemData.tentativeDiagnosis}}
+                             {{registered.usrMedical.diagnosis}}
                            </div>
                          </div>
 
                          <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">治疗意见:</p>
                            <div class="col-md-11">
-                             {{itemData.treatmentSuggest}}
+                             {{registered.usrMedical.treatmentAdvice}}
                            </div>
                          </div>
 
@@ -237,37 +237,38 @@
                            <p class="col-md-1 no-padding text_tips">治&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;疗:</p>
                            <div class="col-md-11">
 
-                             <div v-for="(item, position) in itemData.treatmentList" class="col-md-12 no-padding">
+                             <div v-for="(item, position) in registered.projects" class="col-md-12 no-padding">
                                <div class="col-md-4 no-padding">
-                                 {{position + 1}}.{{item.treatmentName}}
+                                 {{position + 1}}.{{item.projectName}}
                                </div>
                                <div class="col-md-4 no-padding">
-                                 {{item.treatemntDays}}天
+                                 {{item.dayNum}}天
                                </div>
-                               <div :class="{'text-danger' : item.treatmentState == 0}" class="col-md-1 pull-right">
-                                 {{item.treatmentState == 0 ? '未完成' : '已完成'}}
+                               <div :class="{'text-danger' : item.state == 1}" class="col-md-1 pull-right">
+                                 {{item.state == 1 ? '未完成' : '已完成'}}
                                </div>
                              </div>
 
                            </div>
                          </div>
 
-                         <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
+                   <div class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">西药处方:</p>
                            <div class="col-md-11">
 
-                             <div v-for="(item, position) in itemData.westernMedicine" class="col-md-12 no-padding">
+                             <div v-for="(item, position) in registered.westernMedicine" class="col-md-12 no-padding">
                                <div class="col-md-4 no-padding">
-                                 {{position + 1}}.{{item.medicineName}}
+                                 {{position + 1}}.{{item.prodName}}
                                </div>
                                <div class="col-md-3 no-padding">
-                                 {{item.medicineCount}}盒
+                                 {{item.amount}}{{ $enumeration.getParseValue($enumeration.getPROD_UNITE(),item.doseUnit) }}
+
                                </div>
                                <div class="col-md-3 no-padding">
-                                 {{item.medicineUsage}}
+                                 {{$enumeration.getParseValue($enumeration.getUSAGE_TYPE(),item.usageType)  }},  {{$enumeration.getParseValue($enumeration.getPROD_FREQUENCY(),item.frequency)  }},
                                </div>
-                               <div :class="{'text-danger' : item.medicineState == 0}" class="col-md-1 pull-right">
-                                 {{item.medicineState == 0 ? '未领取' : '已领取'}}
+                               <div :class="{'text-danger' : item.state == 1}" class="col-md-1 pull-right">
+                                 {{item.state == 1 ? '未领取' : '已领取'}}
                                </div>
                              </div>
 
@@ -278,34 +279,34 @@
                            <p class="col-md-1 no-padding text_tips">中药处方:</p>
                            <div class="col-md-11">
 
-                             <div v-for="(item, position) in itemData.chineseMedicine" class="col-md-12 no-padding">
+                             <div v-for="(item, position) in registered.chineseMedicine" class="col-md-12 no-padding">
                                <div class="col-md-4 no-padding">
-                                 {{position + 1}}.{{item.medicineName}}
+                                 {{position + 1}}.{{item.prodName}}
                                </div>
                                <div class="col-md-3 no-padding">
-                                 {{item.medicineCount}}g
+                                 {{item.singleDose}}{{ $enumeration.getParseValue($enumeration.getPROD_UNITE(),item.doseUnit) }}
                                </div>
                                <div class="col-md-3 no-padding">
-                                 {{item.medicineUsage}}
+                                 {{$enumeration.getParseValue($enumeration.getUSAGE_TYPE(),item.usageType)  }},  {{$enumeration.getParseValue($enumeration.getPROD_FREQUENCY(),item.frequency)  }},
+
                                </div>
-                               <div :class="{'text-danger' : item.medicineState == 0}" class="col-md-1 pull-right">
-                                 {{item.medicineState == 0 ? '未领取' : '已领取'}}
+                               <div :class="{'text-danger' : item.state == 1}" class="col-md-1 pull-right">
+                                 {{item.state == 1 ? '未领取' : '已领取'}}
                                </div>
                              </div>
 
                            </div>
                          </div>
 
-                         <div v-show="itemData.suggest.length > 0" class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
+                         <div v-show="registered.usrMedical.doctorSuggest " class="form-group item_line no-m-b" style="margin-left: 25px; padding-right: 15px">
                            <p class="col-md-1 no-padding text_tips">增加建议:</p>
                            <div class="col-md-11">
-                             <div v-for="(item, position) in itemData.suggest">
-                               {{position + 1}}. {{item.suggestContent}}
+                             <div  >
+                              {{registered.usrMedical.doctorSuggest}}
                              </div>
                            </div>
-
                          </div>
-                       </form>
+                      </form>
                      </div>
                    </div>
                  </div>
@@ -327,12 +328,12 @@
              <button type="button" class="close" data-dismiss="modal">
                <span>&times;</span>
              </button>
-             <h5 class="modal-title">增加建议</h5>
+             <h5 class="modal-title" >增加建议</h5>
            </div>
            <div class="modal-body no-padding">
 
              <div style="width: 100%; padding: 10px 20px">
-               <textarea v-model="proposal" class="model_input"></textarea>
+               <textarea v-model=" doctorSuggest" class="model_input"></textarea>
              </div>
              <div id="dialog-body" class="text-center m-b">
                <button @click="saveSuggest()" class="btn btn-primary btn-w-m" data-dismiss="modal">{{compileSuppliers}}完成</button>
@@ -489,14 +490,22 @@
       data(){
         return{
           historyCaseList: '',
-          suggest:[],
           proposal:'',
-          itemSuggest:[],
-          usrAllergys:[{}],
+          doctorSuggest:[],
+          usrAllergys:[],
           compileSuppliersNo:"",
           hasUserMedical:"",
-          registereds:"",
-          usrMedical:""
+          registereds:[],
+          usrMedical:"",
+          registeredOrdId:"",
+          registered:{
+            usrMedical:{},
+            physique:{},
+            westernMedicine:[],
+            chineseMedicine:[],
+            projects:[],
+          },
+
         }
       },
 
@@ -510,9 +519,8 @@
 
       components:{prefect},
       computed : {
-
         compileSuppliers(){
-          this. compileSuppliersNo=this.$store.getters.getCompileSuppliersNo;
+          this. compileSuppliersNo=this.$store.getters.getCompileUserId;
           if (this. compileSuppliersNo){
             return  this.request_history_case(this. compileSuppliersNo);
           }else {
@@ -523,18 +531,59 @@
       },
       methods:{
         back:function () {
-          history.back();
+          this.$router.back();
         },
 
-        add_suggest:function (suggest) {
-          this.itemSuggest = suggest;
+        add_suggest:function (registeredOrdId) {
+          this.registeredOrdId = registeredOrdId;
           this.proposal = '';
         },
 
         saveSuggest:function () {
-          if (this.proposal != null) {
-            this.itemSuggest.push({suggestContent: this.proposal})
+          if (this. doctorSuggest  ) {
+            let that=this;
+            that.$api.post(that,that.$requestApi.doctorSuggest+that.registeredOrdId,{doctorSuggest:this.doctorSuggest},function  (data) {
+              if(data.data.code=='00'){
+                swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
+
+              }else{
+                swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+                console.log(data.body.msg);
+
+              }
+
+            },function (err) {
+              console.log(err);
+
+            });
           }
+        },
+        collapseRegistered:function (event,itemData ) {
+          this.collapse(event);
+          let that=this;
+          that.$api.get(that,that.$requestApi.historyMedical+itemData.registeredOrdId,"",function  (data) {
+            if(data.data.code=='00'){
+              that.registered.physique = data.body.physique;
+              that.registered.usrMedical = data.body.data;
+              that.registered.projects = data.body.projects;
+              let prods = data.body.prods;
+              for (let i  in prods){
+                if (prods[i].prodType==1){
+                  that .registered.westernMedicine.push(prods[i]);
+                }else {
+                  that.registered. chineseMedicine.push(prods[i]);
+                }
+              }
+            }else{
+              console.log(data.body.msg);
+            }
+
+          },function (err) {
+            console.log(err);
+
+          });
+
         },
 
         collapse:function (event) {
@@ -558,14 +607,13 @@
 
         request_history_case:function (registeredOrdId) {
           var that=this;
-          this.$api.get(this,this.$requestApi.historyMedicals+registeredOrdId,"",function  (data) {
-            if(data.status=='200'){
+          that.$api.get(that,that.$requestApi.historyMedicals+registeredOrdId,"",function  (data) {
+            if(data.data.code=='00'){
               that.historyCaseList = data.body.data;
               that.usrMedical = data.body.usrMedical;
               that.hasUserMedical = data.body.hasUserMedical;
               that.usrAllergys = data.body.usrAllergys;
               that.registereds = data.body.registereds;
-              console.log(that.historyCaseList);
             }else{
               console.log(data.body.msg);
             }

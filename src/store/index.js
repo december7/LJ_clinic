@@ -14,6 +14,9 @@ import content_title from './modules/content_title';
 import editable from './modules/personal_msg';
 import assistInquiry from './modules/assist_inquiry';
 import showPhysique from './modules/showPhysique';
+import show_dispensing from './modules/show_dispensing';
+import selectTemplate from './modules/selectTemplate';
+import assisInquiry from './modules/assisInquiry';
 
 Vue.use(Vuex);
 
@@ -35,6 +38,9 @@ export default new Vuex.Store({
     editable,
     assistInquiry,
     showPhysique,
+    show_dispensing,
+    selectTemplate,
+    assisInquiry,
   },
   strict: debug,
 });

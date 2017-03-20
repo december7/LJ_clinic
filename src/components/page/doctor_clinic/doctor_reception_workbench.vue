@@ -11,10 +11,10 @@
         <!--顶部信息栏-->
         <div class="col-sm-12 no-padding">
           <div class="ibox-title no-top-border gray-bg pull-left" style="padding-left: 0;">
-            <h5 class="red-bg" style="margin: 2px 10px 0 0;" v-if=" patientCaseList.isEmergency==1" >急</h5>
+            <h5 class="red-bg" style="margin: 2px 10px 0 0;" v-if=" patientCaseList.isEmergency==2" >急</h5>
             <a style="border-bottom: 1px solid blue" data-toggle="modal" data-target="#perfect_information_modal">
               <small>{{patientCaseList.userName}}</small>
-              <small class="m-l-sm">{{$stringUtils.dateAge(patientCaseList.birthdayDate)}}岁 /{{ $stringUtils.dateSex(patientCaseList.userSex )}} / {{patientCaseList.billId}}</small>
+              <small class="m-l-sm">{{ $stringUtils.dateAge(patientCaseList.birthdayDate)}}岁 /{{ $stringUtils.dateSex(patientCaseList.userSex )}} / {{patientCaseList.billId}}</small>
             </a>
             <small class="m-l-sm text-danger" v-if="hasUserMedical">&#9888 该患者有过敏史!</small>
           </div>
@@ -324,7 +324,7 @@
     </div>
 
     <!--模态窗开始-->
-    <treatment-model></treatment-model>
+    <treatment-model :prescription_type="prescription_type" :cure_template_currentIndex="cure_template_currentIndex"   ></treatment-model>
     <!--模态窗结束-->
 
     <!--完善信息模态框-->
@@ -465,6 +465,7 @@
   import doctor_rest_charge from './doctor_rest_charge.vue';
   export default{
     data(){
+
       return {
         titles: [
           {titleName: '病例', selected: true},
@@ -484,7 +485,7 @@
         hasUserMedical: false,
 //        assist_inquiry_show: false,
 //        assist_inquiry_showed:false,
-        prescription_type:0,
+        prescription_type:1,
         currentFocusIndex:0,
         cure_items: [],
         other_charge_items: [],
@@ -522,6 +523,7 @@
     },
     components:{switch_tab, prefect, case_report,doctor_treatment,treatmentModel,doctor_prescription,doctor_rest_charge},
     created(){
+
       this.$store.dispatch('addSwitchTabs', this.titles);
       this.$store.dispatch('addSelectStates', this.selects);
       this.$store.dispatch('showRightSearch', false);
@@ -603,7 +605,7 @@ console.log(status);
     methods: {
       historyCase:function () {
         console.log(" this.patientCaseList.userId)"+ this.patientCaseList.userId);
-        this.$store.dispatch('medicine_compile_suppliers_no',  this.patientCaseList.userId);
+        this.$store.dispatch('medicine_compile_user_id',  this.patientCaseList.userId);
         this.$router.push('/doctor_clinic/history_case');
       },
 
@@ -693,9 +695,6 @@ console.log(status);
       },
 
 
-      select_cure_temp:function (index) {
-        this.cure_template_currentIndex = index;
-      },
 
       showModel:function () {
         this.cure_template_currentIndex = -100;
