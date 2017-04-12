@@ -2,22 +2,22 @@
   <div class="ibox-content padding-lr-10 gray-bg">
     <!--按钮-->
     <div style="display: inline-block;margin-top: 10px">
-      <a type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;增加角色</a>
+      <a @click="addRoleClick" type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew_role"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;增加角色</a>
     </div>
     <div class="pull-right search_input" style="margin-top: 5px;margin-right: 0">
-      <input placeholder="请输入角色名称" type="text" style="outline: none;width:200px;border: none;" v-model="search_role_name">
+      <input @keyup.enter="searchRole(search_role_name)" placeholder="请输入角色名称" type="text" style="outline: none;width:200px;border: none;" v-model="search_role_name">
       <a @click="searchRole(search_role_name)"><img style="width: 15px;height: 15px;margin-right: 5px" src="../../../../static/img/set_manage_img/search.png"></a>
     </div>
     <!--模态弹窗开始--增加角色-->
-    <div class="modal inmodal fade" id="addnew" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal inmodal fade" id="addnew_role" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
       <div class="modal-dialog modal-lg" style="width: 360px;">
         <div class="modal-content">
           <div class="tc-title-div">增加角色</div>
           <button type="button" class="close" data-dismiss="modal" style="margin: 11.5px 15px 0 0;"><span
             aria-hidden="true">&times;</span></button>
           <div class="hr-tcline"></div><!--分隔线-->
-          <input style='width: 300px' class='form-tcinput form-alone-input' placeholder='请输入需要增加的角色名称' v-model="add_role_name">
-          <button @click="saveAddRole(add_role_name)" style='margin: 80px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">保存</button>
+          <input maxlength='20' style='width: 300px' class='form-tcinput form-alone-input' placeholder='请输入需要增加的角色名称' v-model="add_role_name">
+          <button @click="saveAddRole(add_role_name)" style='margin: 80px 10px 30px 75px;' class='form-btn-black'>保存</button>
           <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
         </div>
       </div>
@@ -36,7 +36,11 @@
       <tr v-for="(data_item,index) in data_items">
         <td class="text-center">{{waitParams.pageNo+index}}</td>
         <td class="text-center">{{data_item.roleName}}</td>
-        <td class="text-right"><a v-if="data_item.hospitalId!=0 && data_item.roleType!=1" href="javascript:;" data-toggle="modal" data-target="#edit" @click="editRole(data_item,index)">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a @click="powerClick(data_item,index)" v-if="data_item.isAdmin!=1" data-toggle="modal" data-target="#powerSet">权限设置</a></td>
+        <td class="text-right">
+          <a v-if="data_item.hospitalId!=0 && data_item.roleType!=1" href="javascript:;" data-toggle="modal" data-target="#edit_role" @click="editRole(data_item,index)">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a @click="powerClick(data_item,index)" v-if="data_item.hospitalId!=0 && data_item.roleType!=1" data-toggle="modal" data-target="#powerSet">权限设置</a>
+          <a @click="powerClick(data_item,index)" v-if="data_item.hospitalId==0 && data_item.roleType==1" data-toggle="modal" data-target="#powerSet">查看权限</a>
+          </td>
         <td class="text-right">&nbsp;</td>
       </tr>
 
@@ -44,7 +48,7 @@
     </table>
 
     <!--模态弹窗开始--修改名称-->
-    <div class="modal inmodal fade" id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal inmodal fade" id="edit_role" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
       <div class="modal-dialog modal-lg" style="width: 360px;">
         <div class="modal-content">
           <div class="tc-title-div">修改名称</div>
@@ -52,7 +56,7 @@
             aria-hidden="true">&times;</span></button>
           <div class="hr-tcline"></div><!--分隔线-->
           <input style='width: 300px' class='form-tcinput form-alone-input' placeholder='请输入新的角色名称' v-model="edit_role_name">
-          <button @click="saveEditRole(edit_role_name)" style='margin: 80px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">保存</button>
+          <button @click="saveEditRole(edit_role_name)" style='margin: 80px 10px 30px 75px;' class='form-btn-black'>保存</button>
           <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
         </div>
       </div>
@@ -60,106 +64,32 @@
     <!--模态弹窗结束-->
 
     <!--模态弹窗开始--权限设置-->
-    <div class="modal inmodal fade" id="powerSet" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal inmodal fade" id="powerSet" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
       <div class="modal-dialog modal-lg" style="width: 920px;">
         <div class="modal-content">
           <div class="tc-title-div">权限设置</div>
           <button type="button" class="close" data-dismiss="modal" style="margin: 11.5px 15px 0 0;"><span
             aria-hidden="true">&times;</span></button>
           <div class="hr-tcline"></div><!--分隔线-->
-          <div class='tc-block-div'>
+          <div class='tc-block-div' v-for="(data,index) in datas">
             <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input @click="registerClick" class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">挂号</span></div>
+              <div class="checkbox-div"><input @click="registerClick(index)" class="checkbox-gray" type="checkbox" name="checkInfo" :checked='data.checkboxDiv' value="0" id="all" :disabled="isDisabled"><span class="lightgray-width">{{data.title}}</span></div>
             </div>
             <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">新增挂号</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">挂号列表</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">收费</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">待收费</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">收费列表</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">医生门诊</span></div>
-              <!--<a  href="#" style="float: right;font-size: 12px;margin-top: 5px"  data-toggle="modal" data-target="#selfinfo">查看更多</a>-->
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">今日患者</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">历史患者</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">治疗室</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">待治疗</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">治疗列表</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">药房</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">待发药</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">发药列表</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">药品进销存</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">商品管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">供应商管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">库存管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">预警</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">采购</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">入库</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">出库</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">退货</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">盘点</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">审核</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">患者管理</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">患者列表</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">数据统计</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">接诊量</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">收益</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">收益分析</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">药品分析</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">患者年龄分析</span></div>
-          </div>
-          <div class='tc-block-div'>
-            <div class='tc-darkgray-div'>
-              <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">设置管理</span></div>
-            </div>
-            <!--灰色部分复选框-->
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">诊所信息</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">角色管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">员工管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">挂号设置</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">项目管理</span></div>
-            <div class="checkbox-div"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="0"><span class="lightgray-width">项目模板设置</span></div>
-          </div>
-          <button style='margin: 30px 10px 30px 355px;' class='form-btn-black'>保存</button><button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
+            <div class="checkbox-div" v-for="(content,i) in  data.content"><input class="checkbox-gray" type="checkbox" name="checkInfo" value="4" :checked='content.checkboxDiv'  @click="registerClick1(index,i)" :disabled="isDisabled"><span class="lightgray-width">{{content.title}}</span></div>
+           </div>        
+          <button @click="saveRolePower" style='margin: 30px 10px 30px 355px;' class='form-btn-black' :disabled="isDisabled">保存</button><button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
         </div>
       </div>
     </div>
     <!--模态弹窗结束-->
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
+
+    <div v-show="data_items.length <= 0" style="width:100%; height:100%; text-align:center; margin-top:150px">
+      <img src="../../../../static/img/patient_nor.png">
+      <h5>暂无此角色</h5>
+    </div>
+
 <!--<delete-toast></delete-toast>-->
   </div>
 
@@ -179,6 +109,188 @@ export default {
     },
     data(){
       return {
+        datas:[
+          {
+            title:"挂号",
+            checkboxDiv:false,
+            privId:'3',
+            content:[
+              { 
+                title:"新增挂号",
+                checkboxDiv:false,
+                privId:'4',
+                
+              },{
+                title:"挂号列表",
+                checkboxDiv:false,
+                privId:'17',
+              }
+            ]
+          },
+          {
+            title:"收费",
+            checkboxDiv:false,
+            privId:'1',
+            content:[
+              { 
+                title:"待收费",
+                checkboxDiv:false,
+                privId:'2',
+                
+              },{
+                title:"收费列表",
+                checkboxDiv:false,
+                privId:'16',
+              }
+            ]
+          },
+          {
+            title:"医生门诊",
+            checkboxDiv:false,
+            privId:'10',
+            content:[
+              { 
+                title:"今日患者",
+                checkboxDiv:false,
+                privId:'11',
+                
+              },{
+                title:"历史患者",
+                checkboxDiv:false,
+                privId:'12',
+              }
+            ]
+          },
+          {
+            title:"治疗室",
+            checkboxDiv:false,
+            privId:'18',
+            content:[
+              { 
+                title:"待治疗",
+                checkboxDiv:false,
+                privId:'19',
+                
+              },{
+                title:"治疗列表",
+                checkboxDiv:false,
+                privId:'21',
+              }
+            ]
+          },
+          {
+            title:"药房",
+            checkboxDiv:false,
+            privId:'5',
+            content:[
+              { 
+                title:"待发药",
+                checkboxDiv:false,
+                privId:'14',
+                
+              },{
+                title:"发药列表",
+                checkboxDiv:false,
+                privId:'15',
+              }
+            ]
+          },
+          {
+            title:"药品进销存",
+            checkboxDiv:false,
+            privId:'23',
+            content:[
+              { 
+                title:"商品管理",
+                checkboxDiv:false,
+                privId:'24',
+                
+              },{
+                title:"供应商管理",
+                checkboxDiv:false,
+                privId:'25',
+              },{
+                title:"库存管理",
+                checkboxDiv:false,
+                privId:'26',
+              },{
+                title:"预警",
+                checkboxDiv:false,
+                privId:'27',
+              },{
+                title:"采购",
+                checkboxDiv:false,
+                privId:'28',
+              },{
+                title:"入库",
+                checkboxDiv:false,
+                privId:'30',
+              },{
+                title:"出库",
+                checkboxDiv:false,
+                privId:'29',
+              },{
+                title:"退货",
+                checkboxDiv:false,
+                privId:'31',
+              },{
+                title:"盘点",
+                checkboxDiv:false,
+                privId:'32',
+              },{
+                title:"审核",
+                checkboxDiv:false,
+                privId:'33',
+              },
+            ]
+          },
+          {
+            title:"患者管理",
+            checkboxDiv:false,
+            privId:'6',
+            content:[
+              { 
+                title:"患者列表",
+                checkboxDiv:false,
+                privId:'13',
+                
+              },
+            ]
+          },
+          {
+            title:"设置管理",
+            checkboxDiv:false,
+            privId:'7',
+            content:[
+              { 
+                title:"诊所信息",
+                checkboxDiv:false,
+                privId:'34',
+                
+              },{
+                title:"角色管理",
+                checkboxDiv:false,
+                privId:'8',
+              },{
+                title:"员工管理",
+                checkboxDiv:false,
+                privId:'9',
+              },{
+                title:"挂号设置",
+                checkboxDiv:false,
+                privId:'35',
+              },{
+                title:"项目设置",
+                checkboxDiv:false,
+                privId:'36',
+              },{
+                title:"项目模板设置",
+                checkboxDiv:false,
+                privId:'37',
+              },
+            ]
+          },
+        ],
         data_items:[],
         item_data_line:{},
         add_role_name:'',
@@ -188,12 +300,19 @@ export default {
         search_role_name:'',
 
         power_arr:[],
+        checkboxDiv:false,
+         checkboxDiv1:false,
+         checked1:false,
+         checkboxDivmodel:0,
+         checkboxDiv1model:0,
+         checked1model:0,
 
         waitParams:{
           pageSize:this.$enumerationType.pageSize,
           pageNo:'',
           roleName:'',
-        }
+        },
+        isDisabled:false,
 
       }
     },
@@ -206,11 +325,12 @@ export default {
 
     methods: {
       pageIndexNo:function(){
-        		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
       },
-      role_manage_list: function () {
-        var that = this;
+      role_manage_list: function (search_role_name) {
+        this.waitParams.roleName = search_role_name;
         this.waitParams.pageNo = this.pageIndexNo();
+        var that = this;
         console.log("this.waitParams.pageNo-->" + this.waitParams.pageNo);
         this.$api.get(this, this.$requestApi.roleManage, this.waitParams, function (data) {
           if (data.body.code == '00') {
@@ -218,6 +338,7 @@ export default {
             that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
             console.log(data.body.msg);
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         }, function (err) {
           console.log(err);
@@ -229,29 +350,27 @@ export default {
       },
 //      搜索角色
       searchRole:function (search_role_name) {
-        if (!search_role_name){
-          return;
-        }
-        var that = this;
-        this.$api.get(this, this.$requestApi.roleManage, {"roleName":search_role_name}, function (data) {
-          if (data.body.code == '00') {
-            that.data_items = data.body.data;
-          } else {
-            console.log(data.body.msg);
-          }
-        });
+        this.$store.dispatch('setCurrentPageNo',1);
+        this.role_manage_list(search_role_name);
+      },
+      // 点击新增角色
+      addRoleClick: function (){
+        this.add_role_name = '';
       },
 //      保存新增的角色
       saveAddRole: function (add_role_name) {
         if(add_role_name == ''){
           console.log("没填写角色名");
+          swal({title: "未填写角色名", text: "", type: "error", timer: 1000, showConfirmButton: false});
         }else {
           var that=this;
           this.$api.post(this,this.$requestApi.addNewRole, {"roleName":add_role_name,"roleType":"2"},function  (data) {
             if(data.body.code == '00'){
               that.role_manage_list();
+              swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
+              $("#addnew_role").modal('hide');
             }else{
-
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
             }
           });
         }
@@ -267,35 +386,122 @@ export default {
         console.log("编辑后的角色名------>" + edit_role_name + "点击的rollId---->" + this.edit_role_id + "index---->" + this.click_index);
         if(edit_role_name == ''){
           console.log("没填写角色名");
+          swal({title: "未填写角色名", text: "", type: "error", timer: 1000, showConfirmButton: false});
+        }else if (edit_role_name == this.data_items[this.click_index].roleName){
+          swal({title: "并未修改角色名", text: "", type: "error", timer: 1000, showConfirmButton: false});
         }else {
           var that=this;
           this.$api.post(this,this.$requestApi.updateRole, {"roleName":edit_role_name,"roleId":this.edit_role_id},function  (data) {
             if(data.body.code == '00'){
               that.role_manage_list();
+              swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
+              $("#edit_role").modal('hide');
             }else{
-
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
             }
           });
         }
       },
-
+      // 点击权限设置按钮
       powerClick: function (data_item,index) {
+        // 重置源数据
+        for (var i in this.datas){
+          this.datas[i].checkboxDiv = false;
+          for (var j in this.datas[i].content){
+            this.datas[i].content[j].checkboxDiv = false;
+          }
+        }
         this.edit_role_name = data_item.roleName;
         this.edit_role_id = data_item.roleId;
         this.click_index = index;
         var that = this;
         this.$api.get(this, this.$requestApi.queryRolePower, {"roleId":this.edit_role_id}, function (data) {
           if (data.body.code == '00') {
-            
-          } else {
-            
+            var powerData = data.body.data;
+            for (var i in powerData){
+              for (var j in that.datas){
+                if (powerData[i].privId == that.datas[j].privId){
+                  that.datas[j].checkboxDiv = true;
+                }
+                if (powerData[i].childPrivs){
+                  for (var k in powerData[i].childPrivs){
+                    for (var a in that.datas[j].content){
+                      if (powerData[i].childPrivs[k].privId == that.datas[j].content[a].privId){
+                        that.datas[j].content[a].checkboxDiv = true;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }else {
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         });
+        if(data_item.hospitalId==0 && data_item.roleType==1){
+          this.isDisabled = true;
+        }else {
+          this.isDisabled = false;
+        }
       },
 
-      registerClick:function () {
-        
+      
+
+      registerClick:function (index) {
+        let contents= this.datas[index].content;
+        this.datas[index].checkboxDiv=! this.datas[index].checkboxDiv;
+    
+        for(let j in contents){
+          contents[j].checkboxDiv=this.datas[index].checkboxDiv;
+        }
+        this.datas[index].content=contents;
+},
+      registerClick1:function (index ,i) {
+       this.datas[index].content[i].checkboxDiv=! this.datas[index].content[i].checkboxDiv;
+       let contents= this.datas[index].content;
+       let flag=0;
+       console.log(JSON.stringify(contents));
+       for(let j in contents){
+        if(!contents[j].checkboxDiv){
+          flag++;
+        }
+       }
+
+      this.datas[index].checkboxDiv=(flag<=contents.length-1);
+      
+    },
+    // 保存角色权限
+    saveRolePower: function() {
+      // console.log("---->" + this.datas);
+      var power = '';
+      for(var i in this.datas){
+        console.log(this.datas[i].title + "--->" + this.datas[i].checkboxDiv + "----->" + this.datas[i].privId);
+        if (this.datas[i].checkboxDiv) {
+          power += this.datas[i].privId;
+          power += ',';
+        }
+        for (var j in this.datas[i].content){
+          console.log(this.datas[i].content[j].title + "--->" + this.datas[i].content[j].checkboxDiv + "----->" + this.datas[i].content[j].privId)
+          if (this.datas[i].content[j].checkboxDiv) {
+            power += this.datas[i].content[j].privId;
+            power += ',';
+          }
+        }
       }
+      if (power.length){
+        power=power.substring(0,power.length-1);
+      }
+      console.log("power-->" + power);
+      var that=this;
+      this.$api.post(this,this.$requestApi.saveRolePower, {"privIds":power,"roleId":this.edit_role_id} ,function (data) {
+        if(data.body.code == '00'){
+          swal({title: "保存成功!", text: "", type: "success", timer: 1000, showConfirmButton: false});
+          $("#powerSet").modal('hide');
+        }else {
+          swal({title: "保存失败!", text: "", type: "error", timer: 1000, showConfirmButton: false});
+        };
+      });
+    },
 
 
     },

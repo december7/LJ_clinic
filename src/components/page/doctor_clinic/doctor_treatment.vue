@@ -21,7 +21,7 @@
                     <input @input="getDataList(cure_item.projectName)" @focus="getFocus(cure_item, 0,cure_item.projectName)"   @blur="loseFocus(cure_item)"   class="form-control white-bg no-padding text-center no-borders" style="height: auto; background: white" type="text" v-model="cure_item.projectName">
                     <div v-show="cure_item.focus && currentFocusIndex == 0" class="list_menu">
                         <div v-if="dataList.length == 0&&cure_item.operType!=4" class="red-bg">暂无该治疗</div>
-                        <ul  v-else  class="no-margins">
+                        <ul  v-else  class="no-margins attopic">
                             <li @mousedown="selectedName(data, cure_item)" class="item_list_normal" v-for="(data, index) in dataList"><a>{{data.projectName}}</a></li>
                         </ul>
                     </div>
@@ -215,7 +215,9 @@
                               that.cure_items=[];
                               that.deleteCureItems=[];
                             }else{
-                                console.log(data.body.msg);
+                              swal({   title: data.body.msg,   text: "", type:that.$enumerationType.error,  timer: that.$enumerationType.timers,   showConfirmButton: false });
+
+                              console.log(data.body.msg);
                             }
 
                         },function (err) {

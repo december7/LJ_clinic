@@ -11,12 +11,12 @@
             <input name="phone" v-model="phone" v-validate:phone.initial="'required|numeric'"
                    :class="{'input': true, 'login-input': true, 'is-danger': errors.has('phone') }" type="tel"
                    placeholder="请输入您的手机号码" maxlength="11">
-            <toast-error class="my-toast-error" v-show="errors.has('phone')" :toastContent="placeholder.toastContent"></toast-error>
+            <toast-error  class="my-toast-error" v-show="errors.has('phone')" :toastContent="placeholder.toastContent"></toast-error>
           </div>
           <div class="login-input-div">
             <div :class="[{ 'top-20px': errors.has('phone') }, 'login-input-frontImg paswd-BG']"></div><div :class="[{ 'top-20px': errors.has('phone') }, 'login-input-frontLine']"></div>
-            <a @click="clickEye(eyeOpen)" id="click_eye_id" :class="{ 'top-20px': errors.has('phone') }" class="login-input-rightImg eye-off-BG" v-show="!errors.has('phone')"></a>
-            <input name="password" id="paswd_id" v-model="password" v-validate:phone.initial="'required|numeric'"
+            <a @click="clickEye(eyeOpen)" id="click_eye_id" class="login-input-rightImg eye-off-BG" v-show="!errors.has('phone')"></a>
+            <input name="password" id="paswd_id" v-model="password" v-validate:password.initial="'required'"
                    :class="{'input': true, 'login-input': true, 'is-danger': errors.has('password') }" type="password"
                    placeholder="请输入密码">
             <toast-error style="margin-bottom: 0px" class="my-toast-error" v-show="errors.has('password')" :toastContent="placeholder.toastPassword"></toast-error>
@@ -32,11 +32,13 @@
           <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start"></el-tooltip>
           <div class="login-checkbox-div">
             <!--<img class="" src="../../../static/img/LoginAndRegister/login_phone.png" style="display: inline-block">-->
-            <input class="checkbox-myblue" type="checkbox" name="checkbox_paswd" value="0"><span style="font-size: 12px">记住密码</span>
+            <input class="checkbox-myblue" type="checkbox" name="checkbox_paswd" value="0" v-model="remeberPaswd"><span style="font-size: 12px">记住密码</span>
           </div>
-          <a href="#/login/welcome_home_page" style="color: #1c2b44"><div class="foget-paswd-div"><img class="forget-paswd-img" src="../../../static/img/LoginAndRegister/login_forget.png"><span style="font-size: 12px">&nbsp;忘记密码</span></div></a>
-          <!--<a href="#/login/forget_password" style="color: #1c2b44"><div class="foget-paswd-div"><img class="forget-paswd-img" src="../../../static/img/LoginAndRegister/login_forget.png"><span style="font-size: 12px">&nbsp;忘记密码</span></div></a>-->
+          <!--<a href="#/login/reset_password" style="color: #1c2b44"><div class="foget-paswd-div"><img class="forget-paswd-img" src="../../../static/img/LoginAndRegister/login_forget.png"><span style="font-size: 12px">&nbsp;忘记密码</span></div></a>-->
+          <!--<a href="#/login/welcome_home_page" style="color: #1c2b44"><div class="foget-paswd-div"><img class="forget-paswd-img" src="../../../static/img/LoginAndRegister/login_forget.png"><span style="font-size: 12px">&nbsp;忘记密码</span></div></a>-->
+          <a href="#/login/forget_password" style="color: #1c2b44"><div class="foget-paswd-div"><img class="forget-paswd-img" src="../../../static/img/LoginAndRegister/login_forget.png"><span style="font-size: 12px">&nbsp;忘记密码</span></div></a>
           <button type="button" class="login-button" @click="handleSubmit2">登 录</button>
+          <a href="#/login/home_register" class="into-register">立即注册<img style="width:9px;height:6px;margin-left:6px;vertical-align: middle;" src="../../../static/img/LoginAndRegister/login_into_register.png"></a>
           <!--<button type="button" :class="agree_clickCheck ? 'login-button' : 'login-button-gray'" @click="handleSubmit2">登 录</button>-->
           <!--同意协议复选框-->
           <!--<div class="login-checkbox-div" style="margin-top: 20px"><input class="checkbox-red" type="checkbox" name="checkbox_service" v-model="agree_clickCheck"><span style="color: #f44f63;font-size: 12px;">同意《邻家好医服务条款》</span></div>-->
@@ -67,19 +69,26 @@
           toastPhone: "请输入手机号码 !",
           toastPassword: "请输入密码 !",
           toastLogin: "登录失败请重试 !",
-
         },
 
 //      phone:"18621889844",
-//        phone: "13026306663",
-        phone: "15726816311",
-        accounting: '',
-        password: "123456",
+        //  phone: "13026306663",
+        // phone: "15726816311",
+        // password: "123456",
+        phone: "",
+        password: "",
         isLogin: false,
 
         eyeOpen: false,
-        agree_clickCheck: false,
+        // agree_clickCheck: false,
+        remeberPaswd: false,
       };
+    },
+
+    created(){
+      //分析cookie值，显示上次的登陆信息
+      this.phone = this.getCookieValue("phone");
+      this.password = this.getCookieValue("password");
     },
 
     methods: {
@@ -89,45 +98,64 @@
 //          console.log("可以登录");
           if (this.phone && this.password) {
             //设置提示信息内容
-            var that = this;
-            this.$api.post(this, this.$requestApi.login, {
-              "source": "1",
-              "billId": this.phone,
-              "password": this.password
-            }, function (data) {
-              console.info(data.body);
-              if (data.body.code === '00') {
-                console.log(data.body.ljhyToken);
-                that.$store.dispatch('login_submit_success', data.body.ljhyToken);
-                that.$store.dispatch('auth_access_user_operator_id', data.body.data.operatorId);
-                console.log("data.body.data.operatorId" + data.body.data.operatorId);
-//          localStorage.setItem("AUTH_ACCESS_USER_DATA", data.body.data.operatorId);
-                localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_ID", data.body.data.operatorId);
-                localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_NAME", data.body.data.operatorName);
-                localStorage.setItem("AUTH_ACCESS_USER_BILLID", data.body.data.billId);
-                swal({title: data.body.msg, text: "", type: "success", timer: 2000, showConfirmButton: false});
-
-                that.$router.push('/');
-
-              } else {
-                console.log(data.body.msg);
-                that.isLogin = true;
-                swal({title: data.body.msg, text: "", type: "error", timer: 2000, showConfirmButton: false});
-              }
-
-            }, function (err) {
-              console.log(err);
-              swal({title: "登录失败", text: "", type: "error", timer: 2000, showConfirmButton: false});
-            });
+            if(this.$stringUtils.checkPhone(this.phone)){
+              var that = this;
+              this.$api.post(this, this.$requestApi.login, {
+                "source": "1",
+                "billId": this.phone,
+                "password": this.$md5(this.password)
+              }, function (data) {
+                if (data.body.code === '00') {
+                  if(that.remeberPaswd){ 
+                    that.setCookie("phone",that.phone,24,"/");
+                    that.setCookie("password",that.password,24,"/");
+                    console.log("记住密码成功--------------");
+                    console.log(data.body.ljhyToken);
+                    that.$store.dispatch('login_submit_success', data.body.ljhyToken);
+    //                that.$store.dispatch('auth_access_user_operator_id', data.body.data.operatorId);
+                    console.log("data.body.data.operatorId" + data.body.data.operatorId);
+                    localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_ID", data.body.data.operatorId);
+                    localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_NAME", data.body.data.operatorName);
+                    localStorage.setItem("AUTH_ACCESS_USER_BILLID", data.body.data.billId);
+                    localStorage.setItem(that.$names.reload, 1);
+                    localStorage.setItem("add_home_left_tabs","");
+                    swal({title: "登录成功", text: "", type: "success", timer: 2000, showConfirmButton: false});
+                    that.$router.replace('/home');
+                  }else {
+                    console.log(data.body.ljhyToken);
+                    that.$store.dispatch('login_submit_success', data.body.ljhyToken);
+    //                that.$store.dispatch('auth_access_user_operator_id', data.body.data.operatorId);
+                    console.log("data.body.data.operatorId" + data.body.data.operatorId);
+                    localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_ID", data.body.data.operatorId);
+                    localStorage.setItem("AUTH_ACCESS_USER_OPERATOR_NAME", data.body.data.operatorName);
+                    localStorage.setItem("AUTH_ACCESS_USER_BILLID", data.body.data.billId);
+                    localStorage.setItem(that.$names.reload, 1);
+                    localStorage.setItem("add_home_left_tabs","");
+                    swal({title: data.body.msg, text: "", type: "success", timer: 2000, showConfirmButton: false});
+                    that.$router.replace('/home');
+                  } 
+                } else{
+                  that.isLogin = true;
+                  if (data.body.code == "07"){
+                    console.log("第一次登录请重置密码");
+                    swal({title: data.body.msg, text: "", type: "success", timer: 2000, showConfirmButton: false});
+                    that.$router.replace('/login/reset_password?' + 'phone=' + that.phone);
+                  }else {
+                    swal({title: data.body.msg, text: "", type: "error", timer: 2000, showConfirmButton: false});
+                  }
+                }
+              });
+            }else {
+              swal({title: "手机号输入有误", text: "", type: "error", timer: 1000, showConfirmButton: false});
+            }
           }else {
-            swal({title: "账号或密码未填写", text: "", type: "error", timer: 2000, showConfirmButton: false});
+            swal({title: "账号或密码未填写", text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
 //        }else {
 //          console.log("未勾选不可以登录");
 //        }
 
       },
-
       clickEye :function (eyeOpen) {
         $("#paswd_id").attr("type",$("#paswd_id").attr("type")==='password'?"text":"password");
         if (eyeOpen) {
@@ -140,8 +168,41 @@
       },
       deletePhone: function () {
         this.phone = '';
+        console.log("md5--->" + this.$md5("123456"));
       },
-
+      setCookie: function (name,value,hours,path) {
+        var name = escape(name);
+        var value = escape(value);
+        var expires = new Date();
+        expires.setTime(expires.getTime() + hours*3600000);
+        path = path == "" ? "" : ";path=" + path;
+        var _expires = (typeof hours) == "string" ? "" : ";expires=" + expires.toUTCString();
+        document.cookie = name + "=" + value + _expires + path;
+      },
+      getCookieValue: function (name) {
+        var name = escape(name);
+        //读cookie属性，这将返回文档的所有cookie
+        var allcookies = document.cookie;   
+        //查找名为name的cookie的开始位置
+        name += "=";
+        var pos = allcookies.indexOf(name); 
+        //如果找到了具有该名字的cookie，那么提取并使用它的值
+        if (pos != -1){//如果pos值为-1则说明搜索"version="失败
+          var start = pos + name.length;//cookie值开始的位置
+          var end = allcookies.indexOf(";",start);//从cookie值开始的位置起搜索第一个";"的位置,即cookie值结尾的位置
+          if (end == -1) end = allcookies.length;//如果end值为-1说明cookie列表里只有一个cookie
+          var value = allcookies.substring(start,end);//提取cookie的值
+          return (value);//对它解码  
+        }else{
+          return "";//搜索失败，返回空字符串
+        }               
+      },
+      deleteCookie: function (name,path) {
+        var name = escape(name);
+        var expires = new Date(0);
+        path = path == "" ? "" : ";path=" + path;
+        document.cookie = name + "="+ ";expires=" + expires.toUTCString() + path;
+      },
 
     },
 
@@ -152,8 +213,8 @@
 
 <style>
   .logo-div {
-    width: 33%;
-    height: 24%;
+    width: 330px;
+    height: 180px;
     /*background: black;*/
     float: right;
     margin-right: 4%;
@@ -173,6 +234,7 @@
     font-size: 52px;
     color: #1c2b44;
     float: right;
+    width: 270px;
     /*margin-right: 4%;*/
     /*margin-top: 12%;*/
     display: inline-block;
@@ -188,9 +250,7 @@
   .loginBG {
     width: 100%;
     height: 100%;
-    /*background-image: url(../../../static/img/LoginAndRegister/login_bg.png);*/
     background: url(../../../static/img/LoginAndRegister/login_bg.png) no-repeat center center;
-    /*background-repeat:no-repeat;*/
     background-size: 100% 100%;
     /*background-position: 0 50%;*/
   }
@@ -205,7 +265,6 @@
   .login-box {
     width: 292px;
     height: 330px;
-    /*height: 318px;*/
     background: rgba(255,255,255,0.8);
     margin-top: 10%;
     margin-right: 14%;
@@ -295,7 +354,7 @@
     margin-left: 30px;
     margin-top: 3px !important;
     margin-bottom: 8px;
-    font-size: 1px;
+    font-size: 12px;
   }
   /*登录按钮*/
   .login-button {
@@ -391,6 +450,16 @@
     display: inline-block;
     margin:10px 30px 0px 0px;
     float: right;
+  }
+  .into-register{
+    width:100px;
+    font-size:12px;
+    color: #4ca7d3;
+    display: block;
+    margin: 20px 0 0 103px;
+  }
+  .into-register:hover{
+    color: #4ca7d3;
   }
 
 

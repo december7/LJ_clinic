@@ -15,12 +15,12 @@
                   <div  v-if="compileAuditContent.suppliers" :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="procurement_form-div_margin no-padding">
                     <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">{{compileAuditContent.suppliers}}:</div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input   @input="getSuppliers(1)" type="text"  class="form-control gray-bg input_circular_corner" v-model="suppliersData.suppliers">
-                      <div v-show="suppliersList.length>0" class="list_menu" style=" margin: auto;">
-                        <ul class="no-margins">
-                          <li @mousedown="selectSuppliers(data)" class="item_list_normal" v-for="(data, index) in suppliersList"><a>{{data.drugName}} </a></li>
-                        </ul>
-                      </div>
+                      <input   @input="getSuppliers(1)" type="text"  data-toggle="dropdown"   class="form-control gray-bg input_circular_corner" v-model="suppliersData.suppliers">
+                      <ul  v-show="suppliersList.length>0" class="attopic dropdown-menu" style="width: 100%" >
+                        <li @mousedown="selectSuppliers(titleItem)" v-for="(titleItem, index) in suppliersList">
+                          <a  class="no-padding" style="text-align: center">{{titleItem.supplierName}}</a>
+                        </li>
+                      </ul>
                     </div>
                   </div>
 
@@ -93,8 +93,8 @@
 
           </div>
         </div>
-        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black'>完成</button>
-        <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
+        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' :disabled="isDisabled" >完成</button>
+        <button class='layui-layer-close form-btn-white' data-dismiss="modal" >取消</button>
       </div>
     </div>
 </template>
@@ -109,6 +109,7 @@
     data(){
       return {
         assist_inquiry_show: false,
+        isDisabled:false,
         assist_inquiry_showed:false,
         currentFocusIndex:0,
         focus: false,
@@ -367,46 +368,5 @@
 
 </script>
 <style>
-  .add_procurement_body{
-    padding: 10px;
-  }
-  .procurement_form-div_margin{
-    margin-bottom: 10px;
-  }
-  .procurement_tips_down{
-    position: absolute;
-    right: 10px;
-    top: 15px;
-  }
-  .top_border{
-    border-top: 1px solid #ddd !important;
-  }
-  .right_border{
-    border-right: 1px solid #ddd !important;
-  }
-  .bottom_border{
-    border-bottom: 1px solid #ddd !important;
-  }
-  .input_circular_left_radius{
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
-  }
-  .input_circular_right_radius{
-    border-bottom-right-radius: 5px;
-    border-top-right-radius: 5px;
-  }
-  .add_body{
-    width: 100%;
-    height: 100%;
-    background: white;
-  }
-  .btn_close{
-    font-size: 14px;
-    -webkit-appearance: none;
-    padding: 0;
-    cursor: pointer;
-    background: 0 0;
-    border: 0;
-    float: right;
-  }
+
 </style>

@@ -4,12 +4,10 @@
 <div class="goods_manage_body">
   <div class="goods_manage_title_add">
     <router-link   :to="{ name:'add_goods'}" append >
-    <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title"> 新增商品</span></router-link>
+    <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title patient_add_btn"> 新增商品</span></router-link>
 
-    <div    class=" right_select"  >
-      <selected-search :suppliersItems="suppliersItems" :placeholderData="placeholderData" :suppliersIndex="suppliersIndex"></selected-search>
+      <selected-search class=" right_select" :suppliersItems="suppliersItems" :placeholderData="placeholderData" :suppliersIndex="suppliersIndex"></selected-search>
 
-    </div>
   <table class="table table-striped table-bordered table-hover dataTables-example">
     <thead>
 
@@ -19,7 +17,7 @@
     </thead>
     <tbody>
     <tr class="gradeC" v-for="(goodsItem ,index) in goodsData">
-      <td class="text-center" >{{goodsItem. prodId}}</td>
+      <td class="text-center" >{{pageIndexNo()+index}}</td>
       <td class="text-center" >{{goodsItem.prodName}}</td>
       <td class="text-center" >{{goodsItem.prodSpec}}</td>
       <td class="text-center" >{{$enumeration.getProjectUnit(goodsItem.prodUnit)}}</td>
@@ -32,9 +30,11 @@
       <td class="text-center" ><span v-if="goodsItem.state==1"><router-link class="table-margin-r-5" :to="{ path: 'add_goods'}" append><span @click="compileSuppliers(goodsItem.prodId)">编辑</span></router-link><a @click="outageGoods(index ,goodsItem.prodId)">停用</a> </span><a @click="enabledGoods(index ,goodsItem.prodId)" v-else >启用</a></td>
     </tr>
     </tbody>
+    <tbody v-if="goodsData.length===0" ><tr class="gradeC"> <td class="text-center":colspan="goods.length">{{$toastContent.toastTableContent}}</td></tr></tbody>
+
   </table>
 </div>
-  <pagination v-show="goodsData.length > 0"></pagination>
+  <pagination v-show="goodsData.length > 0" :iDisplayLength="goodsData.length"></pagination>
   </div>
 </template>
 
@@ -67,7 +67,6 @@
         ],
         placeholderData:"商品名称",
         suppliersIndex: 0,
-        iDisplayLength:10,
       }
     },
     components:{
@@ -113,6 +112,9 @@
     },
 */
     methods:{
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1;
+      },
       compileSuppliers:function (prodId) {
         this.$store.dispatch('medicine_compile_suppliers_no',  prodId);
         console.log(prodId);
@@ -120,11 +122,11 @@
       },
       request :function () {
         var that=this;
-        this.$api.get(this,this.$requestApi.goodsSearch,{iDisplayLength:this.iDisplayLength},function  (data) {
+        this.$api.get(this,this.$requestApi.goodHistory,{iDisplayLength:this.$enumerationType.iDisplayLength},function  (data) {
           console.log(data.body.iTotalRecords);
           if(data.body.code=='00'){
             that.goodsData=data.body.data
-            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageIDisplayLength(data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -140,11 +142,11 @@
         let that=this;
         that.suppliersIndex=state;
         if (0===state||""===state){
-          data= { iDisplayLength:this.iDisplayLength,supplierNameOrContactName:searchKeywords}
+          data= { iDisplayLength:this.$enumerationType.iDisplayLength,supplierNameOrContactName:searchKeywords}
         }else {
-          data= { state:state,iDisplayLength:this.iDisplayLength,supplierNameOrContactName:searchKeywords}
+          data= { state:state,iDisplayLength:this.$enumerationType.iDisplayLength,supplierNameOrContactName:searchKeywords}
         }
-        this.$api.get(this,this.$requestApi.goodsSearch,data,function  (data) {
+        this.$api.get(this,this.$requestApi.goodHistory,data,function  (data) {
           if(data.body.code=='00'){
             that.goodsData=data.body.data
             that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(   data.body.iTotalRecords));
@@ -161,11 +163,11 @@
         let that=this;
         let  data={};
         if ( that.suppliersIndex===0||that.suppliersIndex===""){
-          data= { iDisplayLength:this.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.iDisplayLength+1}
+          data= { iDisplayLength:this.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1}
         }else {
-          data= {state:that.suppliersIndex, iDisplayLength:this.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.iDisplayLength+1}
+          data= {state:that.suppliersIndex, iDisplayLength:this.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1}
         }
-        this.$api.get(this,this.$requestApi.goodsSearch,data,function  (data) {
+        this.$api.get(this,this.$requestApi.goodHistory,data,function  (data) {
           if(data.body.code=='00'){
             that.goodsData=data.body.data
           }else{
@@ -188,7 +190,6 @@
           if(data.body.code=='00'){
             that.goodsData[index].state=1;
             that. goodsData.splice(index, 1,  that.goodsData[index]);
-
             console.log(data.body.msg);
           }
 
@@ -242,6 +243,7 @@
   .goods_manage_tips_down{
        position: absolute;
        top: 15px;
+    right: -5px;
      }
 
  .form-control2 {

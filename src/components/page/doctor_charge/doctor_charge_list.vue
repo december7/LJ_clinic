@@ -8,11 +8,10 @@
           <screen_title :titleItems="titleItems"></screen_title>
         </div>
         <div class="col-sm-4" style="float: right; margin-right: 10px;">
-          <div class="search_background">
-            <input v-model="waitParams.userName" @keyup.enter="chargeOrderList" type="text" placeholder="请输入需要搜索的姓名" class="serach_box">
-            <span style="color: lightgray; margin-left: 33px">|</span>
-            <button @click="chargeOrderList" style="border: none; background-color: white"><img src="../../../../static/img/set_manage_img/search.png"></button>
-          </div>
+          <div class="pull-right search_input" style="margin:15px -25px 0px 0px">
+            <input v-model="waitParams.userName" @keyup.enter="chargeOrderList()" placeholder="请输入需要搜索的姓名" type="text" style="outline: none;width:200px;border: none;">
+            <a @click="chargeOrderList()"><img style="width: 15px;height: 15px;margin-right: 5px" src="../../../../static/img/set_manage_img/search.png"></a>
+  	      </div>
         </div>
       </div>
 
@@ -22,7 +21,7 @@
             <div class="ibox patient_item">
               <div class="ibox-title patient_list_item_title">
                 <h5>{{data_item.userName.length > 8 ? data_item.userName.substring(0,8)+"...":data_item.userName}}</h5>
-                <small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+                <small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 9 ? '未知' : data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
               </div>
               <div class="ibox-content patient_ibox-content">
 
@@ -43,7 +42,7 @@
                   </div>
 
                   <div class="m-t-sm">
-                    <a href="#/doctor_charge/doctor_charge_confirm" @click="chargeConfirmClick(data_item)"><button class="charge_btn">收费详情</button></a>
+                    <a href="#/doctor_charge/doctor_charge_detail" @click="chargeConfirmClick(data_item)"><button class="charge_btn">收费详情</button></a>
                   </div>
                 </div>
 
@@ -54,10 +53,14 @@
           </li>
         </ul>
       </div>
+      
     </div>
-
+    <div v-show="data_items.length <= 0" style="width:100%; height:100%; text-align:center; margin-top:150px">
+	    <img src="../../../../static/img/patient_nor.png">
+	    <h5>暂无患者</h5>
+    </div>
     <!--底部分页-->
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
 
   </div>
 </template>

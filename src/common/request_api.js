@@ -4,11 +4,17 @@
  */
 export  default {
   login: "sec/login/user/1", //登录
-  // login: "login",
+  operatorPrivs: "sec/login/operatorPrivs",//tab查询
   //注册和忘记密码
   sendCode: "sec/sms/sendRandomCode", //发送验证码
   findPwd: "sec/login/findPwd", //找回密码
+  sendFindPwdCode: "sec/sms/sendPwdRandomCode", //发送找回密码的验证码
+  resetPwd: "sec/login/resetPwd", //重置密码
+  updatePwd: "sec/oper/updateOperPwd", //更换员工密码
+  sendPhoneCode: "sec/sms/updateBillIdRandomCode", //更换手机号发的验证码
+  resetPhone: "sec/oper/updateBillId", //更换手机号
   registClinic: "sec/register/registerSecHospital", //注册诊所
+  checkRegistedPhone: "sec/oper/queryBillId/", //检查该手机号是否注册
   //
   auth: "sec/priv/bPriv",//登录鉴权
   staticData: "base/staticData/list",//获取枚举值
@@ -21,7 +27,8 @@ export  default {
   roleManage: "sec/role/queryRoles", //查询全部角色
   addNewRole: "sec/role/addRole", //新增角色
   updateRole: "sec/role/updateRole", //编辑角色
-  queryRolePower:"sec/rolePriv/queryRolePrivs", //查询角色的权限
+  queryRolePower: "sec/rolePriv/queryRolePrivs", //查询角色的权限
+  saveRolePower: "sec/rolePriv/saveRolePriv", //保存角色的权限
   staffManage: "sec/oper/queryOpers", //查询全部员工
   addNewStaff: "sec/oper/addOper", //新增员工
   stopStaff: "sec/oper/stopOper", //停用员工
@@ -32,7 +39,9 @@ export  default {
   costDepList: "base/depart/list", //查询科室列表
   addNewCost: "usr/usrDoctor/create/", //新增挂号设置
   editCost: "usr/usrDoctor/edit/", //编辑挂号设置
-  itemManageList: "prod/project/search/", //查询项目管理列表
+  itemManageList: "prod/project/search/", //查询项目设置列表
+  notStopProList: "prod/project/search/normal/", //查询未停用的项目设置列表
+  // searchProdsList: "prod/inventory/list/stock",//查询未停用的商品列表（有库存的）
   addNewItem : "prod/project/create/", //新增治疗项目或者其他收费
   editItem: "prod/project/update/", //编辑治疗项目或其他收费
   stopItem: "prod/project/disable/", //停用治疗项目或其他收费
@@ -50,7 +59,7 @@ export  default {
   startTemplate: "prod/template/enable/", //启用项目模板
   stopTemplate: "prod/template/disable/", //停用项目模板
   deleteTemplate: "prod/template/delete/", //删除项目模板
-  searchProdsList: "prod/goods/search", //查询商品列表
+  searchProdsList: "prod/goods/search", //查询商品列表（不管有没有库存）
   addNewWCTemplate: "prod/template/create/prescription/", //新增西成药或中药模板
   orderProjectInfo: 'order/projectInfo/',//治疗，其他收费项目查询
   //发药
@@ -131,7 +140,8 @@ export  default {
 
   /***********************商品************************************/
   createGoods:"prod/goods/create",//创建商品
-  goodsSearch: "prod/goods/search",//供应商品
+  goodsSearch: "prod/goods/history",//供应商品
+  goodHistory: "prod/goods/history",//商品查询
   goodsHistory: "prod/inventory/list/stock",//查询库存的商品
   goodsEnable: "prod/goods/disable/",//商品停用
   goodsDisable: "prod/goods/enable/",//商品启用
@@ -149,6 +159,8 @@ export  default {
   stockCheckDetail: "prod/stock/audit/",
   listInventory: "prod/inventory/list/inventory",//库存列表
   stockDetails: "prod/inventory/list/stockDetails",//批号维护
+  listStock: "prod/warning/list/stock",//库存预警
+  listPeriod: "prod/warning/list/period",//效期预警
 
   //收费
   chargeOrderWait: "order/registereds/waitPay",
@@ -162,8 +174,14 @@ export  default {
 
   stockView:"prod/stock/view/",
   createPurchase:"prod/stock/create/purchase",//新建采购单
+  createCancel:"prod/stock/create/cancel",//新建退货单
+  createCheck:"prod/stock/create/check",//新建盘点单
+  createOutbound:"prod/stock/create/outbound",//新建出库单
   updatePurchase:"prod/stock/update/purchase/",//修改采购单
-  stockUpdateInbound:"prod/stock/update/inbound/",
+  updateCancel:"prod/stock/update/cancel/",//修改退货单
+  updateCheck:"prod/stock/update/check/",//修改盘点单
+  updateOutbound:"prod/stock/update/outbound/",//修改出库单
+  stockUpdateInbound:"prod/stock/update/inbound/",//修改入库单
 
   //根据姓名模糊查询患者信息
   historyPatientNameRequest: "usr/usrUser/searchbyname",

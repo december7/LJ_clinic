@@ -22,7 +22,7 @@
                       <div class="col-md-11 col-md-11-padding-r"   >
                         <div class="input-group-btn">
                           <input  data-toggle="dropdown" type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入选择供应商" v-model="goodsData.supplierName"  @focus="getSupplierName(goodsData.supplierName)" @input="getSupplierName(goodsData.supplierName)">
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul    class="attopic dropdown-menu" style="width: 100%" >
                             <li @click="selectSupplierNameItem(index)" v-for="(titleItem, index) in supplierNameItems">
                               <a  class="no-padding" style="text-align: center">{{titleItem.supplierName}}</a>
                             </li>
@@ -40,7 +40,7 @@
                     </div>
 
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
-                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">商品名</div>
+                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">商品名<span class="span-red">*</span></div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <input  type="text"  class="form-control gray-bg input_circular_corner" placeholder="请输入商品名" v-model="goodsData.prodName">
                       </div>
@@ -75,7 +75,7 @@
                             <div class="input-group-btn">
                               <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{prodTypeItems[goodsData.prodType ]}}<span class="goods_tips_down caret"></span>
                               </button>
-                              <ul class="dropdown-menu" style="width: 100%" >
+                              <ul   class="dropdown-menu  " style="width: 100%" >
                                 <li @click="selectProdTypeItem(index)" v-for="(titleItem, index) in prodTypeItems">
                                   <a :class="{selected_item : goodsData.prodType == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                 </li>
@@ -111,7 +111,7 @@
                         <div class="input-group-btn">
                           <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{splitUnitItems[goodsData.prodUnit]}}<span class="goods_tips_down caret"></span>
                           </button>
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul   class="attopic dropdown-menu" style="width: 100%" >
                             <li @click="selectProdUnitItem(index)" v-for="(titleItem, index) in splitUnitItems">
                               <a :class="{selected_item : goodsData.prodUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
@@ -126,7 +126,7 @@
                         <div class="input-group-btn">
                           <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{dosageFormItems[goodsData.dosageForm]}}<span class="goods_tips_down caret"></span>
                           </button>
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul    class="attopic dropdown-menu" style="width: 100%" >
                             <li @click="selectDosageFormItem(index)" v-for="(titleItem, index) in dosageFormItems">
                               <a :class="{selected_item : goodsData.dosageForm == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
@@ -139,13 +139,17 @@
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">零售价<span class="span-red">*</span></div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                        <input  type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入零售价" v-model="goodsData.retailPrice">
+                        <input @input="getIsRetailPrice(goodsData.retailPrice)"  :class="{'is-danger':isRetailPrice}  "  type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入零售价" v-model="goodsData.retailPrice">
+                        <toast-error   v-show="isRetailPrice " :toastContent="$toastContent.toastPrice"></toast-error>
+
                       </div>
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">采购价</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                        <input  type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入采购价" v-model="goodsData.costPrice">
+                        <input  @input="getIsCostPrice(goodsData.costPrice)"  :class="{'is-danger':isRetailPrice}  "  type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入采购价" v-model="goodsData.costPrice">
+                        <toast-error   v-show="isCostPrice " :toastContent="$toastContent.toastPrice"></toast-error>
+
                       </div>
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
@@ -154,7 +158,7 @@
                         <div class="input-group-btn">
                           <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{isSplitItems[goodsData.isSplit].titleName}}<span class="goods_tips_down caret"></span>
                           </button>
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul   class="  dropdown-menu" style="width: 100%" >
                             <li @click="selectIsSplitItem(index)" v-for="(titleItem, index) in isSplitItems">
                               <a :class="{selected_item : goodsData.isSplit == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
                             </li>
@@ -165,7 +169,7 @@
                     </div>
 
 
-                    <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
+                    <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding" v-show="goodsData.isSplit==1">
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">拆零数量</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                         <div class="input-group-btn">
@@ -173,7 +177,7 @@
                           <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{splitUnitItems[ goodsData.splitUnit]}}<span class=" caret goods_tips_down"></span>
                           </button>
 
-                          <ul class="dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
+                          <ul   class="attopic dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
                             <li @click="selectSplitUnitItem(index)" v-for="(titleItem, index) in splitUnitItems">
                               <a :class="{selected_item : goodsData.splitUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
@@ -182,10 +186,12 @@
                         </div>
                       </div>
                     </div>
-                    <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
+                    <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding" v-show="goodsData.isSplit==1">
                       <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">拆零售价</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                        <input  type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入拆零售价" v-model="goodsData.splitPrice">
+                        <input   @input="getIsSplitPrice(goodsData.splitPrice)"  :class="{'is-danger':isRetailPrice}  " type="text"  class="form-control gray-bg input_circular_corner"  placeholder="请输入拆零售价" v-model="goodsData.splitPrice">
+                        <toast-error   v-show="isSplitPrice " :toastContent="$toastContent.toastPrice"></toast-error>
+
                       </div>
                     </div>
 
@@ -209,7 +215,7 @@
                         <div class="input-group-btn">
                           <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{usageTypeItems[ goodsData.usageType]}}<span class=" caret goods_tips_down"></span>
                           </button>
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul   class="attopic dropdown-menu" style="width: 100%" >
                             <li @click="selectUsageTypeItem(index)" v-for="(titleItem, index) in usageTypeItems">
                               <a :class="{selected_item : goodsData.usageType== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
@@ -226,7 +232,7 @@
                         <button data-toggle="dropdown" style="width: 35%;  float: right;" class="form-control gray-bg     input_circular_right_radius   " type="button">  {{singleUnitItems[goodsData.singleUnit]}}<span class=" caret goods_tips_down"></span>
                         </button>
 
-                          <ul class="dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
+                          <ul   class="attopic dropdown-menu" style="margin-left: 65%;min-width: 35%;" >
                           <li @click="selectSingleUnitItem(index)" v-for="(titleItem, index) in singleUnitItems">
                             <a :class="{selected_item : goodsData.singleUnit == index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                           </li>
@@ -241,7 +247,7 @@
                         <div class="input-group-btn">
                           <button data-toggle="dropdown" style="width: 100%" class="form-control gray-bg     input_circular_corner   " type="button">{{frequencyItems[ goodsData.frequency]}}<span class=" caret goods_tips_down"></span>
                           </button>
-                          <ul class="dropdown-menu" style="width: 100%" >
+                          <ul   class="attopic dropdown-menu" style="width: 100%" >
                             <li @click="selectFrequencyItem(index)" v-for="(titleItem, index) in frequencyItems">
                               <a :class="{selected_item : goodsData.frequency== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                             </li>
@@ -258,10 +264,10 @@
                       </div>
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
-                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">药品库存的预警天数</div>
+                      <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">药品库存的预警数量</div>
                       <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                        <input  type="text"  style="width: 80%;float: left" class="form-control gray-bg input_circular_left_radius" placeholder="请输入预警天数" v-model="goodsData.stockWarning">
-                        <label  class="form-control gray-bg     input_circular_right_radius   " style="width: 20%;    float: right;">天</label>
+                        <input  type="text"  style="width: 80%;float: left" class="form-control gray-bg input_circular_left_radius" placeholder="请输入预警数量" v-model="goodsData.stockWarning">
+                        <label  class="form-control gray-bg     input_circular_right_radius   " style="width: 20%;    float: right;">{{getStockWarning}}</label>
                       </div>
                     </div>
 
@@ -281,7 +287,7 @@
             </div>
           </div>
 
-        <button  style='margin: 30px 10px 30px 335px;' class='form-btn-black ' @click="createGoods">完成</button>
+        <button  style='margin: 30px 10px 30px 335px;' class='form-btn-black ' @click="createGoods" :disabled="isDisabled">完成</button>
         <button class='layui-layer-close form-btn-white ' @click="abandon" >放弃{{compileSuppliers}}</button>
         </div>
           <div style="background: #F9F9F9; height: 20px" ></div>
@@ -292,13 +298,23 @@
 </template>
 
 <script>
+  import toastError from "components/commonView/toastError.vue";
+
   export default {
+    components: {
+      //注册组件
+      toastError
+    },
     mounted(){
-    this.$nextTick(() => $(window).scrollTop(0));
+//    this.$nextTick(() => $(window).scrollTop(0));
     },
     data(){
       return {
         assist_inquiry_show: false,
+        isDisabled: false,
+        isRetailPrice:false,
+        isCostPrice:false,
+        isSplitPrice:false,
         assist_inquiry_showed:false,
         compileSuppliersNo:"",
         suppliersIndex: 0,
@@ -361,11 +377,19 @@
         }else {
           return "";
         }
+      },
+      getStockWarning(){
+        let  that=this;
+        if (that.goodsData.isSplit==0){
+          return that.splitUnitItems[that.goodsData.prodUnit]
+        }else {
+          return that.splitUnitItems[that.goodsData.splitUnit]
+
+        }
       }
 
     },
     created(){
-
     },
 
     methods: {
@@ -393,7 +417,7 @@
 
       getSupplierName:function (supplierName) {
         let that = this;
-        that.$api.get(that, that.$requestApi.goodsSupplierQuery ,{ supplierNameOrContactName:  supplierName,iDisplayLength:that.$enumerationType.iDisplayLength}, function (data) {
+        that.$api.get(that, that.$requestApi.goodsSupplierQuery ,{ supplierNameOrContactName:  supplierName,iDisplayLength:20}, function (data) {
           if (data.body.code == '00') {
             that.supplierNameItems=data.body.data;
           } else {
@@ -408,6 +432,25 @@
       },
       createGoods:function () {
         let that = this;
+        if ( that.goodsData.supplierId==""){
+          return   swal({   title:that.$toastContent.toastSupplierId ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+        } if ( that.goodsData.retailPrice==""||that.$stringUtils.checkMoney(that.goodsData.retailPrice)){
+          return   swal({   title:that.$toastContent.toastRetailPrice ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+        }if ( that.goodsData.costPrice=="" ||that.$stringUtils.checkMoney(that.goodsData.costPrice)){
+          return   swal({   title:that.$toastContent.toastCostPrice ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+        }
+        if ( that.goodsData.isSplit==1 ){
+          if (that.goodsData.splitNum=="" ){
+            return   swal({   title:that.$toastContent.toastSplitNum ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+          } if (that.goodsData.splitPrice==""){
+            return   swal({   title:that.$toastContent.toastSplitPrice,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
+
+          }
+        }
          if ( that.goodsData.genericName==""){
            return   swal({   title:that.$toastContent.toastGenericName ,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
          }
@@ -417,7 +460,10 @@
        that.goodsData.retailPrice=that.$enumeration.getComputePricet( that. goodsData.retailPrice);
        that.goodsData.costPrice=that.$enumeration.getComputePricet( that. goodsData.costPrice);
        that.goodsData.splitPrice=that.$enumeration.getComputePricet( that. goodsData.splitPrice);
+        that.isDisabled=true;
         this.$api.post(that,that.compileSuppliersNo?that.$requestApi.goodsUpdate+  that. compileSuppliersNo:that.$requestApi.createGoods , that.goodsData, function (data) {
+          that.isDisabled=false;
+
           if (data.body.code == '00') {
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
             that.returnPage();
@@ -427,6 +473,8 @@
           }
 
         }, function (err) {
+          that.isDisabled=false;
+
           that. setDefaultGoodsData();
           console.log(err);
 
@@ -440,6 +488,14 @@
           that.  goodsData.splitPrice= that.$enumeration. getGoodsPrice(that.goodsData.splitPrice);
 
         },
+      getIsRetailPrice:function(price){
+        return this.isRetailPrice= this.$stringUtils.checkMoney( price);
+      },
+      getIsCostPrice:function(price){
+        return this.isCostPrice= this.$stringUtils.checkMoney( price);
+      },  getIsSplitPrice:function(price){
+        return this.isSplitPrice= this.$stringUtils.checkMoney( price);
+      },
       change_phone: function () {
         this.inputState=false;
       },

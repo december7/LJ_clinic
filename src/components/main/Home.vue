@@ -17,17 +17,22 @@
   //引用组件
 import homecontent from  './home_content'
 import homeleft from  './home_left'
+
 export default {
   components: {
     homecontent,
     homeleft,
   },
   created() {
-    // 组件创建完后获取数据，这里和1.0不一样，改成了这个样子
 
-    console.log("check"+this.$store.state.account.login.success);
+
+  },
+  beforeMount:function () {
+
   },
   mounted: function () {
+    // 组件创建完后获取数据，这里和1.0不一样，改成了这个样子
+
     this.fix_height;
     $(window).bind("load resize click scroll", function () {
       if (!$("body").hasClass('body-small')) {

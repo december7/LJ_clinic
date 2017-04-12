@@ -22,6 +22,8 @@
     </tr>
 
     </tbody>
+    <tbody v-if="auditContent.length===0" ><tr class="gradeC"> <td class="text-center" :colspan="items.length" >{{$toastContent.toastTableContent}}</td></tr></tbody>
+
   </table>
 
 </template>

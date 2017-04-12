@@ -37,19 +37,19 @@ Vue.prototype.isDebug=false;
 Vue.prototype.$api = api;
 Vue.prototype.$md5 = md5;
 Vue.use(VeeValidate);
+// Vue.use(Validator);
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(ElementUI);
+// Vue.use(xlsx);
 
 Vue.http.options.root = process.env.API_URL;
 Vue.prototype.$API_URL = process.env.API_URL;
-const jwtToken =store.state.account.auth.check();
 Vue.http.interceptors.push((request, next) => {
   //request.headers.common['token'] = sessionStorage.getItem("accessToken");
   //request.headers['token'] = sessionStorage.getItem("accessToken");
-
- // const jwtToken =sessionStorage.getItem("accessToken");
-console.log("Token---"+jwtToken);
+  const jwtToken =store.state.account.auth.check();
+  console.log("Token---"+jwtToken);
 
   // request. header("Access-Control-Allow-Origin: http://test.rolinzs.com/clinic");
   if (jwtToken) {
@@ -65,12 +65,12 @@ console.log("Token---"+jwtToken);
 import routes from 'router/routes'
 // 使用配置文件规则
 const router = new VueRouter({
-  routes,
+  // mode: 'history',
+  routes: routes,
 });
 
 
 router.beforeEach((to, from, next) => {
-  console.log(to.fullPath);
   //console.log(to.matched.some(record => record.meta.requiresAuth));
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
@@ -90,6 +90,7 @@ router.beforeEach((to, from, next) => {
       //console.log(to.fullPath);
       //console.log(vue);
       next();
+      // getTabs(to)
       // Vue.http.post(requestApi.auth ,{"path":to.fullPath}).then(function(response){
       //   if(response.body.code==='00'){
       //     //next();
@@ -131,10 +132,9 @@ var vue = new Vue({
   router,
   store,
   render: (h) => h(App),
-  //created: function () {
-  // this.$router.replace('/login')
-  //}
+
 });
 window.vueRoot = vue;
+
 
 

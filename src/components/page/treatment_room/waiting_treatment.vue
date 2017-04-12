@@ -10,7 +10,7 @@
             <div class="ibox patient_item">
               <div class="ibox-title patient_list_item_title">
                 <h5>{{data_item.userName}}</h5>
-                <small class="m-l-sm">{{getAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+                <small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 9 ? '未知' : data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
               </div>
               <div class="ibox-content patient_ibox-content">
 
@@ -28,7 +28,7 @@
 
                   <div>
                     <p class="patient_msg_title">接诊类型:</p>
-                    <p class="patient_msg_content">{{data_item.registeredType == 0 ? '初诊' : '复诊'}}</p>
+                    <p class="patient_msg_content">{{data_item.registeredType == 1 ? '初诊' : '复诊'}}</p>
                   </div>
 
                 </div>
@@ -37,7 +37,7 @@
                   <a @click="clickWaitTreatDetail(data_item,index)" class="waiting_treatment_btn" href="#/treatment_room/wait_treat_detail" role="button">待治疗 ( {{data_item.waitTreat}} )</a>
                 </div>
 
-                <div v-show="data_item.isEmergency == 1" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
+                <div v-show="data_item.isEmergency == 2" class="patient_state_img"><img src="../../../../static/img/emergency.png" alt=""></div>
 
               </div>
             </div>
@@ -45,9 +45,14 @@
         </ul>
       </div>
     </div>
+    
+    <div v-show="data_items.length == 0" style="width:100%; height:100%; text-align:center; margin-top:150px">
+      <img src="../../../../static/img/patient_nor.png">
+      <h5>暂无患者</h5>
+    </div>
 
     <!--底部分页-->
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
 
   </div>
 </template>
@@ -56,6 +61,7 @@
 
   import screen_title from '../doctor_clinic/screen_content_title.vue'
   import pagination from '../doctor_clinic/bottom_pagination.vue'
+  import defaultInterface from 'components/commonView/defaultInterface.vue'
 
 
   export default{
@@ -100,6 +106,7 @@
             that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.$enumerationType.iDisplayLength));
           }else{
             console.log(data.body.msg);
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         },function (err) {
           console.log(err);
@@ -124,15 +131,8 @@
         this.waiting_list();
       },
       request_list:function (index) {
-
-				let that=this;
-				if (index==1||index==2){
-					that.waitParams.state=index==1?2:1;
-				}else {
-					delete  that.waitParams['state'];
-				}
-				this.waiting_list();
-			},
+        this.waiting_list();
+      },
 //      计算年龄
       getAge:function (timestamp) {
         var now = new Date().getTime();
@@ -147,7 +147,7 @@
 
     },
 
-    components: {screen_title, pagination},
+    components: {screen_title, pagination,defaultInterface},
   }
 </script>
 

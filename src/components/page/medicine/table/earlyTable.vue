@@ -8,22 +8,32 @@
       <th  v-for="item in items" class="text-center">{{item.name}}</th>
     </tr>
     </thead>
-    <tbody>
-    <tr class="gradeC" v-for="storageItem in auditContent">
-      <td class="text-center"v-if="storageItem.no">{{storageItem.no}}</td>
-      <td class="text-center"v-if="storageItem.storageOdd">{{storageItem.storageOdd}}</td>
-      <td class="text-center"v-if="storageItem.storageDate">{{storageItem.storageDate}}</td>
-      <td class="text-center"v-if="storageItem.storageSingle">{{storageItem.storageSingle}}</td>
-      <td class="text-center"v-if="storageItem.storageMember">{{storageItem.storageMember}}</td>
-      <td class="text-center"v-if="storageItem.storagePhone">{{storageItem.storagePhone}}</td>
-      <td class="text-center"v-if="storageItem.storageRemarks">{{storageItem.storageRemarks}}</td>
-      <td class="text-center" v-if="storageItem.storageSuppliers">{{storageItem.storageSuppliers}}</td>
-      <td class="text-center" v-if="storageItem.storageStatus">{{storageItem.storageStatus}}</td>
-      <td class="text-center"v-if="storageItem.storageDelete">{{storageItem.storageDelete}}</td>
-
+    <tbody  v-show="selectedIndex==0">
+    <tr class="gradeC" v-for="(storageItem ,index) in auditContent">
+      <td class="text-center" >{{++index}}</td>
+      <td class="text-center" >{{storageItem.prodName}}</td>
+      <td class="text-center" >{{storageItem.prodSpec}}</td>
+      <td class="text-center" >{{storageItem.manufacturer}}</td>
+      <td class="text-center" >{{storageItem.supplierName}}</td>
+      <td class="text-center" >{{storageItem.stockWarning}}</td>
+      <td class="text-center" >{{storageItem.alarmNum}}</td>
+      <td class="text-center" >{{$enumeration. getGoodsPrice(storageItem.retailPrice)}}</td>
     </tr>
-
     </tbody>
+
+    <tbody  v-show="selectedIndex==1">
+    <tr class="gradeC" v-for="(storageItem ,index) in auditContent">
+      <td class="text-center" >{{++index}}</td>
+      <td class="text-center" >{{storageItem.prodName}}</td>
+      <td class="text-center" >{{storageItem.prodSpec}}</td>
+      <td class="text-center" >{{storageItem.manufacturer}}</td>
+      <td class="text-center" >{{storageItem.supplierName}}</td>
+      <td class="text-center" >{{storageItem.batchNumber}}</td>
+      <td class="text-center" >{{$stringUtils.dateFormat(storageItem.expireDate)}}</td>
+      <td class="text-center"  >{{$enumeration. getGoodsPrice(storageItem.retailPrice)}}</td>
+    </tr>
+    </tbody>
+    <tbody v-if="auditContent.length===0" ><tr class="gradeC"> <td class="text-center" :colspan="items.length"  >{{$toastContent.toastTableContent}}</td></tr></tbody>
   </table>
 
 </template>
@@ -35,6 +45,9 @@
      },
       auditContent:{
         default: []
+      },
+      selectedIndex:{
+        default: 0
       },
     },
     data(){

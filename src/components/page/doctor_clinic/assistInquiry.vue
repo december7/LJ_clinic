@@ -10,7 +10,7 @@
       <div class="ibox-content no_top_padding" style="padding-left: 10px; padding-bottom: 10px;  height:1200px;  overflow: auto;">
         <div class="file-manager">
           <ul class="tag-list" style="padding: 0;">
-            <li @click="selectHotSymptom(hotSymptom,index)" :class=" hotSymptom.selectStyle ? 'selectStyle' : 'defaultStyle' "   v-for="(hotSymptom,index) in hotSymptoms"><a>{{hotSymptom.name}}</a></li>
+            <li @click="selectHotSymptom(hotSymptom,index)" :class=" hotSymptom.selectStyle ? 'selectStyle' : 'defaultStyle' "  v-for="(hotSymptom,index) in hotSymptoms"><a>{{hotSymptom.name}}</a></li>
           </ul>
           <div v-for="(symptom ,index) in symptoms "  >
 
@@ -61,14 +61,21 @@
           let that=this;
 
           hotSymptom.selectStyle=!hotSymptom.selectStyle;
-          let name='';
+          this.$store.dispatch('set_chief_complaint', [hotSymptom.name,++index]);
+          let manifestations='';
+          let matchSymptom='';
         for (let i in that.hotSymptoms){
           if ( that.hotSymptoms[i].selectStyle){
-            name+= that.hotSymptoms[i].name+","
+            if (that.hotSymptoms[i].type==2){
+            manifestations+= that.hotSymptoms[i].name+","
+            }else if (that.hotSymptoms[i].type==1){
+              matchSymptom+= that.hotSymptoms[i].name+","
+
+            }
           }
         }
 
-          this.getListDisease(name);
+          this.getListDisease(manifestations,matchSymptom);
       },
         selectSymptom:function(symptom,index){
           this.$store.dispatch('set_preliminary_diagnosis', [symptom,index]);
@@ -114,9 +121,14 @@
           });
         },
         getListDisease:function (manifestations,matchSymptom) {
+          if (typeof  manifestations !="undefined"&&manifestations!=""){
+              manifestations=manifestations.substring(0,manifestations.length-1);
+          }
+          if (typeof  matchSymptom !="undefined"&&matchSymptom!=""){
+            matchSymptom=matchSymptom.substring(0,matchSymptom.length-1);
+
+          }
           let that = this;
-
-
           that.$api.get(that, that.$requestApi.listDisease, {manifestations:manifestations,matchSymptom:matchSymptom}, function (data) {
             if (data.body.code == '00') {
               that.symptoms=data.body.data;

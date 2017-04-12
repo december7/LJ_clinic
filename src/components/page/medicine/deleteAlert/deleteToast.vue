@@ -3,15 +3,14 @@
     <div class="modal inmodal fade" id="selfinfo" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" style="width: 300px;">
             <div class="modal-content">
-                <div class="tc-title-div">个人信息</div>
+                <div class="tc-title-div">{{selectedTitle}}</div>
                 <button type="button" class="close" data-dismiss="modal" style="margin: 11.5px 15px 0 0;"><span
                         aria-hidden="true">&times;</span></button>
                 <div class="hr-tcline"></div>
                 <!--弹窗详细内容-->
-              <div style="    padding: 12px;line-height: 20px;text-align: center; font-size: 13px">确定删除该采购单吗?<br/>
-                   删除后将不能恢复</div>
+              <div style="    padding: 12px;line-height: 20px;text-align: center; font-size: 13px"  v-html="selectedContent"></div>
               <div style="    padding: 15px;">
-                <button  class='alert-btn-black'  data-dismiss="modal" @click="complete">完成</button>
+                <button  class='alert-btn-black'  data-dismiss="modal" @click="complete">确定</button>
                 <button class='layui-layer-close alert-btn-white' data-dismiss="modal">取消</button>
               </div>
             </div>
@@ -72,6 +71,12 @@
         selectedIndex:{
           default: 0
         },
+        selectedTitle:{
+          default: ""
+        },
+       selectedContent:{
+         default: ""
+       },
 
 
       },

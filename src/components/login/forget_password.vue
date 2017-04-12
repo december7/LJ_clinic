@@ -10,7 +10,7 @@
              v-show="phone.length"></a>
           <input v-model="phone" v-validate:phone.initial="'required|numeric'"
                  :class="{'login-input': true, }" type="tel"
-                 placeholder="手机号码" maxlength="11">
+                 placeholder="手机号码" maxlength="11" @focus="getFocus(phone)" @blur="loseFocus(phone)">
         </div>
         <!--验证码-->
         <div class="login-input-div">
@@ -36,8 +36,8 @@
                  placeholder="确认新密码">
           <toast-error style="margin-bottom: 0px" class="my-toast-error" v-show="new_password!=again_password" :toastContent="placeholder.toastNotSame"></toast-error>
         </div>
-        <button @click="back" class="forget-button-white">取消</button>
         <button @click="sureClick" class="forget-button-blue">确认</button>
+        <button @click="back" class="forget-button-white">取消</button>
 
       </div>
     </div>
@@ -70,7 +70,6 @@
     width: 109px;
     height: 32px;
     margin-top: 20px;
-    margin-right: 10px;
     outline: none;
     text-align: center;
   }
@@ -82,6 +81,7 @@
     width: 109px;
     height: 32px;
     margin-top: 20px;
+    margin-right: 10px;
     outline: none;
     text-align: center;
   }
@@ -119,6 +119,7 @@
         timerCodeMsg:'',
         showtimerCode:false,
         showSendCodeMsg:true,
+        notRegisted:false,
       };
     },
 
@@ -130,31 +131,36 @@
       sendSecurity:function () {
         var sec = 60;
         console.log("=========");
-        if (this.phone.length == 11){
-          var that=this;
-          this.$api.post(this,this.$requestApi.sendCode, {"billId":this.phone} ,function (data) {
-            if(data.body.code == '00'){
-              console.log("发送成功");
-              swal({title: "发送成功!", text: "", type: "success", timer: 2000, showConfirmButton: false});
-              that.showSendCodeMsg = false;
-              that.showtimerCode = true;
-              for(var i = 0; i <= 60; i++){
-                window.setTimeout(function(){
-                  if (sec != 0) {
-                    that.timerCodeMsg = "重新发送(" + sec + "s)";
-                    console.log("|||||||||||" + that.timerCodeMsg + '--->' + that.showtimerCode);
-                    sec--;
-                  } else {
-                    sec = 60;//如果倒计时结束就让  获取验证码显示出来
-                    that.showSendCodeMsg = true;
-                    that.showtimerCode = false;
-                  }
-                }, i * 1000)
+        if(this.$stringUtils.checkPhone(this.phone)){
+          if (!this.notRegisted){
+            var that=this;
+            this.$api.post(this,this.$requestApi.sendFindPwdCode, {"billId":this.phone} ,function (data) {
+              if(data.body.code == '00'){
+                console.log("发送成功");
+                swal({title: "发送成功!", text: "", type: "success", timer: 2000, showConfirmButton: false});
+                that.showSendCodeMsg = false;
+                that.showtimerCode = true;
+                for(var i = 0; i <= 60; i++){
+                  window.setTimeout(function(){
+                    if (sec != 0) {
+                      that.timerCodeMsg = "重新发送(" + sec + "s)";
+                      // console.log("|||||||||||" + that.timerCodeMsg + '--->' + that.showtimerCode);
+                      sec--;
+                    } else {
+                      sec = 60;//如果倒计时结束就让  获取验证码显示出来
+                      that.showSendCodeMsg = true;
+                      that.showtimerCode = false;
+                    }
+                  }, i * 1000)
+                }
+              }else{
+                console.log("发送失败");
+                swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
               }
-            }else{
-              console.log("发送失败");
-            }
-          });
+            });
+          }else{
+            swal({title: "该手机号并未注册，无法找回密码，不可发送验证码", text: "", type: "error", timer: 2000, showConfirmButton: false});
+          }
         }else {
           swal({title: "手机号输入有误", text: "", type: "error", timer: 2000, showConfirmButton: false});
           console.log("手机号输入有误");
@@ -162,24 +168,54 @@
       },
 
       sureClick: function () {
-        if (this.phone.length==11 && this.security && this.new_password && this.again_password){
-//          var that=this;
-          this.$api.post(this,this.$requestApi.findPwd, {
-            "billId":this.phone,
-            "validCode":this.security,
-            "password":this.new_password,
-            "confirmPwd":this.again_password,
-          } ,function (data) {
+        if(this.$stringUtils.checkPhone(this.phone)){
+          if (!this.notRegisted){
+            if (this.security && this.new_password && this.again_password && this.new_password==this.again_password){
+              this.$api.post(this,this.$requestApi.findPwd, {
+                "billId":this.phone,
+                "validCode":this.security,
+                "password":this.$md5(this.new_password),
+                "confirmPwd":this.$md5(this.again_password),
+              } ,function (data) {
+                if(data.body.code == '00'){
+                  console.log("设置新密码成功!");
+                  swal({title: "设置新密码成功!", text: "", type: "success", timer: 2000, showConfirmButton: false});
+                  history.back();
+                }else{
+                  console.log("设置新密码失败");
+                  swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
+                }
+              });
+            }else {
+              swal({title: "信息填写有误!", text: "", type: "error", timer: 1000, showConfirmButton: false});
+            }
+          }else {
+            swal({title: "该手机号并未注册，无法找回密码", text: "", type: "error", timer: 2000, showConfirmButton: false});
+          }
+        }else {
+          swal({title: "手机号填写有误", text: "", type: "error", timer: 1000, showConfirmButton: false});
+        }
+      },
+
+      getFocus:function (contactPhone) {
+        console.log("=========getFocus");
+      },
+      loseFocus:function (contactPhone) {
+        console.log("=========loseFocus--->" + contactPhone);
+        if(this.$stringUtils.checkPhone(contactPhone)){
+          var that=this;
+          this.$api.post(this,this.$requestApi.checkRegistedPhone + contactPhone,"",function  (data) {
             if(data.body.code == '00'){
-              console.log("设置新密码成功!");
-              swal({title: "设置新密码成功!", text: "", type: "success", timer: 2000, showConfirmButton: false});
-              history.back();
+              console.log("*******************");
+              swal({title: "该手机号并未注册，无法找回密码", text: "", type: "error", timer: 2000, showConfirmButton: false});
+              that.notRegisted = true;
             }else{
-              console.log("设置新密码失败");
+              that.notRegisted = false;
+              console.log("----------");
             }
           });
         }else {
-
+          // swal({title: "手机号不合法", text: "", type: "error", timer: 1000, showConfirmButton: false});
         }
       },
 

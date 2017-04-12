@@ -2,14 +2,14 @@
   <div class="ibox-content padding-lr-10 gray-bg">
       <!--按钮-->
     <div style="display: inline-block;margin-top: 10px">
-      <a @click="addNewClick" type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;添加员工</a>
+      <a @click="addNewClick" type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew_staff"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;添加员工</a>
     </div>
     <div class="pull-right search_input" style="margin-top: 5px;margin-right: 0">
-      <input placeholder="姓名/手机号" type="text" style="outline: none;width:200px;border: none;" v-model="search_staff">
+      <input @keyup.enter="searchStaff(search_staff)" placeholder="姓名/手机号" type="text" style="outline: none;width:200px;border: none;" v-model="search_staff">
       <a @click="searchStaff(search_staff)"><img style="width: 15px;height: 15px;margin-right: 5px" src="../../../../static/img/set_manage_img/search.png"></a>
     </div>
       <!--模态弹窗开始--添加员工-->
-      <div class="modal inmodal fade" id="addnew" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal inmodal fade" id="addnew_staff" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg" style="width: 360px;">
           <div class="modal-content">
             <div class="tc-title-div">添加员工</div>
@@ -17,28 +17,32 @@
               aria-hidden="true">&times;</span></button>
             <div class="hr-tcline"></div>
             <div>
-              <div class='tc-form-labeldiv'>姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名&nbsp<span style="color: red;">&#10045</span></div>
-              <input style='width: 210px' class='form-tcinput' placeholder='请输入真实姓名' v-model="staff_json.operatorName">
+              <div class='tc-form-labeldiv'>姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名&nbsp<span style="color: red;">*</span></div>
+              <input maxlength="20" style='width: 210px' class='form-tcinput' placeholder='请输入真实姓名' v-model="staff_json.operatorName">
             </div>
             <div>
-              <div class='tc-form-labeldiv'>手&nbsp&nbsp机&nbsp&nbsp号&nbsp<span style="color: red;">&#10045</span></div>
-              <input style='width: 210px' class='form-tcinput' type="tel" placeholder='请输入手机号码' v-model="staff_json.billId">
+              <div class='tc-form-labeldiv'>手&nbsp&nbsp机&nbsp&nbsp号&nbsp<span style="color: red;">*</span></div>
+              <input style='width: 210px' class='form-tcinput' type="tel" placeholder='请输入手机号码' v-model="staff_json.billId" maxlength="11">
             </div>
             <div>
               <div class='tc-form-labeldiv'>邮&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp箱&nbsp</div>
-              <input style='width: 210px' class='form-tcinput' placeholder='请输入邮箱地址' v-model="staff_json.email">
+              <input maxlength="32" style='width: 210px' class='form-tcinput' placeholder='请输入邮箱地址' v-model="staff_json.email">
             </div>
             <div>
               <div class='tc-form-labeldiv'>微&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp信&nbsp</div>
-              <input style='width: 210px' class='form-tcinput' placeholder='请输入员工微信号' v-model="staff_json.wechatNo">
+              <input maxlength="20" style='width: 210px' class='form-tcinput' placeholder='请输入员工微信号' v-model="staff_json.wechatNo">
             </div>
             <div>
-              <div class='tc-form-labeldiv'>角&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp色&nbsp<span style="color: red;">&#10045</span></div>
-              <select class='form-tcinput' id="pid">
-                <option v-for="(roles_item,index) in roles_items" :index="index">{{roles_item.roleName}}</option>
-              </select>
+              <div class='tc-form-labeldiv'>角&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp色&nbsp<span style="color: red;">*</span></div>
+              <input @click="clickRoleNameList" readonly v-model="roleName" placeholder="请选择角色" data-toggle="dropdown" style="border-radius: 3px" class="form-tcinput" type="text">
+              <ul class="attopic dropdown-menu" style="width: 210px;top:265px;left:104px;">
+                <li @click="selectRoleName(role_item,index)" v-for="(role_item, index) in roles_items">
+                  <a class="no-padding" style="text-align: center">{{role_item.roleName}}</a>
+                </li>
+              </ul>
+              <img @click="clickRoleNameList" data-toggle="dropdown" style="position: absolute;width: 10px;height: 10px;margin-top:25px;right:52px" src="../../../../static/img/LoginAndRegister/register_arrow_gray.png">
             </div>
-            <button @click="saveAddNewStaff(staff_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">确定</button>
+            <button @click="saveAddNewStaff(staff_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black'>确定</button>
             <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
           </div>
         </div>
@@ -66,14 +70,14 @@
         <td class="text-center">{{data_item.wechatNo}}</td>
         <td class="text-center l_r_border">{{data_item.roleName}}</td>
         <td class="text-center"><span v-if="data_item.isAdmin!=1">{{data_item.state == 1 ? '正常' : '停用'}}</span></td>
-        <td class="text-center l_r_border"><a v-if="data_item.isAdmin!=1" href="javascript:;" data-toggle="modal" data-target="#edit" @click="editstaff(data_item,index)">编辑</a></td>
+        <td class="text-center l_r_border"><a v-if="data_item.isAdmin!=1" href="javascript:;" data-toggle="modal" data-target="#edit_staff" @click="editstaff(data_item,index)">编辑</a></td>
         <td class="text-center"><a @click="stopStaff(data_item,index)" v-if="data_item.isAdmin!=1" href="javascript:;" data-toggle="modal" data-target="#stop">{{data_item.state == 1 ? '停用' : '启用'}}</a></td>
       </tr>
       </tbody>
     </table>
 
     <!--模态弹窗开始--修改员工-->
-    <div class="modal inmodal fade" id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal inmodal fade" id="edit_staff" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
       <div class="modal-dialog modal-lg" style="width: 360px;">
         <div class="modal-content">
           <div class="tc-title-div">编辑员工信息</div>
@@ -81,34 +85,38 @@
                   aria-hidden="true">&times;</span></button>
           <div class="hr-tcline"></div>
           <div>
-            <div class='tc-form-labeldiv'>姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名&nbsp<span style="color: red;">&#10045</span></div>
+            <div class='tc-form-labeldiv'>姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名&nbsp</div>
             <div class='form-labeldiv' style="width: 210px;padding-left: 10px">{{staff_json.operatorName}}</div>
           </div>
           <div>
-            <div class='tc-form-labeldiv'>手&nbsp&nbsp机&nbsp&nbsp号&nbsp<span style="color: red;">&#10045</span></div>
+            <div class='tc-form-labeldiv'>手&nbsp&nbsp机&nbsp&nbsp号&nbsp</div>
             <div class='form-labeldiv' style="width: 210px;padding-left: 10px">{{staff_json.billId}}</div>
           </div>
           <div>
             <div class='tc-form-labeldiv'>邮&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp箱&nbsp</div>
-            <input style='width: 210px' class='form-tcinput' placeholder='请输入邮箱地址' v-model="edit_json_email">
+            <input maxlength="32" style='width: 210px' class='form-tcinput' placeholder='请输入邮箱地址' v-model="edit_json_email">
           </div>
           <div>
             <div class='tc-form-labeldiv'>微&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp信&nbsp</div>
-            <input style='width: 210px' class='form-tcinput' placeholder='请输入员工微信号' v-model="edit_json_wechatNo">
+            <input maxlength="20" style='width: 210px' class='form-tcinput' placeholder='请输入员工微信号' v-model="edit_json_wechatNo">
           </div>
           <div>
-            <div class='tc-form-labeldiv'>角&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp色&nbsp<span style="color: red;">&#10045</span></div>
-            <select class='form-tcinput' id="edit_select_id">
-              <option v-for="(roles_item,index) in roles_items" :index="index">{{roles_item.roleName}}</option>
-            </select>
+            <div class='tc-form-labeldiv'>角&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp色&nbsp<span style="color: red;">*</span></div>
+            <input @click="clickRoleNameList" readonly v-model="roleName" placeholder="请选择角色" data-toggle="dropdown" style="border-radius: 3px" class="form-tcinput" type="text">
+              <ul class="attopic dropdown-menu" style="width: 210px;top:254px;left:104px;">
+                <li @click="selectRoleName(role_item,index)" v-for="(role_item, index) in roles_items">
+                  <a class="no-padding" style="text-align: center">{{role_item.roleName}}</a>
+                </li>
+              </ul>
+              <img @click="clickRoleNameList" data-toggle="dropdown" style="position: absolute;width: 10px;height: 10px;margin-top:25px;right:52px" src="../../../../static/img/LoginAndRegister/register_arrow_gray.png">
           </div>
-          <button @click="saveEditStaff(staff_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">确定</button>
+          <button @click="saveEditStaff(staff_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black'>确定</button>
           <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
         </div>
       </div>
     </div>
 
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
   </div>
 </template>
 
@@ -132,13 +140,14 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
           billId:'',
           email:'',
           wechatNo:'',
+          roleId:'',
         },
+        roleName:'',
         select_edit_index:-100,
         waitParams:{
           pageSize:this.$enumerationType.pageSize,
           pageNo:'',
-          billId:"",
-          operatorName:""
+          operatorNameOrBillId:'',
         }
       }
     },
@@ -160,6 +169,7 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
             that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
             console.log(data.body.msg);
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         }, function (err) {
           console.log(err);
@@ -171,25 +181,15 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
       },
 //      搜索员工
       searchStaff:function (search_staff) {
-        if (!search_staff){
-          return;
-        }
         var that = this;
-        var billId;
-        var operatorName;
-        if (search_staff.length==11){
-          billId = search_staff;
-          operatorName = '';
-        }else {
-          billId = '';
-          operatorName = search_staff;
-        }
-        console.log(billId + "------" + operatorName);
-        this.$api.get(this, this.$requestApi.staffManage, {"billId":billId,"operatorName":operatorName}, function (data) {
+        this.waitParams.operatorNameOrBillId = search_staff;
+        this.$api.get(this, this.$requestApi.staffManage, this.waitParams, function (data) {
           if (data.body.code == '00') {
             that.data_items = data.body.data;
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
             console.log(data.body.msg);
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         }, function (err) {
           console.log(err);
@@ -197,71 +197,84 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
       },
 //      点击了添加员工
       addNewClick:function () {
-        this.staff_json = {};
+        this.staff_json = {
+          operatorName:'',
+          billId:'',
+          email:'',
+          wechatNo:'',
+          roleId:'',
+        };
+        this.roleName = '';
+        // var that = this;
+        // this.$api.get(this, this.$requestApi.roleManage, "", function (data) {
+        //   console.log("请求的数据:" + JSON.stringify(data));
+        //   if (data.body.code == '00') {
+        //     that.roles_items = data.body.data;
+        //   } else {
+
+        //   }
+        // });
+      },
+      // 点击了选择角色
+      clickRoleNameList:function (){
         var that = this;
         this.$api.get(this, this.$requestApi.roleManage, "", function (data) {
           console.log("请求的数据:" + JSON.stringify(data));
           if (data.body.code == '00') {
             that.roles_items = data.body.data;
           } else {
-
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
-        }, function (err) {
-
         });
+      },
+      // 选择角色
+      selectRoleName: function (role_item,index){
+        this.staff_json.roleId = role_item.roleId;
+        this.roleName = role_item.roleName;
       },
 //      保存添加员工
       saveAddNewStaff:function (staffjson) {
-        var objS = document.getElementById("pid");
-        var roleName = this.roles_items[objS.selectedIndex].roleName;
-        var roleId = this.roles_items[objS.selectedIndex].roleId;
-        console.log(roleId);
-        if(staffjson.operatorName==''||staffjson.billId==''){
-          console.log("没填完");
+        console.log("roleId--->"+staffjson.roleId);
+        if(staffjson.operatorName && staffjson.billId && staffjson.roleId) {
+          if(this.$stringUtils.checkPhone(staffjson.billId)){
+            var that=this;
+            this.$api.post(this,this.$requestApi.addNewStaff, {"operatorName":staffjson.operatorName,"billId":staffjson.billId,"email":staffjson.email,"wechatNo":staffjson.wechatNo,"roleId":staffjson.roleId},function (data) {
+              if(data.body.code == '00'){
+                console.log("添加成功");
+                swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
+                that.staff_manage_list();
+                $("#addnew_staff").modal('hide');
+              }else{
+                swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
+              }
+            });
+          }else {
+            swal({title: "错误的手机号", text: "", type: "error", timer: 1000, showConfirmButton: false});
+          }
         }else {
-          var that=this;
-          this.$api.post(this,this.$requestApi.addNewStaff, {"operatorName":staffjson.operatorName,"billId":staffjson.billId,"email":staffjson.email,"wechatNo":staffjson.wechatNo,"roleId":roleId},function (data) {
-            if(data.body.code == '00'){
-              console.log("添加成功");
-              that.staff_manage_list();
-            }else{
-
-            }
-          });
+          swal({title: "必填项未填写完整", text: "", type: "error", timer: 1000, showConfirmButton: false});
         }
       },
 //      点击员工列表的编辑按钮
       editstaff:function (data_item,index) {
         this.staff_json = data_item;
+        this.roleName = data_item.roleName;
         this.edit_json_email = data_item.email;
         this.edit_json_wechatNo = data_item.wechatNo;
         this.select_edit_index = index;
-        var that = this;
-        this.$api.get(this, this.$requestApi.roleManage, "", function (data) {
-          console.log("请求的数据:" + JSON.stringify(data));
-          if (data.body.code == '00') {
-            that.roles_items = data.body.data;
-          } else {
-            console.log(data.body.msg);
-          }
-        }, function (err) {
-          console.log(err);
-        });
       },
 //      点击编辑框的保存按钮
       saveEditStaff:function (staff_json) {
-        var objS = document.getElementById("edit_select_id");
-        var roleName = this.roles_items[objS.selectedIndex].roleName;
-        var roleId = this.roles_items[objS.selectedIndex].roleId;
         var operatorId = this.data_items[this.select_edit_index].operatorId;
         var that=this;
-        this.$api.post(this,this.$requestApi.updateStaff, {"email":that.edit_json_email,"wechatNo":that.edit_json_wechatNo,"roleId":roleId,"operatorId":operatorId},function (data) {
+        this.$api.post(this,this.$requestApi.updateStaff, {"email":that.edit_json_email,"wechatNo":that.edit_json_wechatNo,"roleId":staff_json.roleId,"operatorId":operatorId},function (data) {
           if(data.body.code == '00'){
             console.log("编辑成功");
-            console.log(roleName);
+            swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
             that.staff_manage_list();
+            $("#edit_staff").modal('hide');
           }else{
-
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         });
       },
@@ -272,9 +285,10 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
           this.$api.post(this,this.$requestApi.stopStaff, {"operatorId":data_item.operatorId},function (data) {
             if(data.body.code == '00'){
               console.log("停用成功");
+              swal({title: "停用成功", text: "", type: "success", timer: 1000, showConfirmButton: false});
               that.data_items[index].state = 0;
             }else{
-
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
             }
           });
         }else {//当前状态为停用状态
@@ -282,9 +296,10 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
           this.$api.post(this,this.$requestApi.startStaff, {"operatorId":data_item.operatorId},function (data) {
             if(data.body.code == '00'){
               console.log("启用成功");
+              swal({title: "启用成功", text: "", type: "success", timer: 1000, showConfirmButton: false});
               that.data_items[index].state = 1;
             }else{
-
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
             }
           });
         }

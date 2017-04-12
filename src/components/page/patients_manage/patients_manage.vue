@@ -7,7 +7,7 @@
 	<!--患者列表-->
 	<div class="wrapper wrapper-content animated fadeInRight">
 		<div>
-			<button type="button" class="btn btn-link patient_add_btn" style="margin-top: -10px" data-toggle="modal" data-target="#patients_add">
+			<button type="button" class="btn btn-link patient_add_btn" style="margin-top: -10px" data-toggle="modal" data-target="#patients_add" data-backdrop="static">
 			<img src="../../../../static/img/set_manage_img/add.png" style="margin-top: -3px"> 添加患者</button>
 		</div>
 
@@ -17,7 +17,7 @@
 					<div class="ibox patient_item">
 						<div class="ibox-title patient_list_item_title">
 							<h5>{{data_item.userName.length > 8 ? data_item.userName.substring(0,8)+"...":data_item.userName}}</h5>
-							<small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
+							<small class="m-l-sm">{{$stringUtils.dateAge(data_item.birthdayDate)}}岁 / {{data_item.userSex == 9 ? '未知' : data_item.userSex == 1 ? '男' : '女'}} / {{data_item.billId}}</small>
 						</div>
 						<div class="ibox-content patient_ibox-content">
 
@@ -34,8 +34,8 @@
 							</div>
 
 							<div style="margin-top: 20px">
-								<button @click="perfect_information_click(data_item)" type="button" class="patient_perfect_information" data-toggle="modal" data-target="#perfect_information_modal">完善信息</button>
-								<button @click="reception(data_item.userId)" type="button" class="patient_perfect_information"><a style="color: white" href="#/doctor_clinic/history_case">查看病例</a></button>
+								<button @click="perfect_information_click(data_item)" type="button" class="patient_perfect_information" data-toggle="modal" data-target="#perfect_information_modal" data-backdrop="static">完善信息</button>
+								<button @click="reception(data_item.userId)" type="button" class="patient_perfect_information"><a style="color: white" href="#/doctor_clinic/history_case">查看病历</a></button>
 								<button @click="doctorWorkbench(data_item)" type="button" class="patient_physical_check">方便门诊</button>
 							</div>
 
@@ -44,9 +44,14 @@
 				</li>
 			</ul>
 		</div>
+
+	</div>
+	<div v-show="data_items.length <= 0" style="width:100%; height:100%; text-align:center; margin-top:150px">
+		<img src="../../../../static/img/patient_nor.png">
+		<h5>暂无患者</h5>
 	</div>
 	<!--底部分页-->
-	<pagination v-show="data_items.length > 0"></pagination>
+	<pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
 	</div>
 </template>
 
@@ -207,8 +212,9 @@
 					if(data.body.code=='00'){
 						console.log(data.body.data);
 						localStorage.setItem(that.$names.registeredOrdId, data.body.data);
-						parent.document.getElementById("30300").click();
+						parent.document.getElementById("39").click();
 					}else{
+						swal({title:data.body.msg,text: "",type: "error",timer: 2000,showConfirmButton: false });
 						console.log(data.body.msg);
 					}
 				},function (err) {

@@ -18,12 +18,9 @@
             <tr v-for="(other_charge_item, index) in other_charge_items">
                 <td :class="{focus_border : other_charge_item.focus && currentFocusIndex == 0}" style="width: 160px">
                     <input @input="getDataList(other_charge_item.projectName)" @focus="getFocus(other_charge_item, 0,other_charge_item.projectName)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="other_charge_item.projectName">
-                    <div v-show="other_charge_item.focus && currentFocusIndex == 0" class="list_menu">
-                        <div v-if="dataList.length == 0" class="red-bg">暂无该收费项目</div>
-                        <ul v-else class="no-margins">
+                        <ul  class="list_menu attopic">
                             <li @mousedown="selectOtherCharge(data, other_charge_item)" class="item_list_normal" v-for="(data, index) in dataList"><a>{{data.projectName}}</a></li>
                         </ul>
-                    </div>
                 </td>
                 <td :class="other_charge_item.focus && currentFocusIndex == 1 ? 'focus_border' : 'l_border' " class="little_item"><span @focus="getFocus(other_charge_item, 1)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" >{{$enumeration.getProjectUnit(other_charge_item.projectUnit) }}</span></td>
                 <td :class="other_charge_item.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' " class="little_item"><input @focus="getFocus(other_charge_item, 2)" @blur="loseFocus(other_charge_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="other_charge_item.amount"></td>
@@ -180,7 +177,9 @@
                                 swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
                                 that.setDefaultData();
                             }else{
-                                console.log(data.body.msg);
+                              swal({   title: data.body.msg,   text: "", type:that.$enumerationType.error,  timer: that.$enumerationType.timers,   showConfirmButton: false });
+
+                              console.log(data.body.msg);
                             }
 
                         },function (err) {

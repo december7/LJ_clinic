@@ -16,21 +16,21 @@
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="procurement_form-div_margin no-padding">
                     <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">采购员:</div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input  type="text"  class="form-control gray-bg input_circular_corner"  v-model="suppliersData.operatorName">
+                      <input :disabled=" goodsType"  type="text"  class="form-control gray-bg input_circular_corner"  v-model="suppliersData.operatorName">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="procurement_form-div_margin no-padding">
                     <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">采购员电话:</div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input  type="text"  class="form-control gray-bg input_circular_corner"  v-model="suppliersData.billId">
+                      <input :disabled=" goodsType" type="text"  class="form-control gray-bg input_circular_corner"  v-model="suppliersData.billId">
                     </div>
                   </div>
                 <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="procurement_form-div_margin no-padding">
                   <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' " class="pull-left no-padding left_text_tips">供应商:</div>
                   <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                     <div class="input-group-btn">
-                      <input  data-toggle="dropdown" type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入选择供应商" v-model="suppliersData.supplierName"  @focus="getSuppliers(suppliersData.supplierName)" @input="getSuppliers(suppliersData.supplierName)">
-                      <ul class="dropdown-menu" style="width: 100%" >
+                      <input :disabled=" goodsType" data-toggle="dropdown" type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入选择供应商" v-model="suppliersData.supplierName"  @focus="getSuppliers(suppliersData.supplierName)" @input="getSuppliers(suppliersData.supplierName)">
+                      <ul v-show="suppliersList.length>0" class="attopic dropdown-menu" style="width: 100%" >
                         <li @click="selectSuppliers(titleItem)" v-for="(titleItem, index) in suppliersList">
                           <a  class="no-padding" style="text-align: center">{{titleItem.supplierName}}</a>
                         </li>
@@ -43,7 +43,7 @@
                   <div   class="no-padding col-md-12 procurement_form-div_margin">
                     <div   class=" col-md-1 pull-left no-padding left_text_tips"> 备注 </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-11' " style="padding-right: 23px">
-                      <input  type="text"  class="form-control gray-bg input_circular_corner" v-model="suppliersData.remark">
+                      <input  :disabled=" goodsType" type="text"  class="form-control gray-bg input_circular_corner" v-model="suppliersData.remark">
 
                     </div>
                   </div>
@@ -58,7 +58,7 @@
               <thead>
 
               <tr  :class="{'bottom_border': procurementDatas.length==0}">
-                <th  v-for="(item,index) in procurement" :class="{right_border:index==procurement.length-1}"  class=" l_border text-center top_border" style="border-bottom: none;">{{item.name}}</th>
+                <th  v-for="(item,index) in procurement"   v-if="!getTitleShow(goodsType,procurement,index) "  class=" right_border l_border text-center top_border" style="border-bottom: none;">{{item.name}}</th>
               </tr>
               </thead>
               <tbody>
@@ -66,8 +66,8 @@
                 <td class="text-center  l_border" ><span   class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;">{{++index}}</span></td>
 
                 <td  :class="procurementData.focus && currentFocusIndex == 2 ? 'focus_border' : 'l_border' "  class="text-center  l_border">
-                  <input  @input="getGoodsData(procurementData.prodName)"  @focus="getFocus(procurementData, 2)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="procurementData.prodName">
-                  <div v-show="procurementData.focus " class="list_menu">
+                  <input :disabled=" goodsType" @input="getGoodsData(procurementData.prodName)"  @focus="getFocus(procurementData, 2)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="procurementData.prodName">
+                  <div v-show="procurementData.focus " class="list_menu goods-margin-left5 attopic">
                     <ul class="no-margins">
                       <li @mousedown="selectChinesePrescription(data, procurementData)" class="item_list_normal" v-for="(data, index) in dataList"><a>{{data.prodName}} </a></li>
                     </ul>
@@ -79,22 +79,21 @@
                 <td  :class="procurementData.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="text-center " ><span @focus="getFocus(procurementData, 3)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" >{{$enumeration. getGoodsPrice(procurementData. lastPrice )}}</span></td>
                 <td  :class="procurementData.focus && currentFocusIndex == 3 ? 'focus_border' : 'l_border' " class="text-center " ><span @focus="getFocus(procurementData, 3)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" >{{$enumeration. getGoodsPrice(procurementData.minimumPrice)}}</span></td>
                 <td :class="procurementData.focus && currentFocusIndex == 8 ? 'focus_border' : 'l_border' "   class="   text-center"><span @focus="getFocus(procurementData, 8)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;">{{$enumeration. getGoodsPrice(procurementData.retailPrice)}}</span></td>
-                <td :class="procurementData.focus && currentFocusIndex == 9 ? 'focus_border' : 'l_border' " class="   text-center"><input @focus="getFocus(procurementData, 9)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="tel" style="height: auto;width: 100%;"v-model="procurementData.purchaseNum"> </td>
-                <td :class="procurementData.focus && currentFocusIndex == 10 ? 'focus_border' : 'l_border' "  class="   text-center"><input @focus="getFocus(procurementData, 10)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="tel" style="height: auto;width: 100%;"v-model="procurementData.purchasePrice"  /> </td>
+                <td :class="procurementData.focus && currentFocusIndex == 9 ? 'focus_border' : 'l_border' " class="   text-center"><input :disabled=" goodsType" @focus="getFocus(procurementData, 9)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="tel" style="height: auto;width: 100%;"v-model="procurementData.purchaseNum"> </td>
+                <td :class="procurementData.focus && currentFocusIndex == 10 ? 'focus_border' : 'l_border' "  class="   text-center"><input :disabled=" goodsType" @focus="getFocus(procurementData, 10)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="tel" style="height: auto;width: 100%;"v-model="procurementData.purchasePrice"  /> </td>
                 <td :class="procurementData.focus && currentFocusIndex == 11? 'focus_border' : 'l_border' "  class="   text-center"><span @focus="getFocus(procurementData, 11)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" > {{getPrice(procurementData)}}</span></td>
-                <td  :class="procurementData.focus && currentFocusIndex == 12? 'focus_border' : 'l_border' " class="   text-center"><span @focus="getFocus(procurementData, 12)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" >{{procurementData.remark}} </span></td>
-                <td  class="l_border text-center right_border" @click="deleteProcurements"    ><a class="un_skip_link">删除</a></td>
+                <td  :class="procurementData.focus && currentFocusIndex == 12? 'focus_border' : 'l_border' " class="  right_border  text-center"><span @focus="getFocus(procurementData, 12)" @blur="loseFocus(procurementData)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;width: 100%;" >{{procurementData.remark}} </span></td>
+                <td  v-if="!goodsType" class="l_border text-center right_border" @click="deleteProcurements"    ><a class="un_skip_link">删除</a></td>
               </tr>
 
-              <tr id="add_cure_line" v-show="goodsId[1]!=2" >
-                <td class=" bottom_border l_border text-center"  @click="addProcurement" id="addProcurement"><a class="un_skip_link">添加商品</a>
+              <tr id="add_cure_line"  v-if="goodsId[1]!=2" >
+                <td class=" bottom_border l_border text-center" colspan="2" @click="addProcurement" id="addProcurement"><a class="un_skip_link">添加商品</a>
                 <td class=" bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"> </td>
                 <td class=" bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"></td>
-                <td class="  bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"></td>
                 <td class="  bottom_border l_border text-center"></td>
                 <td class=" bottom_border l_border text-center"></td>
@@ -104,14 +103,15 @@
 
 
               </tbody>
+
             </table>
 
           </div>
 
-            <div  ><h3 >入库金额:{{typeof totalPrice=="number"?"":totalPrice}}</h3></div>
+            <div  ><h3 >采购金额:{{typeof totalPrice=="number"?"":totalPrice}}</h3></div>
         </div>
-        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' @click="compileProcurement" >完成</button>
-        <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消{{no}}</button>
+        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' @click="compileProcurement"v-if="goodsId[1]!=2" :disabled="isDisabled" >完成</button>
+        <button class='layui-layer-close form-btn-white' data-dismiss="modal"  v-if="goodsId[1]!=2" @click="returnPage">取消{{no}}</button>
           </div>
           <div class="add_body_bottom" ></div>
         </div>
@@ -129,6 +129,7 @@
       return {
         assist_inquiry_show: false,
         assist_inquiry_showed:false,
+        isDisabled:false,
         currentFocusIndex:0,
         focus: false,
         suppliersData:{
@@ -176,6 +177,7 @@
         }
 
         return "";
+
       },
 
       totalPrice(){
@@ -186,44 +188,33 @@
           totalPrice   +=Number(datas[i].procurementMoney);
         }
         return totalPrice.toFixed(2);
-      }
+      },
+      goodsType(){
+        let  goodsId=  this.$store.getters.getCompileSuppliersNo;
+        if (goodsId!=""&&goodsId.length==2 ) {
+          console.log("goodsId"+goodsId[1]);
+          return goodsId[1]==2;
+        }
+        return false;
+      },
+
 
     },
      mounted:function () {
-//       $("input").keypress(function () {
-//         var reg = $(this).val().match(/\d+(\.\d{1,2})?/);
-//         var txt = '';
-//         if (reg != null)
-//         {
-//           txt = reg[0];
-//         }
-//         $(this).val(txt);
-//       }).change(function () {
-//         $(this).keypress();
-//       });
-//       $(".inputmoney").keyup(function () {
-//         console.log("====");
-//         var reg = $(this).val().match(/\d+\.?\d{0,2}/);
-//         var txt = '';
-//         if (reg != null) {
-//           txt = reg[0];
-//         }
-//         $(this).val(txt);
-//       }).change(function () {
-//         $(this).keypress();
-//         var v = $(this).val();
-//         if (/\.$/.test(v))
-//         {
-//           $(this).val(v.substr(0, v.length - 1));
-//         }
-//       });
      },
     methods: {
+      getTitleShow:function(goodsType,procurement,index){
+        return goodsType&&procurement.length-1==index;
+      },
       getViewProcurement:function () {
         let that=this;
         this.$api.get(that,that.$requestApi.stockView + that.goodsId[0] ,{}, function (data) {
           if (data.body.code == '00') {
             that.procurementDatas=data.body.prods;
+            for(let i in  that.procurementDatas ){
+              that.procurementDatas[i].focus=false;
+              that.procurementDatas  [i].purchasePrice= that.$enumeration. getGoodsPrice(that.procurementDatas [i].purchasePrice);
+            }
             that.suppliersData=data.body.data;
 
           } else {
@@ -236,12 +227,10 @@
         });
       },
       compileProcurement:function () {
-
         let that=this;
         let prods=[];
         console.log(JSON.stringify(that.procurementDatas));
         for (let i in that.procurementDatas){
-
           prods.push({
            purchaseNum :that.procurementDatas[i].purchaseNum,
            prodId :that.procurementDatas[i].prodId,
@@ -258,8 +247,11 @@
           prods:JSON.stringify(prods),
           totalPrice:  (that.totalPrice*100).toFixed(0),
         };
+        that.isDisabled=true;
        let url=  that.goodsId==""?that.$requestApi.createPurchase:that.$requestApi.updatePurchase+that.goodsId[0];
         this.$api.post(that,url ,data, function (data) {
+          that.isDisabled=false;
+
           if (data.body.code == '00') {
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
             that.returnPage();
@@ -268,6 +260,8 @@
           }
 
         }, function (err) {
+          that.isDisabled=false;
+
           swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
 
         });
@@ -316,14 +310,12 @@
         itemData.manufacturer = data.manufacturer;
         itemData.prodUnit = data.prodUnit;
         itemData.minimumPrice = data.minimumPrice;
-        itemData.minimumPrice = data.minimumPrice;
         itemData.lastPrice = data.lastPrice;
         itemData.remark = data.remark;
       },
       selectSuppliers:function (data) {
        this.suppliersData.supplierName = data.supplierName;
        this.suppliersData.supplierId = data.supplierId;
-          this.suppliersList=[];
       },
 
       getSuppliers:function (supplierName) {
@@ -345,14 +337,26 @@
       getGoodsData:function (goodsName) {
 
         var that=this;
-
+        if (goodsName==""){
+          that.goodsDatas[index].prodName="";
+          that.goodsDatas[index].prodId="";
+          that.goodsDatas[index].prodSpec="";
+          that.goodsDatas[index].retailPrice="";
+          that.goodsDatas[index].manufacturer="";
+          that.goodsDatas[index].prodUnit="";
+          that.goodsDatas[index].minimumPrice=0;
+          that.goodsDatas[index].lastPrice="";
+          that.goodsDatas[index].remark="";
+          that.goodsDatas[index].focus=false;
+          that. goodsDatas.splice(index, 1,  that.goodsDatas[index]);
+          return;
+        }
         this.$api.get(this, this.$requestApi.goodsHistory,{prodNameOrGenericNameOrEnglishName:goodsName,state:1},function  (data) {
           if(data.body.code=='00'){
             that.dataList = data.body.data;
           }else{
             console.log(data.body.msg);
           }
-
         },function (err) {
           console.log(err);
 
@@ -401,15 +405,7 @@
     right: 10px;
     top: 15px;
   }
-  .top_border{
-    border-top: 1px solid #ddd !important;
-  }
-  .right_border{
-    border-right: 1px solid #ddd !important;
-  }
-  .bottom_border{
-    border-bottom: 1px solid #ddd !important;
-  }
+
   .input_circular_left_radius{
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
@@ -422,5 +418,8 @@
   .add_body_bottom{
      background: #F9F9F9;
     height: 20px;
+  }
+  .goods-margin-left5{
+    margin-left: 5%;
   }
 </style>

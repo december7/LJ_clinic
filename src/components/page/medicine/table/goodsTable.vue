@@ -31,11 +31,13 @@
         <td class="text-center">{{$enumeration. getProjectUnit(medicineItem.prodUnit)}}</td>
         <td class="text-center">{{ medicineItem.batchNumber}}</td>
         <td class="text-center">{{$stringUtils.dateFormat(medicineItem.expireDate)}}</td>
-        <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem. stockNum)}}</td>
+        <td class="text-center">{{ medicineItem. stockNum}}</td>
         <td class="text-center">{{$enumeration. getGoodsPrice(medicineItem.stockPrice)}}</td>
         <td class="text-center">{{medicineItem.surplusStockNum}}</td>
       </tr>
       </tbody>
+      <tbody v-if="medicineItems.length===0" ><tr class="gradeC"> <td class="text-center" :colspan="goodsNames.length"  >{{$toastContent.toastTableContent}}</td></tr></tbody>
+
     </table>
 
 </template>

@@ -6,7 +6,7 @@
     <!--中间列表-->
     <div class="wrapper wrapper-content animated fadeInRight" style="padding-top: 0">
       <div class="col-sm-12 no-padding" style="line-height: 40px">
-        <a data-toggle="modal" data-target="#add_patient"><i class="glyphicon glyphicon-plus"></i><h4 style="display: inline-block;margin-left: 10px">添加患者</h4></a>
+        <a data-toggle="modal" data-target="#add_patient"><i class="glyphicon glyphicon-plus"></i><span style="display: inline-block;margin-left: 10px" class="patient_add_btn">添加患者</span></a>
       </div>
       <!--<patient_msg_list></patient_msg_list>-->
       <div class="col-sm-12 no-padding">
@@ -49,8 +49,10 @@
         </ul>
       </div>
     </div>
+    <default-interface v-show="data_items.length === 0"   ></default-interface>
+
     <!--底部分页-->
-    <pagination v-show="data_items.length > 0"></pagination>
+    <pagination v-show="data_items.length > 0" :iDisplayLength=" data_items.length "></pagination>
 
     <!--添加患者模态框 开始-->
     <add_patient_modal></add_patient_modal>
@@ -157,6 +159,8 @@
   import pagination from './bottom_pagination.vue'
   import switch_tab from './switch_tab_template.vue'
   import add_patient_modal from './add_patient_modal'
+  import defaultInterface from 'components/commonView/defaultInterface.vue'
+
   export default{
     data() {
       return{
@@ -215,10 +219,8 @@
             }else{
               console.log(data.body.msg);
             }
-
           },function (err) {
             console.log(err);
-
           });
 
           },
@@ -231,10 +233,9 @@
               if(data.body.code == '00'){
                 that.data_items[index].state=0;
                 that. data_items.splice(index, 1,  that.data_items[index]);
-
                 localStorage.setItem(that.$names.registeredOrdId,registeredOrdId);
                 swal({   title: data.body.msg,   text: "", type:that.$enumerationType.success,  timer: that.$enumerationType.timers,   showConfirmButton: false });
-                parent.document.getElementById("30300").click();
+                parent.document.getElementById("39").click();
 
               }else{
                 console.log(data.body.msg);
@@ -245,8 +246,8 @@
 
             });
         } else {//已经接诊了
-          localStorage.setItem(that.$names.registeredOrdId,registeredOrdId);
-          parent.document.getElementById("30300").click();
+           localStorage.setItem(that.$names.registeredOrdId,registeredOrdId);
+           parent.document.getElementById("39").click();
 
 //          parent.vueRoot.$store.dispatch("medicine_compile_suppliers_no",registeredOrdId);
 
@@ -264,6 +265,6 @@
       this.request();
     },
 
-    components:{switch_tab, pagination, add_patient_modal}
+    components:{defaultInterface,switch_tab, pagination, add_patient_modal}
   }
 </script>

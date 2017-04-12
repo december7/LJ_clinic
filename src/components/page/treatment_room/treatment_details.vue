@@ -4,9 +4,9 @@
     <div class="row white-bg" style="padding: 0 20px; height: 35px">
       <div class="col-sm-12 fixed-div">
         <div class="ibox-title no-top-border pull-left" style="padding-left: 0;min-height: 35px;padding-top: 10px">
-          <h5 v-show="data.isEmergency == 1" class="red-bg" style="margin: 1px 10px 0 0;">急</h5>
+          <h5 v-show="data.isEmergency == 2" class="red-bg" style="margin: 1px 10px 0 0;">急</h5>
           <small>{{data.userName}}</small>
-          <small class="m-l-sm">{{age}}岁 / {{data.userSex == 1 ? '男' : '女'}} / {{data.billId}}</small>
+          <small class="m-l-sm">{{$stringUtils.dateAge(data.birthdayDate)}}岁 / {{data.userSex == 1 ? '男' : '女'}} / {{data.billId}}</small>
           <small class="m-l-xl">门诊号: {{data.sortNo}}</small>
           <small class="m-l-xl">科室: {{data.departName}}</small>
           <small class="m-l-xl">医生: {{data.doctorName}}</small>
@@ -29,7 +29,7 @@
             <small class="m-l-xs" style="color: black">{{data.diagnosis}}</small>
           </div>
           <div class="pull-right m-r-md" style="line-height: 48px">
-            <a style="color: #1c2b44;" href="#/doctor_clinic/history_case">查看病历</a>
+            <a @click="reception(data.userId)" style="color: #1c2b44;">查看病历</a>
           </div>
         </div>
 
@@ -51,7 +51,7 @@
               <td class="text-center">{{index + 1}}</td>
               <td class="text-center l_r_border">{{subData.projectName}}</td>
               <td class="text-center">{{subData.remark}}</td>
-              <td class="text-center l_r_border">{{subData.payState == 0 ? '未收费' : '已收费'}}</td>
+              <td class="text-center l_r_border">{{subData.payState == 1 ? '未收费' : '已收费'}}</td>
               <td class="text-center">{{subData.amount}}/{{subData.finishAmount}}</td>
               <td class="text-center l_r_border">
                 <small>已完成</small>
@@ -106,6 +106,7 @@
             that.age = that.getAge(that.data.birthdayDate);
           } else {
             console.log(data.body.msg);
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
 
         }, function (err) {
@@ -127,7 +128,13 @@
           importCSS: true,
           loadCSS: "//cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
         });
-      }
+      },
+
+      reception:function (userId) {
+        this.$store.dispatch('medicine_compile_user_id',  userId);
+        this.$router.push('/doctor_clinic/history_case');
+      },
+
     },
   }
 </script>

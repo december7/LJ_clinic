@@ -35,13 +35,10 @@
                 <tbody>
                 <tr v-for="(western_prescription_item, index) in western_prescription_items">
                     <td :class="{focus_border : western_prescription_item.focus && currentFocusIndex == 0}" style="width: 160px">
-                        <input @input="getDataList(western_prescription_item.prodName)" @focus="getFocus(western_prescription_item, 0)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="western_prescription_item.prodName">
-                        <div v-show="western_prescription_item.focus && currentFocusIndex == 0" class="list_menu">
-                            <div v-if="dataList.length == 0" class="red-bg">暂无该处方</div>
-                            <ul v-else class="no-margins">
+                        <input @input="getDataList(western_prescription_item.prodName,index)" @focus="getFocus(western_prescription_item, 0)" @blur="loseFocus(western_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="western_prescription_item.prodName">
+                            <ul  v-show="dataList.length>0" class="list_menu attopic">
                                 <li @mousedown="selectWesternMedicine(data, western_prescription_item)" class="item_list_normal" v-for="(data, index) in dataList"><a>{{data.prodName}}</a></li>
                             </ul>
-                        </div>
                     </td>
                     <td class="l_border prescription_little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="western_prescription_item.preStockNum"></td>
                     <td class="l_border cure_little_item"><span class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white"  >{{$enumeration.getGoodsPrice (western_prescription_item.retailPrice)}} </span></td>
@@ -95,13 +92,10 @@
                 <tbody>
                 <tr v-for="(chinese_prescription_item, index) in chinese_prescription_items">
                     <td :class="{focus_border : chinese_prescription_item.focus && currentFocusIndex == 0}" style="width: 160px">
-                        <input @input="getDataList(chinese_prescription_item.prodName)" @focus="getFocus(chinese_prescription_item, 0,chinese_prescription_item.prodName)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="chinese_prescription_item.prodName">
-                        <div v-show="chinese_prescription_item.focus && currentFocusIndex == 0" class="list_menu">
-                            <div v-if="dataList.length == 0" class="red-bg">暂无该处方</div>
-                            <ul v-else  class="no-margins">
+                        <input @input="getDataList(chinese_prescription_item.prodName,index)" @focus="getFocus(chinese_prescription_item, 0,chinese_prescription_item.prodName)" @blur="loseFocus(chinese_prescription_item)" class="form-control white-bg no-padding text-center no-borders" type="text" style="height: auto;" v-model="chinese_prescription_item.prodName">
+                            <ul  v-show="dataList.length > 0"  class="list_menu attopic">
                                 <li @mousedown="selectChinesePrescription(data, chinese_prescription_item)" class="item_list_normal" v-for="(data, index) in dataList"><a>{{data.prodName}}</a></li>
                             </ul>
-                        </div>
                     </td>
                     <td class="l_border little_item"><input class="form-control white-bg no-padding text-center no-borders" readonly type="text" style="height: auto; background-color: white" v-model="chinese_prescription_item.preStockNum"></td>
                     <td class="l_border little_item"><span class="form-control white-bg no-padding text-center no-borders" type="text" readonly style="height: auto; background-color: white" > {{$enumeration.getGoodsPrice (chinese_prescription_item.retailPrice)}}</span></td>
@@ -136,7 +130,7 @@
                                 <div class="input-group-btn">
                                     <button data-toggle="dropdown" style="width: 100%; border: 1px solid white;" class="form-control    " type="button">{{$enumeration.getUsageType(usageType)}}<span class=" caret goods_tips_down"></span>
                                     </button>
-                                    <ul class="dropdown-menu" style="width: 100%" >
+                                    <ul  class="dropdown-menu attopic" style="width: 100%" >
                                         <li @click="selectUsageTypeItem(index)" v-for="(titleItem, index) in $enumeration.getUSAGE_TYPE()">
                                             <a :class="{selected_item :  usageType== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                         </li>
@@ -153,7 +147,7 @@
                                 <div class="input-group-btn">
                                     <button data-toggle="dropdown" style="width: 100%;border: 1px solid white;" class="form-control    " type="button">{{$enumeration.getFrequency(frequency)}}<span class=" caret goods_tips_down"></span>
                                     </button>
-                                    <ul class="dropdown-menu" style="width: 100%" >
+                                    <ul class="dropdown-menu attopic" style="width: 100%" >
                                         <li @click="selectFrequencyItem(index)" v-for="(titleItem, index) in $enumeration.getPROD_FREQUENCY()">
                                             <a :class="{selected_item :  frequency== index}" class="no-padding" style="text-align: center">{{titleItem}}</a>
                                         </li>
@@ -353,10 +347,6 @@
             /*新增中药处方*/
             add_chinese_medicine_prescription: function () {
                 this.chinese_prescription_items.push({
-                    name: '',
-                    repertory: '',
-                    price: '',
-                    dosage: '',
                     doseUnit: '',
                     unit: '',
                     state: 1,
@@ -391,13 +381,7 @@
             add_western_medicine_prescription: function () {
                 this.western_prescription_items.push({
                     prodName: '',
-                    repertory: '',
-                    price: '',
-                    dosage: '',
                     unit: '',
-                    usage: '',
-                    frequency: '',
-                    usageType: '',
                     remark: '',
                     state: 1,
                     operType: 1,
@@ -405,8 +389,40 @@
                     focus: false
                 });
             },
-            getDataList:function (prodName) {
+            getDataList:function (prodName,index) {
                 let that=this;
+                if (prodName==""){
+                  if (that.  prescription_type==1){
+                    that.western_prescription_items[index].prodName="" ;
+                    that.western_prescription_items[index].doseUnit="" ;
+                    that.western_prescription_items[index].retailPrice="" ;
+                    that.western_prescription_items[index].unit="" ;
+                    that.western_prescription_items[index].prodId="" ;
+                    that.western_prescription_items[index].usageType="" ;
+                    that.western_prescription_items[index].frequency="" ;
+                    that.western_prescription_items[index].remark="" ;
+                    that.western_prescription_items[index].singleDose="" ;
+                    that.western_prescription_items[index].operType=1 ;
+
+                    that.western_prescription_items[index].preStockNum="" ;
+                    that.western_prescription_items[index].state=1 ;
+                    that. western_prescription_items.splice(index, 1,  that.western_prescription_items[index]);
+                  }else {
+
+                      that.chinese_prescription_items[index].prodName="" ;
+                      that.chinese_prescription_items[index].preStockNum="" ;
+                      that.chinese_prescription_items[index].doseUnit="" ;
+                      that.chinese_prescription_items[index].prodId="" ;
+                      that.chinese_prescription_items[index].state=1;
+                      that.chinese_prescription_items[index].operType=1 ;
+                      that.chinese_prescription_items[index].retailPrice=1 ;
+                      that. chinese_prescription_items.splice(index, 1,  that.chinese_prescription_items[index]);
+
+                  }
+                  return
+                }
+
+
                 that.$api.get(that, that.$requestApi.goodsHistory,{
                     prodType:that.  prescription_type,
                     iDisplayLength:that.$enumerationType.iDisplayLength,

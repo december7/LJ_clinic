@@ -16,7 +16,7 @@ export default {
 
       accessToken: sessionStorage.getItem(AUTH_ACCESS_TOKEN),
     },
-      operatorId: localStorage.getItem(AUTH_ACCESS_USER_OPERATOR_ID),
+      operatorId: sessionStorage.getItem(AUTH_ACCESS_USER_OPERATOR_ID),
     login: {
       success: false,
       failure: null,
@@ -34,7 +34,7 @@ export default {
     },
     LOGIN_SUBMIT_USER_OPERATOR_ID: (state,  operatorId ) => {
       console.log("LOGIN_SUBMIT_USER_OPERATOR_ID====="+operatorId);
-      localStorage.setItem(AUTH_ACCESS_USER_OPERATOR_ID, operatorId);
+      sessionStorage.setItem(AUTH_ACCESS_USER_OPERATOR_ID, operatorId);
     },
 
     ACCOUNT_LOGIN_SUBMIT_SUCCESS: (state) => {
@@ -58,5 +58,6 @@ export default {
   },
   getters: {
     getOperatorId: (state) => state.operatorId,
+    getAccessToken: (state) => state.auth.accessToken,
   }
 };

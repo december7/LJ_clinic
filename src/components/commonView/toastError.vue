@@ -1,5 +1,5 @@
 <template>
-  <span class="is-danger toast-left"  v-show="errors.has('phone')"   >{{toastContent}}</span>
+  <span class="is-danger toast-left"     >{{toastContent}}</span>
 </template>
 <script>
   export  default{
@@ -14,6 +14,7 @@
 <style >
   .is-danger{
     color:#f44f63;
+    border-color: #f44f63 !important;
   }
   .is-danger:focus{
     border-color: #f44f63 !important;

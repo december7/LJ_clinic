@@ -12,15 +12,15 @@
         <div class="col-sm-12 no-padding">
           <div class="ibox-title no-top-border gray-bg pull-left" style="padding-left: 0;">
             <h5 class="red-bg" style="margin: 2px 10px 0 0;" v-if=" patientCaseList.isEmergency==2" >急</h5>
-            <a style="border-bottom: 1px solid blue" data-toggle="modal" data-target="#perfect_information_modal">
+            <a style="border-bottom: 1px solid blue" data-toggle="modal" data-target="#perfect_information_modal" @click="prefectUser(patientCaseList.userId)">
               <small>{{patientCaseList.userName}}</small>
               <small class="m-l-sm">{{ $stringUtils.dateAge(patientCaseList.birthdayDate)}}岁 /{{ $stringUtils.dateSex(patientCaseList.userSex )}} / {{patientCaseList.billId}}</small>
             </a>
-            <small class="m-l-sm text-danger" v-if="hasUserMedical">&#9888 该患者有过敏史!</small>
+            <small class="m-l-sm text-danger" v-if="hasAllergys">&#9888 该患者有过敏史!</small>
           </div>
 
           <div class="ibox-tools" style="line-height: 48px">
-            <a class="wrapper" style="color: black"  @click="historyCase">查看历史病例</a>
+            <a class="wrapper un_skip_link" style="color: black"  @click="historyCase">查看历史病历</a>
             <a v-if="indexChoose == 0" @click="open_assist_inquiry" class="un_skip_link" style="text-decoration: underline; color: #00b7ee">辅助问诊</a>
             <button @click="showModel()" data-toggle="modal" data-target="#layer" v-else type="button" class="btn btn-w-m btn-primary">选择模板</button>
           </div>
@@ -205,7 +205,7 @@
             <img src="img/locked.png">
             <div>
               <span style="width:33%;border:1px solid #f4f4f4;height: 1px;display: inline-block;"></span><h5
-              style="display: inline-block;width: 33%;vertical-align: sub;text-align: center">邻家好医诊所门诊病例</h5><span
+              style="display: inline-block;width: 33%;vertical-align: sub;text-align: center">邻家好医诊所门诊病历</h5><span
               style="width:33%;border:1px solid #f4f4f4;height: 1px;display: inline-block;"></span>
             </div>
 
@@ -328,7 +328,7 @@
     <!--模态窗结束-->
 
     <!--完善信息模态框-->
-    <prefect></prefect>
+    <prefect :userId="userId"></prefect>
 
   </div>
 </template>
@@ -424,11 +424,13 @@
     box-shadow: rgb(102, 102, 102) 0px 0px 10px;
     margin-top: 12px;
     left: 15px;
+    margin-left: 5px;
     line-height: 30px;
     background-color: white;
     position: absolute;
     z-index: 999;
-    width: 160px;
+    min-width: 160px;
+     width: 160px;
   }
 
   .item_list_normal {
@@ -468,7 +470,7 @@
 
       return {
         titles: [
-          {titleName: '病例', selected: true},
+          {titleName: '病历', selected: true},
           {titleName: '治疗', selected: false},
           {titleName: '处方', selected: false},
           {titleName: '其他收费', selected: false}
@@ -482,14 +484,14 @@
         dataList: [],
         searchName:'',
         patientCaseList: '',
-        hasUserMedical: false,
+        hasAllergys: false,
 //        assist_inquiry_show: false,
 //        assist_inquiry_showed:false,
         prescription_type:1,
         currentFocusIndex:0,
         cure_items: [],
         other_charge_items: [],
-
+        userId:0,
 //        allergy_data: [],
 
 
@@ -569,7 +571,7 @@
       $("#btn_print_add_other_charge").click(function () {
         $(".other_charge_print_wrapper").printThis({importCSS: true,loadCSS:"//cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"});
       });
-var that=this;
+        var that=this;
       var store = localStorage.getItem("to_day_data");
       console.log(("====" + store));
       if (window.addEventListener) {
@@ -588,7 +590,7 @@ var that=this;
       }
 
             // 监听数据变化,当数据发生变化时,同步数据显示
-            window.onstorage = function(event){
+     window.onstorage = function(event){
                 var status = {}
                 status.key = event.key;
                 status.oldValue = event.oldValue;
@@ -609,11 +611,11 @@ console.log(status);
         this.$router.push('/doctor_clinic/history_case');
       },
 
-
-      request_list:function (index) {
-
+      prefectUser:function (userId) {
+        this.userId = userId;
       },
-
+      request_list:function () {
+      },
 
 
       /*打开辅助问诊*/

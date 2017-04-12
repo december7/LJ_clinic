@@ -19,21 +19,15 @@
 							<div class="col-md-4 no-padding">
 								<div class="col-md-3 pull-left no-padding left_text_tips">患者姓名<span class="text-danger" style="margin-left: 2px">*</span></div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.userName" type="text" placeholder="请填写真实姓名" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.userName" type="text" placeholder="请填写真实姓名" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
 							<div class="col-md-4 no-padding">
-								<div class="pull-left col-md-3 no-padding left_text_tips">出生年月<span class="text-danger" style="margin-left: 2px">*</span>
-								</div>
-								<div class="col-md-9 no-padding" id="data_1" style="margin-left: -5px">
-									<div class="col-md-11 no-padding input-group date gray-bg" style="line-height: 34px; border-radius: 4px; border: 1px solid #e5e6e7;">
-										<div class="pull-left col-md-9 no-padding">
-											<input style="background-color: #F4F4F4; height: 20px; width: 100%;padding-left: 12px;border: none;" id="birthdayDate" readonly
-														 type="text" placeholder="请选择出生年月">
-										</div>
-										<span style="margin-top: 2px; margin-left: 15px; background-color: #F4F4F4;" class="pull-left input-group-addon no-borders m-t-xxs" id="startDate"><i class="fa fa-calendar"></i></span>
-									</div>
+								<div class="col-md-3 pull-left no-padding left_text_tips">出生年月<span class="text-danger" style="margin-left: 2px">*</span></div>
+								<div class="col-md-9" style="padding-right: 0">
+									<input readonly @click="$stringUtils.layDateUi()" id="birthdayDate2" type="text" placeholder="请选择出生年月" class="form-control layer-date gray-bg input_circular_corner" style="margin-left: -20px">
+									<span class="fa fa-calendar" style="margin-left:-25px; position:absolute; top:10px"></span>
 								</div>
 							</div>
 
@@ -42,18 +36,18 @@
 									<p class="col-md-2 no-padding left_text_tips" style="margin-left: 15px">性&nbsp;&nbsp;&nbsp;&nbsp;别 :</p>
 									<div class="col-md-9">
 										<div class="radio radio-info radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio1" value="1" name="radioInline" style="margin-top: 2px">
-											<label style="margin-left: -15px">男</label>
+											<input v-model="itemData.userSex" type="radio" id="Radio1" value="1" name="radioSex" style="margin-top: 2px">
+											<label for="Radio1" style="margin-left: -15px">男</label>
 										</div>
 										<div class="radio radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio2" value="2" name="radioInline"
+											<input v-model="itemData.userSex" type="radio" id="Radio2" value="2" name="radioSex"
 														 style="margin-top: 2px">
-											<label style="margin-left: -15px">女</label>
+											<label for="Radio2" style="margin-left: -15px">女</label>
 										</div>
 										<div class="radio radio-inline">
-											<input :disabled="editable" v-model="itemData.userSex" type="radio" id="Radio3" value="9" name="radioInline"
+											<input v-model="itemData.userSex" type="radio" id="Radio9" value="9" name="radioSex"
 														 style="margin-top: 2px">
-											<label>未知</label>
+											<label for="Radio9">未知</label>
 										</div>
 									</div>
 								</div>
@@ -62,14 +56,14 @@
 							<div class="col-md-4 no-padding" style="margin-top: 8px">
 								<div class="pull-left col-md-3 no-padding left_text_tips">手机号码<span class="text-danger" style="margin-left: 2px">*</span></div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.billId" type="text" placeholder="请输入手机号码" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.billId" type="text" placeholder="请输入手机号码" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
 							<div class="col-md-4 no-padding" style="margin-top: 8px">
 								<div class="pull-left col-md-3 no-padding left_text_tips">身份证号</div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.idCardNo" type="text" placeholder="请填写真实身份证号" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.idCardNo" type="text" placeholder="请填写真实身份证号" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
@@ -90,7 +84,7 @@
 							<div class="col-md-4 no-padding">
 								<div class="pull-left col-md-3 no-padding left_text_tips">邮箱地址</div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.email" type="text" placeholder="填写邮箱地址" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.email" type="text" placeholder="填写邮箱地址" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
@@ -98,7 +92,7 @@
 								<div class="pull-left col-md-3 no-padding left_text_tips">民&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;族</div>
 								<div class="col-md-9" style="padding-right: 0; margin-left: -20px">
 									<input @click="selectNationList" v-model="itemData.nation" placeholder="请选择民族" data-toggle="dropdown" style="width: 100%; text-align: left;" class="form-control gray-bg input_circular_corner" type="text"><span class="goods_tips_down caret"></span>
-									<ul class="dropdown-menu" style="width: 93%; margin-left: 16px">
+									<ul v-show="nationList.length>0" class="dropdown-menu attopic" style="width: 93%; margin-left: 16px">
 										<li v-for="(nation, index) in nationList">
 											<a @click="selectNationValue(nation.codeValue)" class="no-padding" style="text-align: center">{{nation.codeValue}}</a>
 										</li>
@@ -110,7 +104,7 @@
 								<div class="pull-left col-md-3 no-padding left_text_tips">婚姻状况</div>
 								<div class="col-md-9" style="padding-right: 0; margin-left: -20px">
 									<input readonly v-model="maritalValue" placeholder="请选择婚姻状况" data-toggle="dropdown" style="width: 100%; text-align: left;" class="form-control gray-bg input_circular_corner" type="text"><span class="goods_tips_down caret"></span>
-									<ul class="dropdown-menu" style="width: 93%; margin-left: 16px">
+									<ul  class="dropdown-menu " style="width: 93%; margin-left: 16px">
 										<li>
 											<a @click="selectMarryValue(0)" class="no-padding" style="text-align: center">未婚</a>
 										</li>
@@ -124,14 +118,14 @@
 							<div class="col-md-4 no-padding m-t">
 								<div class="pull-left col-md-3 no-padding left_text_tips">工作单位</div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.company" type="text" placeholder="请填写工作单位" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.company" type="text" placeholder="请填写工作单位" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
 							<div class="col-md-4 no-padding m-t">
 								<div class="pull-left col-md-3 no-padding left_text_tips">职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业</div>
 								<div class="col-md-9" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.occupation" type="text" placeholder="请填写职业" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.occupation" type="text" placeholder="请填写职业" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 
@@ -139,7 +133,7 @@
 								<div class="pull-left col-md-1 no-padding left_text_tips">家庭住址</div>
 								<div class="col-md-2" style="padding-right: 0; margin-left: -20px">
 									<input v-model="itemData.privCode" @click="selectProvinceList" readonly placeholder="省" data-toggle="dropdown" style="width: 100%; text-align: left" class="form-control gray-bg input_circular_corner" type="text"><span class="goods_tips_down caret"></span>
-									<ul class="dropdown-menu" style="width: 88%; margin-left: 16px">
+									<ul class="dropdown-menu attopic" style="width: 88%; margin-left: 16px">
 										<li v-for="(province, index) in province_items">
 											<a @click="selectProvinceValue(province)" class="no-padding" style="text-align: center">{{province.districtName}}</a>
 										</li>
@@ -147,21 +141,21 @@
 								</div>
 								<div class="col-md-2" style="padding-right: 0">
 									<input v-model="itemData.cityCode" @click="selectCityList" readonly placeholder="市" data-toggle="dropdown" style="width: 100%; text-align: left" class="form-control gray-bg input_circular_corner" type="text"><span class="goods_tips_down caret"></span>
-									<ul class="dropdown-menu" style="width: 88%; margin-left: 16px">
+									<ul class="dropdown-menu attopic" style="width: 88%; margin-left: 16px">
 										<li v-for="(city, index) in city_items">
 											<a @click="selectCityValue(city)" class="no-padding" style="text-align: center">{{city.districtName}}</a>
 										</li>
 									</ul>
 								</div>
 								<div class="col-md-7" style="padding-right: 0">
-									<input :disabled="editable" v-model="itemData.address" type="text" placeholder="详细地址" class="form-control gray-bg input_circular_corner">
+									<input v-model="itemData.address" type="text" placeholder="详细地址" class="form-control gray-bg input_circular_corner">
 								</div>
 							</div>
 
 							<div class="col-md-12 no-padding m-t">
 								<div class="pull-left col-md-1 no-padding left_text_tips">备注信息</div>
 								<div class="col-md-11" style="padding-right: 0px">
-									<input :disabled="editable" v-model="itemData.remark" type="text" placeholder="备注信息" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
+									<input v-model="itemData.remark" type="text" placeholder="备注信息" class="form-control gray-bg input_circular_corner" style="margin-left: -20px">
 								</div>
 							</div>
 						</div>
@@ -226,46 +220,39 @@
 					occupation: '',
 					privCode: '',
 					userName: '',
-					userSex: ''
+					userSex: '9'
 				},
 			}
 		},
+
 		props: {
 			userId:{
 				default: ""
 			},
 		},
 
-		mounted: function () {
-			$('#data_1 .input-group.date').datepicker({
-				todayBtn: "linked",
-				keyboardNavigation: false,
-				forceParse: false,
-				calendarWeeks: false,
-				autoclose: true,
-				todayHighlight: true,
-				language: "zh-CN",
-				format: "yyyy/mm/dd"
-			});
-		},
-
 		methods: {
 
 			//新增患者信息
 			patientsAdd: function () {
-				this.itemData.birthdayDate = $('#birthdayDate').val();
-				if(
-					this.itemData.userName == ''
-					|| this.itemData.birthdayDate == ''
-					|| this.itemData.billId == ''
-				){
-					console.log(this.itemData);
+
+				this.itemData.birthdayDate = $('#birthdayDate2').val();
+
+				if(this.itemData.userName == '' || this.itemData.billId == '' || this.itemData.birthdayDate == ''){
 					swal({title:"请填写完整必填项",text:"",type: "error",timer: 2000,showConfirmButton:false});
+					return;
+				}
+				if (this.itemData.billId.length != 11){
+					swal({title:"手机号码有误",text:"",type: "error",timer: 2000,showConfirmButton:false});
+					return;
+				}
+				if (this.itemData.idCardNo.length > 0 && !this.$stringUtils.checkLegalCard(this.itemData.idCardNo)){
+					swal({title:"身份证号码有误",text:"",type: "error",timer: 2000,showConfirmButton:false});
 					return;
 				}
 				var that=this;
 				this.$api.post(this,this.$requestApi.patientsAdd,that.itemData,function  (data) {
-					if(data.status=='200'){
+					if(data.body.code == '00'){
 						swal({title:data.body.msg,text:"",type:"success",timer:2000,showConfirmButton:false});
 						$("#patients_add").modal('hide');
 					}else{
@@ -347,11 +334,5 @@
 				});
 			},
 		},
-
-		computed:{
-			editable:function () {
-				return this.$store.getters.getEditable;
-			},
-		}
 	}
 </script>

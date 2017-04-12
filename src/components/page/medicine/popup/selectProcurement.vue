@@ -18,27 +18,29 @@
               </tr>
               </thead>
               <tbody>
-              <tr class="gradeC"   v-for="(chinese_prescription_item, index) in procurementDatas" >
+              <tr class="gradeC"   v-for="(procurementData, index) in procurementDatas" >
                 <td    class="text-center l_border  bottom_border " >
                   <div class="checkbox checkbox-info goods_checkbox ">
-                  <input  @click="selectCheckbox(index,$event)"  :index="index" type="checkbox" name="checkbox"  :checked="chinese_prescription_item.selectFlag" >
+                  <input  @click="selectCheckbox(index,$event)"  :index="index" type="checkbox" name="checkbox"  :checked="procurementData.selectFlag" >
 
                 </div></td>
                 <td    class="text-center l_border  bottom_border " >{{++index}}</td>
-                <td    class="text-center l_border  bottom_border " >{{chinese_prescription_item.ostockId}}</td>
-                <td    class="text-center l_border  bottom_border " >{{$stringUtils.dateFormat(chinese_prescription_item.createDate)}}</td>
-                <td    class="text-center l_border  bottom_border " >{{chinese_prescription_item.supplierName}}</td>
-                <td    class="text-center l_border  bottom_border " >{{chinese_prescription_item.operatorName}}</td>
-                <td    class="text-center l_border  bottom_border " >{{chinese_prescription_item.billId}}</td>
-                <td    class="text-center l_border  bottom_border " >{{chinese_prescription_item.remark}}</td>
-                <td    class="text-center l_border  bottom_border right_border" >{{$enumeration.getState (chinese_prescription_item.state)}}</td>
+                <td    class="text-center l_border  bottom_border " >{{procurementData.ostockId}}</td>
+                <td    class="text-center l_border  bottom_border " >{{$stringUtils.dateFormat(procurementData.createDate)}}</td>
+                <td    class="text-center l_border  bottom_border " >{{procurementData.supplierName}}</td>
+                <td    class="text-center l_border  bottom_border " >{{procurementData.operatorName}}</td>
+                <td    class="text-center l_border  bottom_border " >{{procurementData.billId}}</td>
+                <td    class="text-center l_border  bottom_border " >{{procurementData.remark}}</td>
+                <td    class="text-center l_border  bottom_border right_border" >{{$enumeration.getState (procurementData.state)}}</td>
                  </tr>
               </tbody>
+              <tbody v-if="procurementDatas.length===0" ><tr class="gradeC"> <td class="text-center" colspan="8" >{{$toastContent.toastTableContent}}</td></tr></tbody>
+
             </table>
 
           </div>
         </div>
-        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' data-dismiss="modal" @click="accomplish">完成</button>
+        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' data-dismiss="modal" @click="accomplish"  :disabled="isDisabled" >完成</button>
         <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
       </div>
       <!--<div  class="modal-content"></div>-->
@@ -62,6 +64,7 @@
     data(){
       return {
         selectFlagIndex: -1,
+        isDisabled: false,
         procurement:[
           {  name: '选择',},
           {  name: '序号',},

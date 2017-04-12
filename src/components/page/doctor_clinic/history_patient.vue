@@ -24,7 +24,7 @@
 
                   <div style="margin: 3px 0;">
                     <p class="patient_msg_title">接诊类型:</p>
-                    <p class="patient_msg_content">{{ $stringUtils.registeredType(data_item.registeredType) }}</p>
+                    <p class="patient_msg_content">{{ $stringUtils.registeredHistoryType(data_item.registeredType) }}</p>
 
                   </div>
 
@@ -48,9 +48,9 @@
         </ul>
       </div>
     </div>
-
+    <default-interface  v-show="data_items.length === 0" ></default-interface>
     <!--底部分页-->
-    <pagination v-show="data_items.length > 0"> </pagination>
+    <pagination v-show="data_items.length > 0"  :iDisplayLength=" data_items.length "> </pagination>
 
     <!--完善信息模态框-->
     <prefect :userId="userId"></prefect>
@@ -145,6 +145,7 @@
 
 <script>
 
+  import defaultInterface from 'components/commonView/defaultInterface.vue'
   import switch_tab from './switch_tab_template.vue'
   import screen_title from './screen_content_title.vue'
   import pagination from './bottom_pagination.vue'
@@ -266,6 +267,6 @@
       }
     },
 
-    components: {switch_tab, screen_title, pagination, prefect},
+    components: {switch_tab, screen_title, pagination, prefect,defaultInterface},
   }
 </script>

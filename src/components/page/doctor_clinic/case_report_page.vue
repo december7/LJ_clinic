@@ -4,7 +4,7 @@
     <div class="today_patient_top_container">
       <!--左侧切换标题栏-->
       <div class="today_patient_top_left">
-        <p class="pull-left m-l-md" style="line-height: 40px;">病例</p>
+        <p class="pull-left m-l-md" style="line-height: 40px;">病历</p>
       </div>
       <div class="pull-right m-r-md" style="line-height: 40px">
         <a @click="back">返回上一级</a>
@@ -23,7 +23,7 @@
                   {{historyCaseList.tele}}
                 </small>
               </a>
-              <small class="m-l-sm text-danger">该患者有过敏史!</small>
+              <small class="m-l-sm text-danger" v-if="hasAllergys">该患者有过敏史!</small>
             </div>
           </div>
         </div>
@@ -45,6 +45,7 @@
     data(){
       return {
         historyCaseList: '',
+        hasAllergys: '',
       }
     },
 

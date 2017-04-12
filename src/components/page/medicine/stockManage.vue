@@ -2,33 +2,17 @@
 
 <template>
   <div >
-    <div  style="background: white; height: 50px;padding: 10px 10px 0 26px" >
-      <div class="select_screen_container">
-<div style="float: left; margin-right: 30px">
-  <a style="margin-right: 20px;" class="border-bottom-337ab7">导出excel表</a><a class="border-bottom-337ab7" >导入excel表</a></div>
+    <div  style=" height: 50px;padding: 10px 10px 0 26px" >
 
-        <p>筛选: </p>
-        <div class="white-bg select_items_btn">
-          <div class="btn-group roll-nav roll-right" style="right: 0px">
-            <div class="input-group-btn">
-              <button data-toggle="dropdown" style="width: 130px !important;" class="btn btn-white dropdown-toggle no-padding no-borders no-margins search_text" type="button">{{factoryItems[factoryIndex].titleName}}<span class="drop_tips caret"></span>
-              </button>
-              <ul class="dropdown-menu" style="min-width: 130px;"     >
-                <li @click="selectFactoryItem(index)" v-for="(titleItem, index) in factoryItems">
-                  <a :class="{selected_item : factoryIndex == index}" class="no-padding" style="text-align: center">{{titleItem.titleName}}</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
+        <selected-search   style="margin-top: 3px" class=" right_select" :suppliersItems="suppliersItems" :placeholderData="placeholderData" :suppliersIndex="suppliersIndex"></selected-search>
       <ul class="audit_item">
         <li @click="clickSelectedAudit(index)" v-for="(title, index) in selectedAudit" :class="{selected_audit_item : title.selected}">
           <a> {{title.name}}</a>
         </li>
+        <a style="margin-right: 15px;float: right;     margin-top: 10px;  border-bottom: 1px solid #314268"  @click="exportExcel" >导出excel表</a>
+
       </ul>
+
     </div>
 
     <div class="goods_manage_body">
@@ -39,8 +23,8 @@
         </div>
       </div>
     </div>
-    <pagination v-show=" selectedAudit[0].auditContent.length > 0&&selectedIndex==0" ></pagination>
-    <pagination v-show="  selectedAudit[1].auditContent.length > 0&&selectedIndex==1"></pagination>
+    <pagination v-show=" selectedAudit[0].auditContent.length > 0&&selectedIndex==0"  :iDisplayLength=" selectedAudit[0].auditContent.length "></pagination>
+    <pagination v-show="  selectedAudit[1].auditContent.length > 0&&selectedIndex==1"  :iDisplayLength=" selectedAudit[1].auditContent.length "></pagination>
   </div>
 </template>
 
@@ -48,11 +32,14 @@
 <script>
 import goodsTable from "components/page/medicine/table/goodsTable.vue";
 import pagination from 'components/page/doctor_clinic/bottom_pagination.vue'
-
+import selectedSearch from 'components/commonView/selectedSearch.vue'
+import xlsx from  'xlsx' ;
+import fileSaver from 'file-saver'
 export default {
   components: {
     goodsTable,
-    pagination
+    pagination,
+    selectedSearch,
   },
   data(){
     return {
@@ -96,19 +83,13 @@ export default {
         },
       ],
 
-
       suppliersItems: [
-        {titleName: '选择供应商'},
-        {titleName: '选择供应商'},
-        {titleName: '选择供应商'},
-        {titleName: '选择供应商'}
-      ],
-      suppliersIndex: 0,
-      factoryItems: [
         {titleName: '按库存排序'},
         {titleName: '按销售金额'},
       ],
-      factoryIndex: 0,
+      placeholderData:"商品名称",
+      suppliersIndex: 0,
+
       data_items:[],
       selectedIndex:0,
     };
@@ -116,13 +97,79 @@ export default {
   mounted:function(){
   },
   methods:{
-    request_list:function (state) {
+    exportExcel: function () {
+      let that = this;
+      var sheetName = '';
+      if (this.selectedIndex == 0) {
+        var headLine = that.selectedAudit[0].itemAudit.map((i) => i.name);
+        sheetName = that.selectedAudit[0].name;
+        var index = 0;
+        var bodyLines = that.selectedAudit[0].auditContent.map((i) => {
+          return [
+            ++index,
+            that. $stringUtils.dateFormat(i.createDate),
+            i.prodName,
+            i.prodSpec,
+            i.manufacturer,
+            i.supplierName,
+            i.preStockNum,
+            that.$enumeration.getGoodsPrice(i.prodCostPrice),
+            that. $enumeration.getNumMoney(i.preStockNum,i.prodCostPrice),
+            that.$enumeration.getGoodsPrice(i.retailPrice),
+            that.$enumeration.getGoodsPrice(i.totalPrice),
+          ];
+        })
+      } else {
+        var headLine = that.selectedAudit[1].itemAudit.map((i) => i.name);
+        sheetName = that.selectedAudit[1].name;
+        var index = 0;
+        var bodyLines = that.selectedAudit[1].auditContent.map((i) => {
+          return [
+            ++index,
+             that.$stringUtils.dateFormat(i.createDate),
+            i.prodName,
+            i.prodSpec,
+            i.manufacturer,
+            i.supplierName,
+            that. $enumeration. getProjectUnit(i.prodUnit),
+            i.batchNumber,
+            that. $stringUtils.dateFormat(i.expireDate),
+            that.$enumeration.getGoodsPrice(i.stockNum),
+            that.$enumeration.getGoodsPrice(i.stockPrice),
+            i.surplusStockNum,
+          ];
+        })
+      }
+      bodyLines.unshift(headLine)
+      var worksheet = xlsx.utils.aoa_to_sheet(bodyLines);
+      var workBook = {
+        SheetNames: [sheetName],
+        Sheets: {}
+      };
+      workBook.Sheets[sheetName] = worksheet
+
+      var wopts = { bookType: 'xlsx', bookSST: false, type: 'binary' };
+      var wbout = xlsx.write(workBook, wopts);
+
+      function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+      }
+
+      fileSaver.saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), sheetName + ".xlsx");
+    },
+    request_list:function (state,searchKeywords) {
       console.log("state"+state);
       var that=this;
-      this.$api.get(this,that.selectedIndex==0?this.$requestApi.listInventory:this.$requestApi.stockDetails,{iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1,orderBy:state},function  (data) {
+
+
+
+      this.$api.get(this,that.selectedIndex==0?this.$requestApi.listInventory:this.$requestApi.stockDetails,{iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1,orderBy:state,prodNameOrGenericNameOrEnglishName:searchKeywords},function  (data) {
         if(data.body.code=='00'){
           that.selectedAudit[that.selectedIndex].auditContent=data.body.data;
-          that.$store.dispatch('setPageCount', that.$enumerationType.getPageNumber(data.body.iTotalRecords));
+          that.$store.dispatch('setPageCount', that.$enumerationType.getPageIDisplayLength(data.body.iTotalRecords));
         }else{
           console.log(data.body.msg);
         }
@@ -130,12 +177,10 @@ export default {
         console.log(err);
       });
     },
-    selectFactoryItem:function (selectedIndex) {
-      this.factoryIndex = selectedIndex;
-      this. request_list(++selectedIndex);
-    },
-    selectSuppliersItem:function (selectedIndex) {
+
+    searchRequest:function (selectedIndex,searchKeywords) {
       this.suppliersIndex = selectedIndex;
+      this. request_list(++selectedIndex,searchKeywords);
     },
     addTables:function (data) {
       this.$store.dispatch('medicine_table_data', data);
@@ -148,57 +193,16 @@ export default {
         this.selectedIndex=index;
         if (index==0){
           that. request_list(1);
-          that.factoryItems=[{titleName: '按库存排序'}, {titleName: '按销售金额'},];
-          that.factoryIndex=0;
+          that.suppliersItems=[{titleName: '按库存排序'}, {titleName: '按销售金额'},];
+          that.suppliersIndex=0;
         }else {
           that. request_list(1);
-          that.factoryItems=[{titleName: '按入库时间'}, {titleName: '按库存数量'},{titleName: '按商品名称'},];
-          that.factoryIndex=0;
+          that.suppliersItems=[{titleName: '按入库时间'}, {titleName: '按库存数量'},{titleName: '按商品名称'},];
+          that.suppliersIndex=0;
 
         }
       }
     },
-          method1:  function (tableid) {//整个表格拷贝到EXCEL中
-        var curTbl = document.getElementById(tableid);
-        var oXL = new ActiveXObject("Excel.Application");
-        //创建AX对象excel
-        var oWB = oXL.Workbooks.Add();
-        //获取workbook对象
-        var xlsheet = oWB.Worksheets(1);
-        //激活当前sheet
-        var sel = document.body.createTextRange();
-        sel.moveToElementText(curTbl);
-        //把表格中的内容移到TextRange中
-        sel.select();
-        //全选TextRange中内容
-        sel.execCommand("Copy");
-        //复制TextRange中内容
-        xlsheet.Paste();
-        //粘贴到活动的EXCEL中
-        oXL.Visible = true;
-        //设置excel可见属性
-
-        try {
-          var fname = oXL.Application.GetSaveAsFilename("将Table导出到Excel.xls", "Excel Spreadsheets (*.xls), *.xls");
-        } catch (e) {
-          print("Nested catch caught " + e);
-        } finally {
-          oWB.SaveAs(fname);
-
-          oWB.Close(savechanges = false);
-          //xls.visible = false;
-          oXL.Quit();
-          oXL = null;
-          //结束excel进程，退出完成
-          //window.setInterval("Cleanup();",1);
-          idTmr = window.setInterval("Cleanup();", 1);
-
-        }
-      },
-      Cleanup: function () {
-        window.clearInterval(idTmr);
-        CollectGarbage();
-      },
 //    getHttpTables:function () {
 //      var  that=this;
 //      that.$api.get(this,this.$requestApi.getStockManage,"",function  (msg) {
@@ -222,7 +226,6 @@ export default {
     // 组件创建
 //    goodsTable.medicineItems
     this.request_list(1);
-    console.log("md5"+this.$md5("value"));
   },
 }
 </script>

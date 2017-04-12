@@ -3,7 +3,7 @@
 
     <div class="row border-bottom">
       <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" ><i class="fa fa-bars"></i> </a>
+        <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="javascript:void(0);" ><i class="fa fa-bars"></i> </a>
           <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
             <div class="form-group">
               <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search" id="top-search">
@@ -12,37 +12,9 @@
         </div>
         <ul class="nav navbar-top-links navbar-right">
           <li class="dropdown">
-            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+            <a class="J_menuItem count-info" @click="openMessage">
               <i class="fa fa-bell"></i> <span class="label label-danger" style="border-radius: 10px;">8</span>
             </a>
-            <ul class="dropdown-menu dropdown-alerts">
-              <li>
-                <a href="mailbox.html">
-                  <div>
-                    <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
-                    <span class="pull-right text-muted small">4分钟前</span>
-                  </div>
-                </a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <a href="profile.html">
-                  <div>
-                    <i class="fa fa-qq fa-fw"></i> 3条新回复
-                    <span class="pull-right text-muted small">12分钟钱</span>
-                  </div>
-                </a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <div class="text-center link-block">
-                  <a class="J_menuItem" href="notifications.html">
-                    <strong>查看所有 </strong>
-                    <i class="fa fa-angle-right"></i>
-                  </a>
-                </div>
-              </li>
-            </ul>
           </li>
 
         </ul>
@@ -59,24 +31,25 @@
       <button class="roll-nav roll-right J_tabRight" ><i class="fa fa-forward"></i>
       </button>
       <div class="btn-group roll-nav roll-right">
-        <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+        <!--<button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>-->
+        <button class=" dropdown J_tabClose" @click="refreshInterface" >刷新</span>
 
         </button>
-        <ul role="menu" class="dropdown-menu dropdown-menu-right">
-          <li class="J_tabShowActive"><a>定位当前选项卡</a>
-          </li>
-          <li class="divider"></li>
-          <li class="J_tabCloseAll" ><a>关闭全部选项卡</a>
-          </li>
-          <li class="J_tabCloseOther" ><a>关闭其他选项卡</a>
-          </li>
-        </ul>
+        <!--<ul role="menu" class="dropdown-menu dropdown-menu-right">-->
+          <!--<li class="J_tabShowActive"><a>定位当前选项卡</a>-->
+          <!--</li>-->
+          <!--<li class="divider"></li>-->
+          <!--<li class="J_tabCloseAll" ><a>关闭全部选项卡</a>-->
+          <!--</li>-->
+          <!--<li class="J_tabCloseOther" ><a>关闭其他选项卡</a>-->
+          <!--</li>-->
+        <!--</ul>-->
       </div>
-      <a href="#/login" class="roll-nav roll-right J_tabExit" @click="accountOut"><i class="fa fa fa-sign-out"></i> 退出</a>
+      <span @click="accountOut"><a href="#/login" class="roll-nav roll-right J_tabExit" ><i class="fa fa fa-sign-out"></i> 退出</a></span>
     </div>
     <div class="row J_mainContent" id="content-main">
 
-      <iframe v-for="item in navs"  class="J_iframe" :name="item.frameName" width="100%" height="100%" :src="item.path" frameborder="0" :data-id="item.path" seamless></iframe>
+      <iframe v-for="item in navs"  class="J_iframe" :name="item.frameName" width="100%" height="100%" :src="item.path" frameborder="0" :id="item.frameName" :data-id="item.path" seamless></iframe>
     </div>
     <homefooter></homefooter>
 
@@ -88,18 +61,20 @@
 
   import homefooter from  './home_footer'
   export default {
-    data(){
-      return {navs:[]}
-    },
+
     components: {
       homefooter,
     },
     created: function () {
-      // 组件创建完后获取数据，这里和1.0不一样，改成了这个样子
 
     },
+
+    computed : {
+      navs(){
+        return this.$store.getters.getTabs;
+      },
+    },
     mounted: function () {
-      this.navs = this.$store.getters.getTabs;
       var vue = this;
       $('.navbar-minimalize').click(function () {
         $("body").toggleClass("mini-navbar");
@@ -121,10 +96,39 @@
       // 右移按扭
       $('.J_tabRight').on('click',  this.scrollTabRight);
       $('.J_tabCloseAll').on('click',this.closeAll);
+      // 组件创建完后获取数据，这里和1.0不一样，改成了这个样子
+//      let reload= localStorage.getItem(this.$names.reload);
+//      if (reload==1){
+//        console.error("reload   this.closeAll();--------" );
+//
+//        this.$store.dispatch('reset_tab', []);
+////        this.$nextTick(() => {
+////          //vuex改变状态后的dom还没有更新就执行到这里了
+////          this.closeAll();
+////        });
+//
+//        localStorage.setItem("reload",-1);
+//      }
     },
     methods:{
+      refreshInterface:function () {
+     let dataId=$('.active').attr('data-id');
+        $('iframe').each(function () {
+        if (dataId==$(this).attr('data-id')){
+          let name=$(this).attr('name');
+          let nameID=$(this).attr('id');
+          console.log(document)
+//          document.frames(name).location.reload()
+          document.getElementById(nameID).contentWindow.location.reload(true);
+
+        }
+        })
+      },
+      openMessage:function () {
+        parent.document.getElementById("10000").click();
+      },
       accountOut:function () {
-        this.$store.dispatch("logout_submit_success");
+        this.$enumeration.accountOut(this);
       },
       SmoothlyMenu:function(){
         console.log('SmoothlyMenu');
@@ -336,7 +340,9 @@
           });
           this.$parent.scrollToTab($('.J_menuTab.active'));
         }
+
         return false;
+
       }
     }
   }

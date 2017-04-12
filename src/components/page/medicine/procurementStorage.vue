@@ -3,7 +3,7 @@
 <template>
   <div class="goods_manage_body">
     <div class="goods_manage_title_add"><router-link :to="{ path: 'add_procurement_storage'}" append>
-      <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title"> 新增入库</span></router-link></div>
+      <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title patient_add_btn"> 新增入库</span></router-link></div>
 
     <table class="table table-striped table-bordered table-hover dataTables-example">
       <thead>
@@ -14,7 +14,7 @@
       </thead>
       <tbody>
       <tr class="gradeC" v-for="(goodsItem,index) in auditContent">
-        <td class="text-center" >{{getIndex(index)}}</td>
+        <td class="text-center" >{{pageIndexNo()+index}}</td>
         <td class="text-center" >{{goodsItem.ostockId}}</td>
         <td class="text-center" >{{$stringUtils.dateFormat(goodsItem.createDate)}}</td>
         <td class="text-center" >{{goodsItem.supplierName}}</td>
@@ -22,18 +22,22 @@
         <td class="text-center" >{{goodsItem. billId }}</td>
         <td class="text-center" >{{goodsItem.remark}}</td>
         <td class="text-center" >{{goodsItem.auditOpinion}}</td>
-        <td class="text-center"  :class="goodsItem.state==1?'goods-gray':'goods-red'" >{{$enumeration.getState(goodsItem.state)}}</td>
+        <td class="text-center"  :class="goodsItem.state==2?  'goods-red':'goods-gray'" >{{$enumeration.getState(goodsItem.state)}}</td>
         <td class="text-center" >
-          <router-link v-if="goodsItem.state==1||goodsItem.state==2" class="table-margin-r-5" :to="{ path: 'add_procurement_storage'}" append><span @click="compileSuppliers(goodsItem.ostockId)">编辑</span></router-link>
-          <router-link  v-if="goodsItem.state==0" class="table-margin-r-5" :to="{ path: 'add_procurement_storage'}" append><span @click="viewSuppliers(goodsItem.ostockId)">查看</span></router-link>
+          <router-link v-if=" goodsItem.state==2 " class="table-margin-r-5" :to="{ path: 'add_procurement_storage'}" append><span @click="compileSuppliers(goodsItem.ostockId)">编辑</span></router-link>
+          <router-link  v-if="goodsItem.state==0||goodsItem.state==1" class="table-margin-r-5" :to="{ path: 'add_procurement_storage'}" append><span @click="viewSuppliers(goodsItem.ostockId)">查看</span></router-link>
+          <router-link v-if="goodsItem.state==3"  :to="{ path: 'add_procurement_storage'}" append><span @click="compileSuppliers(goodsItem.ostockId)">查看</span></router-link>
 
-          <a  v-if="goodsItem.state!=0" @click="selectIndex(index,goodsItem.ostockId)" data-toggle="modal" data-target="#selfinfo">删除</a></td>
+          <a  v-if=" goodsItem.state==2" @click="selectIndex(index,goodsItem.ostockId)" data-toggle="modal" data-target="#selfinfo">撤销</a></td>
       </tr>
 
       </tbody>
+      <tbody v-if="auditContent.length===0" ><tr class="gradeC"> <td class="text-center" :colspan="goods.length" >{{$toastContent.toastTableContent}}</td></tr></tbody>
+
     </table>
-    <pagination v-show="auditContent.length > 0||isRequestList"></pagination>
-    <delete-toast :selectedIndex="selectedIndex" ></delete-toast>
+    <pagination v-show="auditContent.length > 0||isRequestList"  :iDisplayLength="auditContent.length"></pagination>
+    <delete-toast :selectedIndex="selectedIndex" :selectedTitle="selectedTitle" :selectedContent="selectedContent" ></delete-toast>
+
   </div>
 </template>
 
@@ -52,6 +56,9 @@
     },
     data(){
       return {
+        selectedTitle:"入库单",
+        selectedContent:"确定撤销该入库单吗?<br/>撤销后将不能恢复",
+
         goods:[
           {  name: '序号',},
           {  name:"入库单号",},
@@ -78,8 +85,8 @@
         this.$store.dispatch('medicine_compile_suppliers_no',  [no,1]);
         console.log(no);
       },
-      getIndex:function (index) {
-          return  this.goodsIndex=++index;
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1;
       },
       viewSuppliers:function (no) {
         //查看
@@ -92,7 +99,7 @@
           console.log(data.body.iTotalRecords);
           if(data.body.code=='00'){
             that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(   data.body.iTotalRecords));
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageIDisplayLength(   data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -131,11 +138,11 @@
         let that=this;
         let  data={};
         if ( that.suppliersIndex===0||that.suppliersIndex===""||typeof that.suppliersIndex =="undefined"){
-          data= { iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(that.$store.getters.getCurrentPageNo==0?0:that.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1}
+          data= { iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:that.pageIndexNo()}
         }else {
-          data= {state:that.suppliersIndex, iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*that.$enumerationType.iDisplayLength+1}
+          data= {state:that.suppliersIndex, iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:that.pageIndexNo()}
         }
-        this.$api.get(this,this.$requestApi.stockSearch+that.$enumerationType.storageType,data,function  (data) {
+        that.$api.get(that,that.$requestApi.stockSearch+that.$enumerationType.storageType,data,function  (data) {
           if(data.body.code=='00'){
             that.auditContent=data.body.data
           }else{

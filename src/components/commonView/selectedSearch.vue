@@ -1,9 +1,9 @@
 <template>
-  <div  >
+  <div    >
     <div style="    width: 23%;height: 32px;  float: left;" class="input-group-btn">
       <button data-toggle="dropdown" style="width: 100%" class="form-control2 gray-bg     input_circular_corner   " type="button">{{suppliersItems[suppliersIndex].titleName}}<span class="goods_manage_tips_down caret"></span>
       </button>
-      <ul class="dropdown-menu" style="width: 100%" >
+      <ul v-show="suppliersItems.length>0" class="dropdown-menu   " style="width: 100%" >
         <li @click="selectSuppliersItem(index)" v-for="(titleItem, index) in suppliersItems">
           <a :class="{selected_item : suppliersIndex == index}" class="no-padding" style="text-align: center"  >{{titleItem.titleName}}</a>
         </li>
@@ -13,10 +13,12 @@
     <!--搜索-->
     <div class="goods-search_background  " style="float: right; margin: 0px 16px 10px 0px">
       <span style="color: lightgray;margin-left: 3px " >|</span>
-      <input type="text" :placeholder="placeholderData" class="serach_box" v-model="searchKeywords" id="search_patient_text">
-      <span style="color: lightgray; margin-left: 25px">|</span>
-      <button style="border: none; background-color: white"><img src="../../../static/img/set_manage_img/search.png" style="width: 25px;padding: 5px;" @click="searchList"></button>
+      <input type="text" :placeholder="placeholderData" class="serach_box" v-model="searchKeywords" id="search_patient_text" width="63%">
+      <span style="color: lightgray; margin-left: 10px">|</span>
+      <button style=" border: none;background-color: white;width: 15px;line-height: 32px;"><img src="../../../static/img/set_manage_img/search.png" style="width: 15px;height: 15px;margin-left: 10px" @click="searchList"></button>
+
     </div>
+
 
   </div>
 </template>

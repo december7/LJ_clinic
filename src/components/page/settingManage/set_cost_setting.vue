@@ -3,34 +3,42 @@
     <!--顶部栏-->
       <!--按钮-->
   <div style="display: inline-block;margin-top: 10px">
-    <a @click="addNewClick" type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;新增挂号设置</a>
+    <a @click="addNewClick" type="button" class="addnewBtn" data-toggle="modal" data-target="#addnew_cost"><img style="width:15px;height: 15px " src="../../../../static/img/set_manage_img/add.png">&nbsp;新增挂号设置</a>
   </div>
   <div class="pull-right search_input" style="margin-top: 5px;margin-right: 0">
-    <input placeholder="医生姓名" type="text" style="outline: none;width:200px;border: none;" v-model="search_docName">
+    <input @keyup.enter="searchDocName(search_docName)" placeholder="医生姓名" type="text" style="outline: none;width:200px;border: none;" v-model="search_docName">
     <a @click="searchDocName(search_docName)"><img style="width: 15px;height: 15px;margin-right: 5px" src="../../../../static/img/set_manage_img/search.png"></a>
   </div>
       <!--模态弹窗开始--新增挂号设置-->
-      <div class="modal inmodal fade" id="addnew" tabindex="-1" role="dialog" aria-hidden="true" >
+      <div class="modal inmodal fade" id="addnew_cost" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg" style="width: 360px;">
           <div class="modal-content">
             <div class="tc-title-div">新增挂号设置</div>
             <button type="button" class="close" data-dismiss="modal" style="margin: 11.5px 15px 0 0;"><span aria-hidden="true">&times;</span></button>
             <div class="hr-tcline"></div>
               <div>
-              <div class='form-labeldiv'>医生名称: </div>
-                <select class='form-tcinput' id="addnew_doc_sId">
-                  <option v-for="(doctor_item,index) in doctor_items" :index="index">{{doctor_item.operatorName}}</option>
-                </select>
+              <div class='form-labeldiv'><span style="color: red;">*</span>医生名称: </div>
+              <input @click="clickDocNameList" readonly v-model="docName" placeholder="请选择医生" data-toggle="dropdown" style="border-radius: 3px" class="form-tcinput" type="text">
+              <ul  v-show="doctor_items.length>0" class="attopic dropdown-menu" style="width: 210px;top:90px;left:89px;">
+                <li @click="selectDocName(doctor_item,index)" v-for="(doctor_item, index) in doctor_items">
+                  <a class="no-padding" style="text-align: center">{{doctor_item.operatorName}}</a>
+                </li>
+              </ul>
+              <img @click="clickDocNameList" data-toggle="dropdown" style="position: absolute;width: 10px;height: 10px;margin-top:25px;right:65px" src="../../../../static/img/LoginAndRegister/register_arrow_gray.png">
               </div>
               <div>
-              <div class='form-labeldiv'>科室名称: </div>
-                <select class='form-tcinput' id="addnew_dep_sId">
-                  <option v-for="(department_item,index) in department_items" :index="index">{{department_item.departName}}</option>
-                </select>
+              <div class='form-labeldiv'><span style="color: red;">*</span>科室名称: </div>
+              <input @click="clickDepartNameList" readonly v-model="departName" placeholder="请选择科室" data-toggle="dropdown" style="border-radius: 3px" class="form-tcinput" type="text">
+              <ul v-show="department_items.length>0" class="attopic dropdown-menu" style="width: 210px;top:134px;left:89px;">
+                <li @click="selectDepartName(department_item,index)" v-for="(department_item, index) in department_items">
+                  <a class="no-padding" style="text-align: center">{{department_item.departName}}</a>
+                </li>
+              </ul>
+              <img @click="clickDepartNameList" data-toggle="dropdown" style="position: absolute;width: 10px;height: 10px;margin-top:25px;right:65px" src="../../../../static/img/LoginAndRegister/register_arrow_gray.png">
               </div>
-              <div class='form-labeldiv'>挂&nbsp号&nbsp费&nbsp: </div>
-              <input style='width: 210px' class='form-tcinput' type="number" placeholder='请输入挂号费(元)' v-model="cost_json.ghcost">
-              <button @click="saveAddNewCost(cost_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">保存</button>
+              <div class='form-labeldiv'>&nbsp挂&nbsp号&nbsp费&nbsp: </div>
+              <number decimals="2" maxlength='7' style='width: 210px' class='form-tcinput' placeholder='请输入挂号费(元)' v-model="registrationFee"></number>
+              <button @click="saveAddNewCost(cost_json)" style='margin: 30px 10px 30px 75px;' class='form-btn-black'>保存</button>
               <button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
           </div>
         </div>
@@ -53,12 +61,12 @@
             <td class="text-center l_r_border">{{data_item.doctorName}}</td>
             <td class="text-center">{{data_item.departname}}</td>
             <td class="text-center l_r_border">{{data_item.registrationFee/100}}</td>
-            <td class="text-center"><a href="javascript:;" data-toggle="modal" data-target="#edit" @click="editCost(data_item,index)">编辑</a></td>
+            <td class="text-center"><a href="javascript:;" data-toggle="modal" data-target="#edit_cost" @click="editCost(data_item,index)">编辑</a></td>
         </tr>
         </tbody>
     </table>
   <!--模态弹窗开始--编辑挂号设置-->
-  <div class="modal inmodal fade" id="edit" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal inmodal fade" id="edit_cost" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" style="width: 360px;">
       <div class="modal-content">
         <div class="tc-title-div">修改挂号设置</div>
@@ -73,22 +81,30 @@
           <div class='form-labeldiv' style="width: 210px;padding-left: 10px">{{item_data_line.departname}}</div>
         </div>
         <div class='form-labeldiv'>挂&nbsp号&nbsp费&nbsp: </div>
-        <input style='width: 210px' class='form-tcinput' type="number" placeholder='请输入挂号费(元)' v-model="registrationFee">
-        <button @click="saveEditCost(item_data_line)" style='margin: 30px 10px 30px 75px;' class='form-btn-black' data-dismiss="modal">保存</button><button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
+        <number decimals="2" maxlength='7' style='width: 210px' class='form-tcinput' placeholder='请输入挂号费(元)' v-model="registrationFee"></number>
+        <button @click="saveEditCost(item_data_line)" style='margin: 30px 10px 30px 75px;' class='form-btn-black'>保存</button><button class='layui-layer-close form-btn-white' data-dismiss="modal">取消</button>
       </div>
     </div>
   </div>
   <!--模态弹窗结束-->
-  <pagination v-show="data_items.length > 0"></pagination>
+  <pagination v-show="data_items.length > 0" :iDisplayLength="data_items.length"></pagination>
+
+  <div v-show="data_items.length <= 0" style="width:100%; height:100%; text-align:center; margin-top:150px">
+    <img src="../../../../static/img/patient_nor.png">
+    <h5>暂无此医生</h5>
+  </div>
+      
 </div>
 </template>
 
 <script>
 import pagination from '../doctor_clinic/bottom_pagination.vue';
+import number from '../../commonView/number.vue';
 
   export default {
     components:{
-      pagination
+      pagination,
+      number
     },
 
     data(){
@@ -101,11 +117,12 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
 
         item_data_line: {},
         cost_json: {
-          doctorName: '',
-          departname: '',
-          registrationFee: 0,
+          operatorId:'',
+          departId:'',
         },
-        registrationFee: 0,
+        docName:'',
+        departName:'',
+        registrationFee: '',
         select_edit_index: -100,
         waitParams:{
           pageSize:this.$enumerationType.pageSize,
@@ -124,15 +141,16 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
         		return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.pageSize+1;
       },
 //      挂号设置列表
-      cost_set_list: function () {
+      cost_set_list: function (search_docName) {
         this.waitParams.pageNo = this.pageIndexNo();
+        this.waitParams.doctorName = search_docName;
         var that = this;
         this.$api.get(this, this.$requestApi.costSetList, this.waitParams, function (data) {
           if(data.body.code == '00'){
             that.data_items = data.body.data;
             that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
           } else {
-
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         });
       },
@@ -142,56 +160,81 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
       },
 //      搜索挂号设置
       searchDocName:function (search_docName) {
-        var that = this;
-        this.$api.get(this, this.$requestApi.costSetList, {"pageNo": "1", "pageSize": "20","doctorName":search_docName}, function (data) {
-          if(data.body.code == '00'){
-            that.data_items = data.body.data;
-          } else {
-
-          }
-        });
+        this.$store.dispatch('setCurrentPageNo',1);
+        this.cost_set_list(search_docName);
       },
 //      点击新增挂号设置按钮
       addNewClick:function () {
+        this.docName = '';
+        this.departName = '';
+        this.registrationFee = '',
+        this.cost_json = {
+          operatorId:'',
+          departId:'',
+        };
+      },
+      // 获取医生列表
+      clickDocNameList:function (){
         var that = this;
         this.$api.get(this, this.$requestApi.costDocList, "", function (data) {
           if(data.body.code == '00'){
             that.doctor_items = data.body.data;
           } else {
-
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         });
+      },
+      // 获取科室列表
+      clickDepartNameList:function(){
+        var that = this;
         this.$api.get(this, this.$requestApi.costDepList, "", function (data) {
           if(data.body.code == '00'){
             that.department_items = data.body.data;
           } else {
-
+            swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
           }
         });
       },
+      selectDocName:function(doctor_item,index){
+        this.cost_json.operatorId = doctor_item.operatorId;
+        this.docName = doctor_item.operatorName;
+      },
+      selectDepartName:function(department_item,index){
+        this.cost_json.departId = department_item.departId;
+        this.departName = department_item.departName;
+        console.log(this.departName);
+      },
+      getFocus:function(registrationFee){
+        console.log("getFocus~~~");
+      },
+      loseFocus:function(registrationFee){
+        console.log("loseFocus~~~~");
+        var regu = "^[0-9]+(.[0-9]{1,2})?$";
+        var re = new RegExp(regu);
+        console.log("--------->" + this.registrationFee + "-------->" + re.test(this.registrationFee));
+        if(!re.test(this.registrationFee||!this.registrationFee)){
+          this.registrationFee = '';
+          swal({title: "挂号费填写错误", text: "", type: "error", timer: 1000, showConfirmButton: false});
+        }
+      },
 //      点击新增挂号设置的保存按钮
       saveAddNewCost: function (cost_json) {
-        var obj_doc_S = document.getElementById("addnew_doc_sId");
-        var obj_dep_S = document.getElementById("addnew_dep_sId");
-        var operatorId = this.doctor_items[obj_doc_S.selectedIndex].operatorId;
-        var doctorName = this.doctor_items[obj_doc_S.selectedIndex].operatorName;
-        var departId = this.department_items[obj_dep_S.selectedIndex].departId;
-        var departname = this.department_items[obj_dep_S.selectedIndex].departName;
-
-        console.log("departname-->" + departname);
-        console.log("departId-->" + departId);
-        console.log("doctorName-->" + doctorName);
-        console.log("operatorId-->" + operatorId);
-        var that=this;
-        this.$api.post(this,this.$requestApi.addNewCost + operatorId, {"departId":departId,"departname":departname,"registrationFee":parseInt(cost_json.ghcost*100)},function (data) {
-          if(data.body.code == '00'){
-            console.log("添加成功");
-            that.cost_set_list();
-          }else{
-
-          }
-        });
-
+        if(cost_json.operatorId && cost_json.departId) {
+          var that=this;
+          this.$api.post(this,this.$requestApi.addNewCost + cost_json.operatorId, {"departId":cost_json.departId,"departname":this.departName,"registrationFee":parseInt(this.registrationFee*100)},function (data) {
+            if(data.body.code == '00'){
+              console.log("添加成功");
+              that.cost_set_list();
+              swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
+              $("#addnew_cost").modal('hide');
+            }else{
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
+            }
+          });
+        }else {
+          console.log("fee-->"+this.registrationFee+" operatorId-->"+cost_json.operatorId+" departId-->"+cost_json.departId);
+          swal({title: "必填项未填写完整", text: "", type: "error", timer: 1000, showConfirmButton: false});
+        }
       },
 //      点击编辑按钮
       editCost: function (data_item, index) {
@@ -201,15 +244,17 @@ import pagination from '../doctor_clinic/bottom_pagination.vue';
       },
 //      点击编辑窗口的保存按钮
       saveEditCost: function (item_data_line) {
-        var that=this;
-        this.$api.post(this,this.$requestApi.editCost + item_data_line.doctorId, {"registrationFee":parseInt(this.registrationFee*100)},function (data) {
-          if(data.body.code == '00'){
-            console.log("修改成功");
-            that.cost_set_list();
-          }else{
-
-          }
-        });
+          var that=this;
+          this.$api.post(this,this.$requestApi.editCost + item_data_line.doctorId, {"registrationFee":parseInt(this.registrationFee*100)},function (data) {
+            if(data.body.code == '00'){
+              console.log("修改成功");
+              that.cost_set_list();
+              swal({title: data.body.msg, text: "", type: "success", timer: 1000, showConfirmButton: false});
+              $("#edit_cost").modal('hide');
+            }else{
+              swal({title: data.body.msg, text: "", type: "error", timer: 1000, showConfirmButton: false});
+            }
+          });
       },
 
     },

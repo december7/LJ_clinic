@@ -189,16 +189,20 @@ export  default {
                 return 0;
             }
     },
-  /**计算状态*/
-  getState:function ( state) {
-    if (state=="0"){
-       return "已删除"
-    }else if (state=="1"){
-      return "正常"
-    }else if (state=="2"){
-      return "待审核"
-    }else if (state=="3"){
-      return "拒绝"
-    }
-  },
+        /**计算状态*/
+        getState:function ( state) {
+          if (state=="0"){
+             return "已撤销"
+          }else if (state=="1"){
+            return "已审核"
+          }else if (state=="2"){
+            return "待审核"
+          }else if (state=="3"){
+            return "审核失败"
+          }
+        },
+      accountOut:function (context) {
+        localStorage.setItem(context.$names.reload, 1);
+        context.$store.dispatch("logout_submit_success");
+      },
 }

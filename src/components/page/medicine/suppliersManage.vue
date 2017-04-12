@@ -4,12 +4,9 @@
   <div class="suppliers_manage_body">
     <div class="suppliers_manage_title_add">
       <router-link  :to="{ path: 'add_suppliers'}" append>
-        <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title"> 新增供应商</span></router-link>
+        <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title patient_add_btn"> 新增供应商</span></router-link>
 
-      <div    class=" right_select"  >
-        <selected-search :suppliersItems="selectedItems" :placeholderData="placeholderData" :suppliersIndex="suppliersIndex"></selected-search>
-
-      </div>
+        <selected-search class="right_select" :suppliersItems="selectedItems" :placeholderData="placeholderData" :suppliersIndex="suppliersIndex"></selected-search>
     </div>
     <table class="table table-striped table-bordered table-hover dataTables-example">
       <thead>
@@ -19,7 +16,7 @@
       </thead>
       <tbody>
       <tr class="gradeC" v-for="(suppliersItem ,index) in auditContent">
-        <td class="text-center" >{{suppliersItem.supplierId}}</td>
+        <td class="text-center" >{{pageIndexNo()+index}}</td>
         <td class="text-center" >{{$stringUtils.dateFormat(suppliersItem.createdDate)}}</td>
         <td class="text-center" >{{suppliersItem.supplierName}}</td>
         <td class="text-center" >{{suppliersItem.businessLicence}}</td>
@@ -35,8 +32,10 @@
       </tr>
 
       </tbody>
+      <tbody v-if="auditContent.length===0" ><tr class="gradeC"> <td class="text-center":colspan="suppliers.length">{{$toastContent.toastTableContent}}</td></tr></tbody>
+
     </table>
-    <pagination v-show="auditContent.length > 0"></pagination>
+    <pagination v-show="auditContent.length > 0" :iDisplayLength="auditContent.length"></pagination>
 
   </div>
 </template>
@@ -88,13 +87,16 @@
       this.request();
     },
     methods:{
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1;
+      },
       request :function () {
         var that=this;
         this.$api.get(this,this.$requestApi.supplierSearch,{iDisplayLength:this.iDisplayLength},function  (data) {
           console.log(data.body.iTotalRecords);
           if(data.body.code=='00'){
             that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(data.body.iTotalRecords));
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageIDisplayLength(data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -229,10 +231,11 @@
   }
   .right_select{
     float: right;
-    width: 33%;
+    width: 330px;
     background: white;
     height: 32px;
     margin-top: -5px;
+    margin-right: 15px;
     border-radius: 2px;
     margin-bottom: 10px;
   }

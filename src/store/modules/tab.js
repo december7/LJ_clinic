@@ -11,21 +11,36 @@ const JSON = global.JSON;
 
 export default {
   state: {
-    tabs:[{title:"首页",path:"#/platform/platform_home",class:"active J_menuTab",colsed:false,frameName:"iframe0"}],
+    tabs:[ ],
+    homeLeftTabs:[],
+
   },
   mutations: {
     // Register
     ADD_TAB: (state,tab) => {
       state.tabs.push(tab)
     },
+    ADD_HOME_LEFT_TABS: (state,homeLeftTabs) => {
+      state.homeLeftTabs=homeLeftTabs;
+    },
+    RESET_TAB: (state,tab) => {
+      state.tabs=[tab];
+    },
   },
   actions: {
     //add Tab
     addTab({commit}, tab) {
       commit('ADD_TAB', tab);
-    }
+    },
+    reset_tab({commit}, tab) {
+      commit('RESET_TAB', tab);
+    },
+    add_home_left_tabs({commit}, tab) {
+      commit(types.ADD_HOME_LEFT_TABS, tab);
+    },
   },
   getters: {
-    getTabs: (state) => state.tabs
+    getTabs: (state) => state.tabs,
+    getHomeLeftTabs: (state) => state.homeLeftTabs
   }
 };

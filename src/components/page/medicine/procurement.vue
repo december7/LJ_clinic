@@ -3,7 +3,7 @@
 <template>
   <div class="goods_manage_body">
     <div class="goods_manage_title_add"><router-link :to="{ path: 'add_procurement'}" append>
-      <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title"> 新增采购单</span></router-link></div>
+      <img src="../../../../static/img/set_manage_img/add.png" class="add_img"><span class="add_title patient_add_btn"> 新增采购单</span></router-link></div>
 
     <table class="table table-striped table-bordered table-hover dataTables-example">
       <thead>
@@ -14,7 +14,7 @@
       </thead>
       <tbody>
       <tr class="gradeC" v-for="(goodsItem,index) in auditContent">
-        <td class="text-center" >{{++index}}</td>
+        <td class="text-center" >{{pageIndexNo()+index}}</td>
         <td class="text-center" >{{goodsItem.ostockId}}</td>
         <td class="text-center" >{{$stringUtils.dateFormat(goodsItem.createDate)}}</td>
         <td class="text-center" >{{goodsItem.supplierName}}</td>
@@ -22,17 +22,22 @@
         <td class="text-center" >{{goodsItem. billId }}</td>
         <td class="text-center" >{{goodsItem.remark}}</td>
         <td class="text-center" >{{goodsItem.auditOpinion}}</td>
-        <td class="text-center"  :class="goodsItem.state==1?'goods-gray':'goods-red'" >{{$enumeration.getState(goodsItem.state)}}</td>
+        <td class="text-center"  :class="goodsItem.state==2?  'goods-red':'goods-gray'" >{{$enumeration.getState(goodsItem.state)}}</td>
         <td class="text-center" >
-        <router-link v-if="goodsItem.state==1||goodsItem.state==2" class="table-margin-r-5" :to="{ path: 'add_procurement'}" append><span @click="compileSuppliers(goodsItem.ostockId)">编辑</span></router-link>
-        <router-link  v-if="goodsItem.state==0" class="table-margin-r-5" :to="{ path: 'add_procurement'}" append><span @click="viewSuppliers(goodsItem.ostockId)">查看</span></router-link>
-        <a  v-if="goodsItem.state!=0" @click="selectIndex(index,goodsItem.ostockId)" data-toggle="modal" data-target="#selfinfo">删除</a></td>
+          <router-link v-if=" goodsItem.state==2 " class="table-margin-r-5" :to="{ path: 'add_procurement'}" append><span @click="compileSuppliers(goodsItem.ostockId)">编辑</span></router-link>
+          <router-link  v-if="goodsItem.state==0||goodsItem.state==1" class="table-margin-r-5" :to="{ path: 'add_procurement'}" append><span @click="viewSuppliers(goodsItem.ostockId)">查看</span></router-link>
+          <router-link v-if="goodsItem.state==3"  :to="{ path: 'add_procurement'}" append><span @click="compileSuppliers(goodsItem.ostockId)">查看</span></router-link>
+
+          <a  v-if=" goodsItem.state==2" @click="selectIndex(index,goodsItem.ostockId)" data-toggle="modal" data-target="#selfinfo">撤销</a></td>
       </tr>
 
       </tbody>
+      <tbody v-if="auditContent.length===0" ><tr class="gradeC"> <td class="text-center":colspan="goods.length">{{$toastContent.toastTableContent}}</td></tr></tbody>
+
     </table>
-    <pagination v-show="auditContent.length > 0"></pagination>
-    <delete-toast :selectedIndex="selectedIndex" ></delete-toast>
+    <pagination v-show="auditContent.length > 0"  :iDisplayLength="auditContent.length"></pagination>
+    <delete-toast :selectedIndex="selectedIndex" :selectedTitle="selectedTitle" :selectedContent="selectedContent" ></delete-toast>
+
   </div>
 </template>
 
@@ -68,9 +73,16 @@
         data_items:[],
         selectedIndex:0,
         goodsIndex:0,
+        selectedTitle:"采购单",
+        selectedContent:"确定撤销该采购单吗?<br/>撤销后将不能恢复",
+
+
       }
     },
     methods:{
+      pageIndexNo:function(){
+        return (this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.$enumerationType.iDisplayLength+1;
+      },
       compileSuppliers:function (no) {
         //编辑
         this.$store.dispatch('medicine_compile_suppliers_no',  [no,1]);
@@ -86,7 +98,7 @@
         that.$api.get(that,that.$requestApi.stockSearch+that.$enumerationType.procurementType,{iDisplayLength:that.$enumerationType.iDisplayLength},function  (data) {
           if(data.body.code=='00'){
             that.auditContent=data.body.data
-            that.$store.dispatch('setPageCount',that.$enumerationType.getPageNumber(   data.body.iTotalRecords));
+            that.$store.dispatch('setPageCount',that.$enumerationType.getPageIDisplayLength(   data.body.iTotalRecords));
           }else{
             console.log(data.body.msg);
           }
@@ -97,38 +109,15 @@
         });
 
       },
-//      searchRequest:function (state,searchKeywords) {
-//        let data={};
-//        let that=this;
-//        console.log("state"+state);
-//        that.suppliersIndex=state;
-//        if (0===state||""===state){
-//          data= { iDisplayLength:this.iDisplayLength,supplierNameOrContactName:searchKeywords}
-//        }else {
-//          data= { state:state,iDisplayLength:this.iDisplayLength,supplierNameOrContactName:searchKeywords}
-//        }
-//        this.$api.get(this,this.$requestApi.goodsSearch,data,function  (data) {
-//          if(data.body.code=='00'){
-//            that.auditContent=data.body.data
-//            that.$store.dispatch('setPageCount',Math.ceil(Number(data.body.iTotalRecords)/that.iDisplayLength));
-//          }else{
-//            console.log(data.body.msg);
-//          }
-//
-//        },function (err) {
-//          console.log(err);
-//
-//        });
-//      },
       request_list:function () {
         let that=this;
         let  data={};
         if ( that.suppliersIndex===0||that.suppliersIndex===""){
-          data= { iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.iDisplayLength+1}
+          data= { iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:that.pageIndexNo()}
         }else {
-          data= {state:that.suppliersIndex, iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:(this.$store.getters.getCurrentPageNo==0?0:this.$store.getters.getCurrentPageNo-1)*this.iDisplayLength+1}
+          data= {state:that.suppliersIndex, iDisplayLength:that.$enumerationType.iDisplayLength,iDisplayStart:that.pageIndexNo()}
         }
-        this.$api.get(this,this.$requestApi.stockSearch+that.$enumerationType.procurementType,data,function  (data) {
+        that.$api.get(that,that.$requestApi.stockSearch+that.$enumerationType.procurementType,data,function  (data) {
           if(data.body.code=='00'){
             that.auditContent=data.body.data
           }else{
@@ -152,14 +141,10 @@
           }else{
             swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
           }
-
         },function (err) {
           swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
 
         });
-
-
-
 
       },
       selectIndex:function (index,ostockId) {

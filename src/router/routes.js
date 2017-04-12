@@ -8,8 +8,16 @@ import forget_password from 'components/login/forget_password.vue'
 import welcome_home_page from 'components/login/welcome_home_page.vue'
 //注册
 import home_register from 'components/login/home_register.vue'
+//服务条款
+import ljhy_service from 'components/login/ljhy_service.vue'
 // 引入路由文件首页
 import Home from 'components/main/Home.vue'
+//重置密码
+import reset_password from 'components/login/reset_password.vue'
+//修改员工密码
+import update_password from 'components/login/update_password.vue'
+//重置手机号
+import reset_phone from 'components/login/reset_phone.vue'
 
 import doctor_wrokbench from 'components/page/doctor_clinic/doctor_reception_workbench.vue'
 import today_patient from 'components/page/doctor_clinic/today_patient.vue'
@@ -39,8 +47,6 @@ import set_clinic_setting from 'components/page/settingManage/set_clinic_setting
 import set_role_manage from 'components/page/settingManage/set_role_manage.vue'
 //员工管理 
 import set_staff_manage from 'components/page/settingManage/set_staff_manage.vue'
-//科室管理 
-import set_department_manage from 'components/page/settingManage/set_department_manage.vue'
 //挂号设置 
 import set_cost_setting from 'components/page/settingManage/set_cost_setting.vue'
 //项目管理
@@ -104,13 +110,12 @@ import  add_returned_goods from "components/page/medicine/popup/addReturnedGoods
 import  inventory from "components/page/medicine/inventory.vue";
 //添加盘点单
 import  add_inventory from "components/page/medicine/popup/addInventory.vue";
-//审核表单详细
-import  compile_audit from "components/page/medicine/popup/compileAuditTable.vue";
 import  checkOrderDetail from "components/page/medicine/popup/checkOrderDetail.vue";
 //收费
 import doctor_charge_wait from "components/page/doctor_charge/doctor_charge_wait.vue";
 import doctor_charge_list from "components/page/doctor_charge/doctor_charge_list.vue";
 import doctor_charge_confirm from "components/page/doctor_charge/doctor_charge_confirm.vue";
+import doctor_charge_detail from "components/page/doctor_charge/doctor_charge_detail.vue";
 
 //添加患者modal
 import add_patient_modal from "components/page/doctor_clinic/add_patient_modal";
@@ -120,13 +125,15 @@ import case_report from "components/page/doctor_clinic/case_report_template";
 
 //病例界面
 import case_report_page from "components/page/doctor_clinic/case_report_page";
+//消息中心
+import message_center from "components/page/message_center/message_center";
 
 // 配置路由
 export default [
   {
     path: '/',
-    component: Home,
-    meta: {requiresAuth: true},
+    component: welcome_home_page,
+
   },
   {
     path: '/login',
@@ -138,14 +145,30 @@ export default [
     component: forget_password,
   },
   {
-    path: '/login/welcome_home_page',
-    component: welcome_home_page,
+    path: '/home',
+    component: Home,
+    meta: {requiresAuth: true},
   },
   {
     path: '/login/home_register',
     component: home_register,
   },
-
+  {
+    path: '/login/home_register/ljhy_service',
+    component: ljhy_service,
+  },
+  {
+    path: '/login/reset_password',
+    component: reset_password,
+  },
+  {
+    path: '/login/update_password',
+    component:update_password,
+  },
+  {
+    path: '/login/reset_phone',
+    component: reset_phone,
+  },
   {
     path: '/doctor_clinic/today_patient',
     component: today_patient,
@@ -221,12 +244,6 @@ export default [
   {
     path: '/settingManage/set_staff_manage',
     component: set_staff_manage,
-    meta: {requiresAuth: true},
-  },
-
-  {
-    path: '/settingManage/set_department_manage',
-    component: set_department_manage,
     meta: {requiresAuth: true},
   },
 
@@ -307,11 +324,7 @@ export default [
     component: audit,
     meta: {requiresAuth: true},
   },
-  {
-    path: '/medicine/audit/compile_audit',
-    component: compile_audit,
-    meta: {requiresAuth: true},
-  },
+
   {
     path: '/doctor_charge/doctor_charge_wait',
     component: doctor_charge_wait,
@@ -325,6 +338,11 @@ export default [
   {
     path: '/doctor_charge/doctor_charge_confirm',
     component: doctor_charge_confirm,
+    meta: {requiresAuth: true},
+  },
+  {
+    path: '/doctor_charge/doctor_charge_detail',
+    component: doctor_charge_detail,
     meta: {requiresAuth: true},
   },
   {
@@ -407,6 +425,11 @@ export default [
   {
     path: '/medicine/popup/checkOrderDetail',
     component: checkOrderDetail,
+    meta: {requiresAuth: true},
+  },
+  {
+    path: '/message_center/message_center',
+    component: message_center,
     meta: {requiresAuth: true},
   },
 

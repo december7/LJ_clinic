@@ -2,7 +2,7 @@
     <div  >
       <div class="add_body"  >
         <div class="fixed-div" >
-        <div class="tc-title-div">新增供应商</div>
+        <div class="tc-title-div ">新增供应商</div>
         <button type="button" class="btn_close"  @click="returnPage" style="margin: 11.5px 15px 0 0;"> <a>返回上一级</a></button>
           </div>
         <div class="common-body">
@@ -32,7 +32,7 @@
                                 class="form-control gray-bg     input_circular_corner   " type="button">
                           {{saleItems[ suppliersData.isSale].titleName}}<span class=" caret goods_tips_down"></span>
                         </button>
-                        <ul class="dropdown-menu" style="width: 100%">
+                        <ul  v-show="saleItems.length>0"  class="  dropdown-menu" style="width: 100%">
                           <li @click="selectSaleItem(index)" v-for="(titleItem, index) in saleItems">
                             <a :class="{selected_item : suppliersData.isSale == index}" class="no-padding"
                                style="text-align: center">{{titleItem.titleName}}</a>
@@ -60,10 +60,10 @@
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
                       <div class="input-group-btn">
                         <button data-toggle="dropdown" style="width: 100%"
-                                class="form-control gray-bg     input_circular_corner   " type="button">
+                                class="form-control gray-bg     input_circular_corner   " type="button" >
                           {{  getOperatorIdItems(operatorIdItems[operatorIdItemsIndex])}}<span class=" caret goods_tips_down"></span>
                         </button>
-                        <ul class="dropdown-menu" style="width: 100%">
+                        <ul   v-show="operatorIdItems.length>0"  class="attopic dropdown-menu" style="width: 100%">
                           <li @click="operatorIdItem(index,titleItem.operatorId)" v-for="(titleItem, index) in operatorIdItems">
                             <a :class="{selected_item :operatorIdItemsIndex == index}" class="no-padding"
                                style="text-align: center">{{titleItem.roleName}}</a>
@@ -79,7 +79,7 @@
                          class="pull-left no-padding left_text_tips">开户户名
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入开户户名"   v-model="suppliersData.accountName">
+                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入开户户名" maxlength="20"   v-model="suppliersData.accountName">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
@@ -87,7 +87,7 @@
                          class="pull-left no-padding left_text_tips">开户银行
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入开户银行"  v-model="suppliersData.accountBank">
+                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入开户银行" maxlength="20"    v-model="suppliersData.accountBank">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -96,7 +96,7 @@
                          class="pull-left no-padding left_text_tips">银行账号
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入银行账号"v-model="suppliersData.accountNo">
+                      <input type="text" class="form-control gray-bg input_circular_corner " maxlength="20"   placeholder="请输入银行账号"v-model="suppliersData.accountNo">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -105,7 +105,7 @@
                          class="pull-left no-padding left_text_tips">联系人
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入联系人姓名" v-model="suppliersData.contactName">
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="6"   placeholder="请输入联系人姓名" v-model="suppliersData.contactName">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -114,7 +114,9 @@
                          class="pull-left no-padding left_text_tips">电话
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入联系人电话" v-model="suppliersData.contactPhone">
+                      <input   :class="{'is-danger':$stringUtils.checkPhoneLength(suppliersData.contactPhone)}  " type="tel" class="form-control gray-bg input_circular_corner" maxlength="11"   placeholder="请输入联系人电话" v-model="suppliersData.contactPhone">
+                      <toast-error   v-show="$stringUtils.checkPhoneLength(suppliersData.contactPhone) " :toastContent="$toastContent.toastPhone"></toast-error>
+
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -133,7 +135,7 @@
                          class="pull-left no-padding left_text_tips">法人姓名
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入法人姓名" v-model="suppliersData.legalPerson">
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="6"   placeholder="请输入法人姓名" v-model="suppliersData.legalPerson">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -142,19 +144,22 @@
                          class="pull-left no-padding left_text_tips">身份证号
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入身份证号" v-model="suppliersData.idcardNo">
+                      <input  :class="{'is-danger':$stringUtils.checkIDCardLength(suppliersData.idcardNo)}  "  type="text" class="form-control gray-bg input_circular_corner" maxlength="18"   placeholder="请输入身份证号" v-model="suppliersData.idcardNo">
+                      <toast-error   v-show="$stringUtils.checkIDCardLength(suppliersData.idcardNo) " :toastContent="$toastContent.toastPhone"></toast-error>
+
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_7">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">期限</label>
-                    <div class="input-group date  padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                        >
+                           class="pull-left no-padding left_text_tips font-noraml ">期限</label>
+                    <div class="  padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#entrustDate')"     >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
                       <input type="text" style="width: 80%;float: left ;" placeholder="委托书期限"  id="entrustDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                             @click="$stringUtils.layDateUi()" readonly
+                             class="form-control layer-date gray-bg input_circular_left_radius">
                     </div>
                   </div>
 
@@ -164,7 +169,7 @@
                          class="pull-left no-padding left_text_tips">营业执照
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入营业执照号" v-model="suppliersData.businessLicence">
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="30"   placeholder="请输入营业执照号" v-model="suppliersData.businessLicence">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' "
@@ -173,19 +178,19 @@
                          class="pull-left no-padding left_text_tips">发证机关
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入营业执照发证机关" v-model="suppliersData.issuingAuthority">
+                      <input type="text" class="form-control gray-bg input_circular_corner"maxlength="20"   placeholder="请输入营业执照发证机关" v-model="suppliersData.issuingAuthority">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_6">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">有效期</label>
-                    <div class="input-group date   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                        >
+                           class="pull-left no-padding left_text_tips font-noraml ">有效期</label>
+                    <div class="   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#licenseValidDate')"    >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" placeholder="营业执照有效期"
-                             class="form-control gray-bg input_circular_left_radius"  id="licenseValidDate">
+                      <input type="text" style="width: 80%;float: left ;" placeholder="营业执照有效期"   @click="$stringUtils.layDateUi()" readonly
+                             class="form-control gray-bg input_circular_left_radius layer-date"  id="licenseValidDate">
                     </div>
                   </div>
 
@@ -193,31 +198,31 @@
                   <div class="no-padding col-md-12 procurement_form-div_margin">
                     <div class=" col-md-1 pull-left no-padding left_text_tips"> 经营范围 </div>
                     <div class="col-md-11 col-md-11-padding-r"   >
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入营业执照经营范围" v-model="suppliersData.businessScope"></div></div>
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="80"   placeholder="请输入营业执照经营范围" v-model="suppliersData.businessScope"></div></div>
 
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_5">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">协议效期</label>
-                    <div class="input-group date   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                        >
+                           class="pull-left no-padding left_text_tips font-noraml ">协议效期</label>
+                    <div class="   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi( '#qualityValidDate')"   >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" placeholder="质量协议效期" id="qualityValidDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                      <input type="text" style="width: 80%;float: left ;" placeholder="质量协议效期" id="qualityValidDate" readonly
+                             class="form-control gray-bg input_circular_left_radius  layer-date"   @click="$stringUtils.layDateUi( )"  >
                     </div>
                   </div>
 
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_4">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">特殊药品</label>
-                    <div class="input-group date   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                           class="pull-left no-padding left_text_tips font-noraml ">特殊药品</label>
+                    <div   @click="$stringUtils.layDateUi('#specialEntrustDate')"  class="   padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
                         >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" placeholder="委托书期限" id="specialEntrustDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                      <input type="text" style="width: 80%;float: left ;" placeholder="委托书期限" id="specialEntrustDate" readonly
+                             class="form-control gray-bg input_circular_left_radius   layer-date"   @click="$stringUtils.layDateUi()" >
                     </div>
                   </div>
 
@@ -231,7 +236,7 @@
                                 class="form-control gray-bg     input_circular_corner   " type="button">
                           {{saleFlagItems[ suppliersData.saleFlag].titleName}}<span class=" caret goods_tips_down"></span>
                         </button>
-                        <ul class="dropdown-menu" style="width: 100%">
+                        <ul  v-show="saleFlagItems.length>0"   class="  dropdown-menu" style="width: 100%">
                           <li @click="saleFlagItem(index)" v-for="(titleItem, index) in saleFlagItems">
                             <a :class="{selected_item : suppliersData.saleFlag == index}" class="no-padding"
                                style="text-align: center">{{titleItem.titleName}}</a>
@@ -248,7 +253,7 @@
                          class="pull-left no-padding left_text_tips">收货人
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入收货人姓名" v-model="suppliersData.consigneePerson">
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="6"   placeholder="请输入收货人姓名" v-model="suppliersData.consigneePerson">
                     </div>
                   </div>
 
@@ -259,44 +264,25 @@
                          class="pull-left no-padding left_text_tips">收货电话
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入收货电话 "  v-model="suppliersData.deliveryPhone">
+                      <input :class="{'is-danger':$stringUtils.checkPhoneLength(suppliersData.deliveryPhone)}  " type="tel" class="form-control gray-bg input_circular_corner" maxlength="11"   placeholder="请输入收货电话 "  v-model="suppliersData.deliveryPhone">
+                      <toast-error   v-show="$stringUtils.checkPhoneLength(suppliersData.deliveryPhone) " :toastContent="$toastContent.toastPhone"></toast-error>
+
                     </div>
                   </div>
                   <div class="no-padding col-md-12 procurement_form-div_margin">
                     <div class=" col-md-1 pull-left no-padding left_text_tips"> 送货地址 </div>
                     <div class="col-md-11 col-md-11-padding-r"   >
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入收货地址" v-model="suppliersData.deliveryAddress"></div></div>
-                 <!-- <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding">
-                    <div :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                         class="pull-left no-padding left_text_tips">停售:
-                    </div>
-                    <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <div class="input-group-btn">
-                        <button data-toggle="dropdown" style="width: 100%"
-                                class="form-control gray-bg     input_circular_corner   " type="button">
-                          {{saleFlagItems[suppliersData.businessState].titleName}}<span class=" caret goods_tips_down"></span>
-                        </button>
-                        <ul class="dropdown-menu" style="width: 100%">
-                          <li @click="saleFlagItem(index)" v-for="(titleItem, index) in saleFlagItems">
-                            <a :class="{selected_item : suppliersData.businessState == index}" class="no-padding"
-                               style="text-align: center">{{titleItem.titleName}}</a>
-                          </li>
-
-                        </ul>
-                      </div>
-                    </div>
-
-                  </div>
--->                  <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_8">
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="40"   placeholder="请输入收货地址" v-model="suppliersData.deliveryAddress"></div></div>
+                  <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">建档日期</label>
-                    <div class="input-group date  padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                      >
+                           class="pull-left no-padding left_text_tips font-noraml ">建档日期</label>
+                    <div class="    padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#createdDate')"   >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" id="createdDate"
-                             class="form-control gray-bg input_circular_left_radius"placeholder="请选择建档日期"  >
+                      <input type="text" style="width: 80%;float: left ;" id="createdDate"  @click="$stringUtils.layDateUi()" readonly
+                             class="form-control gray-bg input_circular_left_radius layer-date "placeholder="请选择建档日期"  >
                     </div>
                   </div>
 
@@ -306,45 +292,46 @@
                          class="pull-left no-padding left_text_tips">许可证号
                     </div>
                     <div :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' " style="padding-right: 0">
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="医疗器械许可证号"  v-model="suppliersData.armariumLicense">
+                      <input type="text" class="form-control gray-bg input_circular_corner"  maxlength="30"   placeholder="医疗器械许可证号"  v-model="suppliersData.armariumLicense">
                     </div>
                   </div>
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_3">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">有效期</label>
-                    <div class="input-group date     padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                      >
+                           class="pull-left no-padding left_text_tips font-noraml ">有效期</label>
+                    <div class="     padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#armariumDate')" >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
                       <input type="text" style="width: 80%;float: left ;" placeholder="医疗许可证号有效期"  id="armariumDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                             @click="$stringUtils.layDateUi()" readonly
+                             class="form-control gray-bg input_circular_left_radius layer-date">
                     </div>
                   </div>
 
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_2">
+                       >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">进货合同</label>
-                    <div class="input-group date    padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                     >
+                           class="pull-left no-padding left_text_tips font-noraml ">进货合同</label>
+                    <div class="    padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#purchaseValidDate')"   >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
                             style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" placeholder="进货合同有效期"   id="purchaseValidDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                      <input type="text" style="width: 80%;float: left ;" placeholder="进货合同有效期"   id="purchaseValidDate" @click="$stringUtils.layDateUi()" readonly
+                             class="form-control gray-bg input_circular_left_radius layer-date">
                     </div>
                   </div>
 
                   <div :class="assist_inquiry_show ? 'col-md-6' : 'col-md-4' " class="goods_form-div_margin no-padding "
-                       id="data_1">
+                      >
                     <label :class="assist_inquiry_show ? 'col-md-4' : 'col-md-3' "
-                           class="pull-left no-padding left_text_tips font-noraml margin-right-100">销售合同</label>
-                    <div class="input-group date    padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
-                          >
+                           class="pull-left no-padding left_text_tips font-noraml ">销售合同</label>
+                    <div class="    padding-right-15" :class="assist_inquiry_show ? 'col-md-7' : 'col-md-8' "
+                         @click="$stringUtils.layDateUi('#saleValidDate')" >
                       <span class="form-control gray-bg   input-group-addon input_circular_right_radius   "
-                            style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"></i></span>
-                      <input type="text" style="width: 80%;float: left ;" placeholder="销售合同有效期"   id="saleValidDate"
-                             class="form-control gray-bg input_circular_left_radius">
+                            style="width: 20%;   line-height:  1.5; float: right;"><i class="fa fa-calendar"  ></i></span>
+                      <input type="text" style="width: 80%;float: left ;" placeholder="销售合同有效期"   id="saleValidDate" @click="$stringUtils.layDateUi()" readonly
+                             class="form-control gray-bg input_circular_left_radius  layer-date" >
                     </div>
                   </div>
 
@@ -358,7 +345,7 @@
                                 class="form-control gray-bg     input_circular_corner   " type="button">
                           {{businessStateItems[suppliersData. businessState].titleName}}<span class=" caret goods_tips_down"></span>
                         </button>
-                        <ul class="dropdown-menu" style="width: 100%">
+                        <ul v-show="businessStateItems.length>0" class="  dropdown-menu" style="width: 100%">
                           <li @click="businessStateItem(index)" v-for="(titleItem, index) in businessStateItems">
                             <a :class="{selected_item :suppliersData. businessState == index}" class="no-padding"
                                style="text-align: center">{{titleItem.titleName}}</a>
@@ -379,7 +366,7 @@
                                 class="form-control gray-bg     input_circular_corner   " type="button">
                           {{custTypeItems[suppliersData. custType ].titleName}}<span class=" caret goods_tips_down"></span>
                         </button>
-                        <ul class="dropdown-menu" style="width: 100%">
+                        <ul v-show="custTypeItems.length>0" class="  dropdown-menu" style="width: 100%">
                           <li @click="custTypeItem(index)" v-for="(titleItem, index) in custTypeItems">
                             <a :class="{selected_item :suppliersData. custType == index}" class="no-padding"
                                style="text-align: center">{{titleItem.titleName}}</a>
@@ -394,13 +381,13 @@
                   <div class="no-padding col-md-12 procurement_form-div_margin">
                     <div class=" col-md-1 pull-left no-padding left_text_tips"> 采购部意见 </div>
                     <div class="col-md-11 col-md-11-padding-r"   >
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入采购部意见" v-model="suppliersData.purchaseOpinion"></div></div>
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="100"   placeholder="请输入采购部意见" v-model="suppliersData.purchaseOpinion"></div></div>
 
 
                   <div class="no-padding col-md-12 procurement_form-div_margin">
                     <div class=" col-md-1 pull-left no-padding left_text_tips"> 质管部意见 </div>
                     <div class="col-md-11 col-md-11-padding-r"   >
-                      <input type="text" class="form-control gray-bg input_circular_corner" placeholder="请输入质管部意见" v-model="suppliersData.qualityOpinion"></div></div>
+                      <input type="text" class="form-control gray-bg input_circular_corner" maxlength="100" placeholder="请输入质管部意见" v-model="suppliersData.qualityOpinion"></div></div>
                 </div>
 
 
@@ -410,8 +397,8 @@
           </div>
 
         </div>
-        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' @click="createSuppliers ">完成</button>
-        <button class='layui-layer-close form-btn-white' data-dismiss="modal">放弃{{compileSuppliers}}</button>
+        <button style='margin: 30px 10px 30px 335px;' class='form-btn-black' @click="createSuppliers ":disabled="isDisabled" >完成</button>
+        <button class='layui-layer-close form-btn-white' data-dismiss="modal"  @click="returnPage">放弃{{compileSuppliers}}</button>
             </div>
           <div class="add_body_bottom" ></div>
             </div>
@@ -420,27 +407,20 @@
 </template>
 
 <script>
-  import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'
-  import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js';
-  import 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.zh-CN.min'
+  import toastError from "components/commonView/toastError.vue";
+
   export default {
+    components: {
+      //注册组件
+      toastError
+    },
     mounted: function () {
-      $('#data_1 .input-group.date').datepicker(this.datepickerData);
-      $('#data_2 .input-group.date').datepicker(this.datepickerData);
-      $('#data_3 .input-group.date').datepicker(this.datepickerData);
-      $('#data_4 .input-group.date').datepicker(this.datepickerData);
-      $('#data_5 .input-group.date').datepicker(this.datepickerData);
-      $('#data_6 .input-group.date').datepicker(this.datepickerData);
-      $('#data_7 .input-group.date').datepicker(this.datepickerData);
-      $('#data_8 .input-group.date').datepicker(this.datepickerData);
-      $('#data_9 .input-group.date').datepicker(this.datepickerData);
       this.$nextTick(() => $(window).scrollTop(0));
-
-
     },
 
     data(){
       return {
+        isDisabled:false,
         assist_inquiry_show: false,
         assist_inquiry_showed: false,
         suppliersItems: [
@@ -465,18 +445,6 @@
           {titleName: '是'},
         ],
         suppliersIndex: 0,
-        datepickerData:{
-          todayBtn: "linked",
-          keyboardNavigation: false,
-          forceParse: false,
-          calendarWeeks: false,
-          autoclose: true,
-          todayHighlight: true,
-          enable:true,
-          language: "zh-CN",
-          minDate: 0,
-          format:"yyyy/mm/dd",
-        },
 
         compileSuppliersNo:"",
         suppliersData:{
@@ -519,8 +487,7 @@
     },
 
     created(){
-      this.queryOpers();
-
+        this.queryOpers();
     },
 
     computed : {
@@ -559,14 +526,23 @@
         this.$api.get(this, this.$requestApi.supplierView+compileSuppliersNo,"", function (data) {
           if (data.body.code == '00') {
            let suppliersData=  data.body.data;
-            $("#entrustDate").val( that.$stringUtils.dateFormat(suppliersData.entrustDate));
-            $("#qualityValidDate").val( that.$stringUtils.dateFormat(suppliersData.qualityValidDate));
-            $("#specialEntrustDate").val(that.$stringUtils.dateFormat(suppliersData.specialEntrustDate));
-            $("#licenseValidDate").val(that.$stringUtils.dateFormat(suppliersData.licenseValidDate));
-            $("#createdDate").val(that.$stringUtils.dateFormat(suppliersData.createdDate));
-            $("#armariumDate").val(suppliersData.armariumDate);
-            $("#purchaseValidDate").val(that.$stringUtils.dateFormat(suppliersData.purchaseValidDate) );
-            $("#saleValidDate").val(that.$stringUtils.dateFormat(suppliersData.saleValidDate));
+
+            let entrustDate=suppliersData.entrustDate===""?"": that.$stringUtils.dateFormat(suppliersData.entrustDate);
+            let qualityValidDate=suppliersData.qualityValidDate===""?"": that.$stringUtils.dateFormat(suppliersData.qualityValidDate);
+            let specialEntrustDate=suppliersData.specialEntrustDate===""?"": that.$stringUtils.dateFormat(suppliersData.specialEntrustDate);
+            let licenseValidDate=suppliersData.licenseValidDate===""?"": that.$stringUtils.dateFormat(suppliersData.licenseValidDate);
+            let createdDate=suppliersData.createdDate===""?"": that.$stringUtils.dateFormat(suppliersData.createdDate);
+            let armariumDate=suppliersData.armariumDate===""?"": that.$stringUtils.dateFormat(suppliersData.armariumDate);
+            let purchaseValidDate=suppliersData.purchaseValidDate===""?"": that.$stringUtils.dateFormat(suppliersData.purchaseValidDate);
+            let saleValidDate=suppliersData.saleValidDate===""?"": that.$stringUtils.dateFormat(suppliersData.saleValidDate);
+            $("#entrustDate").val( entrustDate);
+            $("#qualityValidDate").val( qualityValidDate);
+            $("#specialEntrustDate").val(specialEntrustDate);
+            $("#licenseValidDate").val(licenseValidDate);
+            $("#createdDate").val(createdDate);
+            $("#armariumDate").val(armariumDate);
+            $("#purchaseValidDate").val(purchaseValidDate );
+            $("#saleValidDate").val(saleValidDate);
             for(let i=0,j=that. operatorIdItems.length;i<j;i++){
               if (that. operatorIdItems[i].operatorId==that.suppliersData.operatorId){
                 that.operatorIdItemsIndex=i;
@@ -589,6 +565,21 @@
       },
 
       createSuppliers:function () {
+        var that = this;
+        if (that.suppliersData.supplierName==""){
+          return  swal({title: that.$toastContent.toastSupplierName, text: "", type: "error", timer: 2000, showConfirmButton: false});
+
+        }
+        if (that.$stringUtils.checkPhoneLength(that.suppliersData.deliveryPhone)||that.$stringUtils.checkPhoneLength(that.suppliersData.contactPhone)){
+          return  swal({title: that.$toastContent.toastPhone, text: "", type: "error", timer: 2000, showConfirmButton: false});
+
+        }
+
+        if (that.$stringUtils.checkIDCardLength(that.suppliersData.idcardNo) ){
+          return  swal({title: that.$toastContent.toastIdCard, text: "", type: "error", timer: 2000, showConfirmButton: false});
+
+        }
+
         if ($("#entrustDate").val()==""){
           delete this.suppliersData ['entrustDate'];
         }else {
@@ -597,45 +588,53 @@
         if ($("#qualityValidDate").val()==""){
           delete this.suppliersData ['qualityValidDate'];
         }else {
-          this.suppliersData.entrustDate=$("#qualityValidDate").val();
+          this.suppliersData.qualityValidDate=$("#qualityValidDate").val();
         }
         if ($("#specialEntrustDate").val()==""){
           delete this.suppliersData ['specialEntrustDate'];
         }else {
-          this.suppliersData.entrustDate=$("#specialEntrustDate").val();
-        }if ($("#licenseValidDate").val()==""){
+          this.suppliersData.specialEntrustDate=$("#specialEntrustDate").val();
+        }
+
+        if ($("#licenseValidDate").val()==""){
           delete this.suppliersData ['licenseValidDate'];
         }else {
-          this.suppliersData.entrustDate=$("#licenseValidDate").val();
-        }if ($("#createdDate").val()==""){
+          this.suppliersData.licenseValidDate=$("#licenseValidDate").val();
+        }
+
+        if ($("#createdDate").val()==""){
           delete this.suppliersData ['createdDate'];
         }else {
-          this.suppliersData.entrustDate=$("#createdDate").val();
-        }if ($("#armariumDate").val()==""){
+          this.suppliersData.createdDate=$("#createdDate").val();
+        }
+
+        if ($("#armariumDate").val()==""){
           delete this.suppliersData ['armariumDate'];
         }else {
-          this.suppliersData.entrustDate=$("#armariumDate").val();
-        }if ($("#purchaseValidDate").val()==""){
+          this.suppliersData.armariumDate=$("#armariumDate").val();
+        }
+        if ($("#purchaseValidDate").val()==""){
           delete this.suppliersData ['purchaseValidDate'];
         }else {
-          this.suppliersData.entrustDate=$("#purchaseValidDate").val();
-        }if ($("#saleValidDate").val()==""){
+          this.suppliersData.purchaseValidDate=$("#purchaseValidDate").val();
+        }
+        if ($("#saleValidDate").val()==""){
           delete this.suppliersData ['saleValidDate'];
         }else {
-          this.suppliersData.entrustDate=$("#saleValidDate").val();
+          this.suppliersData.saleValidDate=$("#saleValidDate").val();
         }
-        var that = this;
-        this.$api.post(this,this.compileSuppliersNo?this.$requestApi.supplierUpdate+  this. compileSuppliersNo:this.$requestApi.createSuppliers , this.suppliersData, function (data) {
+        that.isDisabled=true;
+        that.$api.post(that,that.compileSuppliersNo?that.$requestApi.supplierUpdate+  that. compileSuppliersNo:that.$requestApi.createSuppliers , that.suppliersData, function (data) {
+          that.isDisabled=false;
           if (data.body.code == '00') {
             that.returnPage();
             swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
           } else {
-            swal({   title: data.body.msg,   text: "", type: "success",  timer: 2000,   showConfirmButton: false });
+            swal({   title: data.body.msg,   text: "", type: "error",  timer: 2000,   showConfirmButton: false });
           }
 
         }, function (err) {
-          console.log(err);
-
+          that.isDisabled=false;
         });
       },
 
@@ -717,15 +716,9 @@
   .col-md-11-padding-r{
     padding-right: 27px;
   }
-  .margin-right-100{
-    margin-right: 4.5%  !important ;
-    /*margin-left: 29.5%   !important ;*/
-    /*margin:0  0 0 29.5%;*/
-    /**margin:0  0 0 29.5%;*/
 
-  }
   .padding-right-15{
-    padding-right: 15px !important;
+    padding-right: 0px !important;
   }
 
 </style>
